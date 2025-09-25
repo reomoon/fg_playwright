@@ -1,4 +1,4 @@
-async def wa_login(page, account="wa", logs=None):
+async def wa_login(page, account="wa2", logs=None):
     # logs가 None이면 빈 리스트로 초기화
     from core.page_account import LOGIN_CREDENTIALS
 
