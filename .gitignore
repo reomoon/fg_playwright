@@ -46,9 +46,6 @@ Thumbs.db
 .env.local
 .env.production
 
-# Account credentials (보안상 중요!)
-core/page_account.py
-
 # Logs
 *.log
 logs/
