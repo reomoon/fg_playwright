@@ -1,8 +1,7 @@
 import pytest
-import asyncio
 from core.browser_manager import launch_browser, close_browser
 from core.page_wrapper import create_highlighted_page
-from pages.web.front import front_login
+from pages.front import front_login
 
 # account 파라미터에 따라 로그인하는 fixture
 @pytest.fixture(scope="function")
