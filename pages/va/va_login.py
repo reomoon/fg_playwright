@@ -1,0 +1,36 @@
+from core.page_wrapper import create_highlighted_page
+
+# Pages/front login
+def va_login(page):
+    from core.page_account import LOGIN_CREDENTIALS # 함수 내부에서 임포트
+
+    # 로그인 정보 가져오기 (전역 변수 LOGIN_CREDENTIALS 사용)
+    dev_va_username = LOGIN_CREDENTIALS["va_username"]
+    dev_va_password = LOGIN_CREDENTIALS["va_password"]
+
+    # 로그인 요소 정의 및 동작
+    username_input = page.locator('input[formcontrolname="userName"]')
+    page.wait_for_timeout(1000) # 1초 대기
+    username_input.type(dev_va_username, delay=100)
+    password_input = page.locator('input[formcontrolname="password"]')
+    password_input.type(dev_va_password, delay=50)
+
+    # SECURE LOGIN
+    page.locator('.btn.btn-blue.width-100p.btn-login').click()
+
+    # 페이지 로딩 상태를 기다림
+    page.wait_for_url("**/home", timeout=30000)
+
+    # Net Terms 팝업 닫기
+    netterms_popup_element = page.locator('div.label', has_text = "Don't show again today")
+
+    if netterms_popup_element.is_visible(): # netterms_popup_element 실제 화면에 렌더링되어 보이는지 여부까지 체크 → 보일 때만 클릭 실행 → 클릭 에러 방지
+        try:
+            netterms_popup_element.click()  # 오늘 하루 보지 않기 체크박스 클릭
+            page.locator_popup('i.modal-close-btn').nth(1).click()  # Net Terms팝업 닫기
+            print("Net Terms 팝업 24시간 안보이기를 클릭 했습니다.")
+        except Exception as e:
+            print(f"Net Terms 팝업 클릭 중 에러 발생:{e}")
+    else:
+        print("Net Terms 팝업이 없습니다.")
+    

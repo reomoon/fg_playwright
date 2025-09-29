@@ -30,7 +30,7 @@ async def wa_login_fixture(request):
   
     # assert 검증
     assert "webadmin.fashiongo" in page.url.lower()
-    print("🅿️ Beta WA URL 접속 성공")
+    print("🅿 Beta WA URL 접속 성공")
 
     yield page #로그인된 페이지를 반환    
     await close_browser(playwright, browser) # Playwright 컨텍스트와 브라우저 닫기

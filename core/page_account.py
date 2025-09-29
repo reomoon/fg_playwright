@@ -6,11 +6,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # 디버깅용 출력 추가(file=sys.stderr 강제 print로 적용여부 확인을 위해 필요)
-print("🟡 fr_username =", os.getenv("fr_username"), file=sys.stderr) 
-print("🟡 mo_username =", os.getenv("mo_username"), file=sys.stderr)
-print("🟡 va_username =", os.getenv("va_username"), file=sys.stderr)
-print("🟡 wa1_username =", os.getenv("wa1_username"), file=sys.stderr)
-print("🟡 wa2_username =", os.getenv("wa2_username"), file=sys.stderr)
+print("🅰 fr_username =", os.getenv("fr_username"), file=sys.stderr) 
+print("🅰 mo_username =", os.getenv("mo_username"), file=sys.stderr)
+print("🅰 va_username =", os.getenv("va_username"), file=sys.stderr)
+print("🅰 wa1_username =", os.getenv("wa1_username"), file=sys.stderr)
+print("🅰 wa2_username =", os.getenv("wa2_username"), file=sys.stderr)
 
 # 공통 환경 변수(전역 변수로 정의)
 LOGIN_CREDENTIALS = {

@@ -11,8 +11,7 @@ async def test_wa_login():
     playwright, browser = await launch_browser()
 
     # 새 페이지 생성 후 하이라이트 래퍼로 감싸기
-    new_page = await browser.new_page()
-    page = create_highlighted_page(new_page)
+    page = await create_highlighted_page(browser)  # 래핑된 페이지 사용
 
     # 페이지 이동
     await page.goto("https://beta-webadmin.fashiongo.net", timeout=90000, wait_until="domcontentloaded")
@@ -22,7 +21,7 @@ async def test_wa_login():
 
     # assert 검증
     assert "webadmin.fashiongo" in page.url.lower()
-    print("🅿️ Beta WA URL 접속 성공")
+    print("🅿 Beta WA URL 접속 성공")
 
     # 브라우저 닫기
     await close_browser(playwright, browser)

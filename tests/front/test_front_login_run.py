@@ -19,7 +19,7 @@ async def test_front_login():
     await front_login(page, account="fr")
 
     assert "www.fashiongo" in page.url.lower()
-    print("🅿️ Beta Front URL 접속 성공")
+    print("🅿 Beta Front URL 접속 성공")
 
     await close_browser(playwright, browser)
 

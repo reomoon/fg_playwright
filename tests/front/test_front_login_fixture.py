@@ -23,7 +23,7 @@ async def front_login_fixture(request):
     await front_login(page, account=account)
 
     assert "fashiongo" in page.url.lower()
-    print("Beta URL 접속 성공")
+    print("🅿 Beta URL 접속 성공")
     
     # 성공적으로 통과하면 출력
     print("Success: Login successful, URL matches expected.")

@@ -42,7 +42,7 @@ class HighlightPageWrapper:
             # element 존재 확인
             count = await self._page.locator(selector).count()
             if count > 0:
-                print(f"✅ {selector} found ({count}개)")
+                print(f"☑ {selector} found ({count}개)")
             else:
                 print(f"❌ {selector} not found")
 
