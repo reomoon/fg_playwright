@@ -1,7 +1,7 @@
 import pytest
 from core.browser_manager import launch_browser, close_browser
 from core.page_wrapper import create_highlighted_page
-from pages.front import front_login
+from pages.front.front_login import front_login
 
 # account 파라미터에 따라 로그인하는 fixture
 @pytest.fixture(scope="function")
@@ -12,8 +12,8 @@ async def front_login_fixture(request):
     # Playwright 컨텍스트와 브라우저를 초기화
     playwright, browser = await launch_browser()
 
-    # HighlightPageWrapper를 사용하여 페이지 래핑 및 new_page 생성
-    page = await create_highlighted_page(browser.new_page())
+    # HighlightPageWrapper를 사용하여 새 페이지 생성 및 래핑
+    page = await create_highlighted_page(browser)
     await page.goto("https://beta-www.fashiongo.net", timeout=90000, wait_until='domcontentloaded')  # 페이지 로딩 대기
     
     # 페이지 뷰포트 크기 설정

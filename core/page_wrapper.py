@@ -68,7 +68,6 @@ class HighlightPageWrapper:
         """
         return getattr(self._page, name)
 
-# 사용 예시 함수
 async def create_highlighted_page(browser):
     """브라우저에서 하이라이트 기능이 있는 페이지 생성"""
     page = await browser.new_page()

@@ -10,8 +10,9 @@ async def test_wa_login():
     # playwright context 브라우저 초기화
     playwright, browser = await launch_browser()
 
-    # 래핑된 페이지 사용
-    page = await create_highlighted_page(browser)
+    # 새 페이지 생성 후 하이라이트 래퍼로 감싸기
+    new_page = await browser.new_page()
+    page = create_highlighted_page(new_page)
 
     # 페이지 이동
     await page.goto("https://beta-webadmin.fashiongo.net", timeout=90000, wait_until="domcontentloaded")

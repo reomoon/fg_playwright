@@ -4,10 +4,10 @@ async def create_vendor_account(page):
     vendor_account = "allium1" # 벤더 ID
 
     # Go To Vendor Admin 클릭 새 탭 열림
-    with await page.context.expect_page() as new_page_into: # 새 탭이 열릴때까지 기다림
+    async with page.context.expect_page() as new_page_into: # 새 탭이 열릴때까지 기다림
         await page.locator('a.header__userinfo__user-info__wholesale').click()
 
-    vendor_page = new_page_into.value # 새로 열린 페이지 객체 지정
+    vendor_page = await new_page_into.value # 새로 열린 페이지 비동기로 객체 지정
     await vendor_page.set_viewport_size({"width": 1680, "height": 900}) # 화면 사이즈 조절
 
     # vendor list 화면 company name 요소 나올 때까지 기다리기
@@ -78,7 +78,7 @@ async def create_vendor_account(page):
     await vendor_page.wait_for_timeout(3000) #저장 후 3초 대기
 
     # allium1 계정이 있으면 성공
-    if vendor_page.locator("td", has_text=vendor_account).count() > 0:
+    if await vendor_page.locator("td", has_text=vendor_account).count() > 0:
         print("Pass: 'allium1' account created successfully.")
     else:
         print("Fail: allium1 account creation failed.")

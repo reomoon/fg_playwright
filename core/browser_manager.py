@@ -21,7 +21,7 @@ async def launch_browser():
     browser = await playwright.chromium.launch(
         headless=False,  # 브라우저 창 표시
         args=[
-            "--kiosk", # 전체화면 키오스크 모드
+            # "--kiosk", # 전체화면 키오스크 모드
             "--disable-web-security",  # 보안 제한 해제
             "--disable-features=VizDisplayCompositor" # GPU 렌더링 비활성화
             ]  
