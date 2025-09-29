@@ -33,11 +33,10 @@ async def front_login(page, account="fr"):
     password_input = page.locator('input[name="password"]')
     await password_input.type(password)
     
-    async with page.expect_navigation(): # async with로 변경
-        await page.locator('.signin_btn').click()
+    await page.locator('.signin_btn').click()
     
     # 3초 대기
-    await page.wait_for_timeout(3000)
+    await page.wait_for_timeout(1000)
 
     # Needs Attention 팝업 24시간 안보이기( # 'for="personal-2"' 속성으로 label을 클릭)
     # try:
