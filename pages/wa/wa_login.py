@@ -25,9 +25,9 @@ async def wa_login(page, account="wa2", logs=None):
     
     # 로그인 요소 정의 및 동작
     username_input = page.locator('#username') 
-    await username_input.type(username, delay=50) # delay 추가
+    await username_input.fill(username) # fill로 한번에 입력
     password_input = page.locator('#password')
-    await password_input.type(password, delay=50) # delay 추가
+    await password_input.fill(password)
 
     # login 버튼 클릭
     await page.locator('button.btn-login', has_text="Member Login").click()
