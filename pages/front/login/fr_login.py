@@ -1,5 +1,4 @@
 from core.page_wrapper import HighlightPageWrapper
-from core.browser_manager import launch_browser, close_browser
 
 async def front_login(page, account="fr"):
     from core.page_account import LOGIN_CREDENTIALS
@@ -27,18 +26,21 @@ async def front_login(page, account="fr"):
     except:
         pass
 
-    # 로그인 버튼 클릭
+    # 헤더 로그인 버튼 클릭
     await page.locator('a.header_signIn').click()
     await page.wait_for_timeout(3000) # 3초 대기
     
+    # username / password 입력
     username_input = page.locator('input[name="userName"]') # fill은 채우기만 해서 이벤트가 트리거가 안됨
     await username_input.fill(username)
     password_input = page.locator('input[name="password"]')
     await password_input.fill(password)
-    
+
+    # 로그인 버튼 클릭
     await page.locator('.signin_btn').click()
+    print(f"☑ FR_{account} 계정 로그인 완료")
     
-    # 3초 대기
+    # 1초 대기
     await page.wait_for_timeout(1000)
 
     # Needs Attention 팝업 24시간 안보이기( # 'for="personal-2"' 속성으로 label을 클릭)

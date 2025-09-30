@@ -23,6 +23,7 @@ async def va_login(page, account="va"):
 
     # SECURE LOGIN
     await page.locator('.btn.btn-blue.width-100p.btn-login').click()
+    print(f"☑ VA_{account} 계정 로그인 완료")
 
     # 페이지 로딩 상태를 기다림
     await page.wait_for_url("**/home", timeout=30000)
@@ -34,9 +35,9 @@ async def va_login(page, account="va"):
         try:
             await netterms_popup_element.click()  # 오늘 하루 보지 않기 체크박스 클릭
             await page.locator('i.modal-close-btn').nth(1).click()  # Net Terms팝업 닫기
-            print("Net Terms 팝업 24시간 안보이기를 클릭 했습니다.")
+            print("☑ Net Terms 팝업 24시간 안보이기를 클릭 했습니다.")
         except Exception as e:
             print(f"Net Terms 팝업 클릭 중 에러 발생:{e}")
     else:
-        print("Net Terms 팝업이 없습니다.")
+        print("☑ Net Terms 팝업이 없습니다.")
     

@@ -1,7 +1,7 @@
 # import asyncio: pytest.ini asyncio_mode = auto 설정해서 주석처리
 from core.browser_manager import launch_browser, close_browser
 from core.page_wrapper import create_highlighted_page
-from pages.front.front_login import front_login
+from pages.front.login.fr_login import front_login
 
 # @pytest.mark.asyncio: pytest.ini asyncio_mode = auto 설정해서 주석처리
 async def test_front_login():

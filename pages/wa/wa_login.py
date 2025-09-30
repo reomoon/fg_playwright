@@ -32,5 +32,7 @@ async def wa_login(page, account="wa2", logs=None):
     # login 버튼 클릭
     await page.locator('button.btn-login', has_text="Member Login").click()
     logs.append("로그인 완료")
+    print(f"☑ WA_{account} 계정 로그인 완료")
+    
     
 
