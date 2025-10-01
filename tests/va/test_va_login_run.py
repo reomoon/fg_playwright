@@ -3,7 +3,6 @@ from core.browser_manager import launch_browser, close_browser
 from pages.va.va_login import va_login
 from core.page_wrapper import create_highlighted_page
 
-# @pytest.mark.asyncio: pytest.ini asyncio_mode = auto 설정해서 주석처리
 def test_va_login():
     """
     VA 로그인 수동 테스트 실행

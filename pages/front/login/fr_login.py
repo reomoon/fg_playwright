@@ -31,18 +31,21 @@ def front_login(page, account="fr"):
     page.wait_for_timeout(3000) # 3초 대기
     
     # username / password 입력
-    username_input = page.locator('input[name="userName"]') # fill은 채우기만 해서 이벤트가 트리거가 안됨
-    username_input.fill(username)
+    # fill은 채우기만 해서 .signin_btn 이벤트가 트리거가 안되서 로그인 버튼이 비활성화로 남아있음
+    username_input = page.locator('input[name="userName"]') 
+    username_input.type(username, delay=50)
     password_input = page.locator('input[name="password"]')
-    password_input.fill(password)
+    password_input.type(password, delay=50)
 
     # 로그인 버튼 클릭
-    
-    page.locator('.signin_btn').click()
-    print(f"☑ Front: {account} 계정 로그인 완료")
-    
-    # 1초 대기
-    page.wait_for_timeout(3000)
+    with page.expect_navigation():
+        page.locator('.signin_btn').click()
+
+    # 대기
+    page.wait_for_timeout(1000)
+
+    assert "www.fashiongo" in page.url.lower()
+    print("🅿 Beta Front URL 접속 성공")
 
     # Needs Attention 팝업 24시간 안보이기( # 'for="personal-2"' 속성으로 label을 클릭)
     # try:

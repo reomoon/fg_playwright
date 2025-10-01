@@ -206,7 +206,7 @@ async def va_Create_items(page, image_prefix="", size="", pack=""):
     page.eval_on_selector(input_selector, 'el => el.style.display = "block"')
 
     # 이미지 파일 url로 가져와서 output에 저장한 다음에 업로드 하도록 추가
-    image_dir = 'C:\\playwright\\autoplay\\fg_image'
+    image_dir = 'C:\\playwright\\fg_playwright\\output'
     image_paths = [
         os.path.join(image_dir, f'{image_prefix}{i}.png')
         for i in range(1, 3)
@@ -244,12 +244,12 @@ async def va_Create_items(page, image_prefix="", size="", pack=""):
         if image_prefix.lower() == "openpack":
             openpack_product_id = product_id
             print("생성된 OpenPack productId:", openpack_product_id)
-            with open("created_openpack_id.txt", "w") as f:
+            with open("output\\created_openpack_id.txt", "w") as f:
                 f.write(str(openpack_product_id))
         elif image_prefix.lower() == "prepack":
             prepack_product_id = product_id
             print("생성된 PrePack productId:", prepack_product_id)
-            with open("created_prepack_id.txt", "w") as f:
+            with open("output\\created_prepack_id.txt", "w") as f:
                 f.write(str(prepack_product_id))
         else:
             print(f"알 수 없는 prefix '{image_prefix}'의 productId:", product_id)

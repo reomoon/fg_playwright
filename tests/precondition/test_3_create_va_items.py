@@ -8,7 +8,7 @@ def test_create_items_openpack(va_login_fixture):
     page.wait_for_timeout(3000) #3초 대기
     product_openpack_id = va_create_items_openpack(page)
     # product_id를 파일에 저장
-    with open("output/created_product_id.txt", "w") as f:
+    with open("output\\created_product_id.txt", "w") as f:
         f.write(str(product_openpack_id))
 
 @pytest.mark.parametrize("va_login_fixture", ["va"], indirect=True)  # account 파라미터 설정
@@ -17,7 +17,7 @@ def test_create_items_prepack(va_login_fixture):
     page.wait_for_timeout(3000) #3초 대기
     product_prepack_id = va_create_items_prepack(page)  # prepack 추가 생성
     # product_id를 파일에 저장
-    with open("output/created_product_id.txt", "w") as f:
+    with open("output\\created_product_id.txt", "w") as f:
         f.write(str(product_prepack_id))
 
 # @pytest.mark.parametrize("login_fixture", ["va"], indirect=True)

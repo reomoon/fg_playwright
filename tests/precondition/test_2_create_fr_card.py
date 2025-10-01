@@ -14,14 +14,12 @@ pytest가 먼저 login_fixture라는 이름의 fixture에 해당 값을 전달�
 
 # "fr" 계정으로 로그인하여 MyCards 기능 테스트
 @pytest.mark.parametrize("front_login_fixture", ["fr"], indirect=True)
-@pytest.mark.asyncio
-async def test_mycard_fr(front_login_fixture):
+def test_mycard_fr(front_login_fixture):
     page = front_login_fixture  # fixture에서 로그인된 페이지를 받아옴
     create_card(page)   # 마이카드 기능 실행 (비동기)
 
 # "mo" 계정으로 로그인하여 MyCards 기능 테스트
 @pytest.mark.parametrize("front_login_fixture", ["mo"], indirect=True)
-@pytest.mark.asyncio
-async def test_mycard_mo(front_login_fixture):
+def test_mycard_mo(front_login_fixture):
     page = front_login_fixture  # fixture에서 로그인된 페이지를 받아옴
     create_card(page)   # 마이카드 기능 실행 (비동기)

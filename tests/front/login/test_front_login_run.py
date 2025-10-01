@@ -29,9 +29,5 @@ def test_front_login():
     # 5. 로그인 함수 실행 (비동기)
     front_login(page, account="fr")
 
-    # 6. 로그인 후 URL이 올바른지 page 내 문자 검증
-    assert "www.fashiongo" in page.url.lower()
-    print("🅿 Beta Front URL 접속 성공")
-
-    # 7. 브라우저 및 Playwright 엔진 종료 (비동기)
+    # 6. 브라우저 및 Playwright 엔진 종료 (비동기)
     close_browser(playwright, browser)

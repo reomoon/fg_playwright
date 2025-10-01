@@ -101,8 +101,7 @@ def call_item_save_api(token):
             resp_json = response.json()
             return response.status, resp_json
 
-# 실제 테스트 함수 (비동기)
-@pytest.mark.syncio
+# 실제 테스트 함수
 def test_create_item_api(login_fixture: HighlightPageWrapper):
     page = login_fixture
 

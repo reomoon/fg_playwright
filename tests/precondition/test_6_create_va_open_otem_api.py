@@ -131,8 +131,8 @@ def call_item_save_api_openpack(token):
         with session.post(url, headers=headers, json=payload) as response:
             resp_json = response.json()
             return response.status, resp_json
-
-@pytest.mark.syncio
+        
+# 실제 테스트 함수
 def test_create_openpack_item_api(login_fixture: HighlightPageWrapper):
     page = login_fixture
     token = page.evaluate("() => localStorage.getItem('token')")

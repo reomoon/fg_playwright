@@ -21,12 +21,6 @@ def front_login_fixture(request):
 
     # 로그인 함수 호출
     front_login(page, account=account)
-
-    assert "fashiongo" in page.url.lower()
-    print("🅿 Beta URL 접속 성공")
     
-    # 성공적으로 통과하면 출력
-    print("Success: Login successful, URL matches expected.")
-
     yield page #로그인된 페이지를 반환    
     close_browser(playwright, browser) # Playwright 컨텍스트와 브라우저 닫기

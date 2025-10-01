@@ -39,7 +39,7 @@ def va_create_promotion(page: Page):
     page.locator('button.btn.btn-lg.btn-blue', has_text='Save Promotion').click()
 
     # 7. Confirm 클릭 직전: 응답 대기 세팅
-    async with page.expect_response("**/api/discount/save/promotion") as save_response_info:
+    with page.expect_response("**/api/discount/save/promotion") as save_response_info:
         page.locator('button.btn.btn-md.btn-blue', has_text="Confirm").click()
 
     # 8. 응답 수신 및 discountId 추출

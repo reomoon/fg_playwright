@@ -78,11 +78,14 @@ def create_card(page):
     # captcha 캡처 함수 불러오기
     captcha_capture(page)
 
-    # 원본 이미지 경로
-    input_image_path = "captcha.png"
+    # output 폴더 경로 설정
+    output_dir = os.path.join(os.getcwd(), "output")
 
-    # 선 제거 후 저장할 이미지 경로
-    output_image_path = "processed_captcha.png"
+    # 원본 이미지 경로 (output 폴더 내)
+    input_image_path = os.path.join(output_dir, "captcha.png")
+
+    # 선 제거 후 저장할 이미지 경로 (output 폴더 내)
+    output_image_path = os.path.join(output_dir, "processed_captcha.png")
 
     # 선 제거
     remove_lines(input_image_path, output_image_path)
@@ -99,8 +102,8 @@ def create_card(page):
         page.locator('.btn.btn_m_blue.add_btn.cls_save_card').click()
         page.wait_for_timeout(3000)  # 3초 대기
 
-        # 팝업 확인
-        if page.locator('#close-showInfoError').is_visible():
+        # 팝업 확인(log_if_not_found=False로 실제 팝업이 안나와도 ❌ 출력 안함)
+        if page.locator('#close-showInfoError', log_if_not_found=False).is_visible():
             print(f"Invalid Verification Code 팝업 감지됨. OCR 재시도 중... (시도 {attempt + 1}/3)")
             # 팝업 닫기
             page.locator('#close-showInfoError').click()
@@ -109,8 +112,8 @@ def create_card(page):
             captcha_capture(page)
 
             # processed_captcha.png 파일이 있다면 기존 파일 삭제
-            if os.path.exists("processed_captcha.png"):
-                os.remove("processed_captcha.png")
+            if os.path.exists(output_image_path):
+                os.remove(output_image_path)
 
             # 새로 생성
             remove_lines(input_image_path, output_image_path)

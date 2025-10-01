@@ -43,7 +43,7 @@ def mobile_order_prepack(page, product_prepack_id):
     print("장바구니 추가 중..")
     try:
         # page.expect_response(): 특정 네트워크 응답이 올 때까지 기다리는 Playwright 메서드
-        async with page.expect_response(check_add_to_cart_response, timeout=10000) as response_info:
+        with page.expect_response(check_add_to_cart_response, timeout=10000) as response_info:
             # with 블록 안에서 실제 액션(버튼 클릭)을 실행
             # 이 클릭으로 인해 add-to-cart API가 호출될 예정
             # page.locator('button.btn_add_bag.nclick', has_text="Add to shopping bag").click()
