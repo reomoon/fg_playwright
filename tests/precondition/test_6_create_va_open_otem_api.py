@@ -5,7 +5,7 @@ from core.page_wrapper import HighlightPageWrapper
 from tests.va.test_va_login_fixture import va_login_fixture
 
 # 상품 생성 API 호출 함수 (비동기)
-async def call_item_save_api_openpack(token):
+def call_item_save_api_openpack(token):
     url = "https://beta-vendoradmin.fashiongo.net/api/item/save"
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     item_name = f"test openpack {now_str}"
@@ -127,17 +127,17 @@ async def call_item_save_api_openpack(token):
         }
     }
 
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url, headers=headers, json=payload) as response:
-            resp_json = await response.json()
+    with aiohttp.ClientSession() as session:
+        with session.post(url, headers=headers, json=payload) as response:
+            resp_json = response.json()
             return response.status, resp_json
 
-@pytest.mark.asyncio
-async def test_create_openpack_item_api(login_fixture: HighlightPageWrapper):
+@pytest.mark.syncio
+def test_create_openpack_item_api(login_fixture: HighlightPageWrapper):
     page = login_fixture
-    token = await page.evaluate("() => localStorage.getItem('token')")
+    token = page.evaluate("() => localStorage.getItem('token')")
     if not token:
-        cookies = await page.context.cookies()
+        cookies = page.context.cookies()
         for c in cookies:
             if c["name"] == "BETA_FG_TOKEN":
                 token = c["value"]
@@ -145,7 +145,7 @@ async def test_create_openpack_item_api(login_fixture: HighlightPageWrapper):
     assert token is not None, "BETA_FG_TOKEN not found"
     print(f"[토큰 추출 완료] 앞 50자: {token[:50]}...")
 
-    status_code, json_data = await call_item_save_api_openpack(token)
+    status_code, json_data = call_item_save_api_openpack(token)
 
     print(f"[응답 코드] {status_code}")
     try:

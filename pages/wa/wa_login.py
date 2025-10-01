@@ -1,4 +1,4 @@
-async def wa_login(page, account="wa2", logs=None):
+def wa_login(page, account="wa2", logs=None):
     # logs가 None이면 빈 리스트로 초기화
     from core.page_account import LOGIN_CREDENTIALS
 
@@ -25,12 +25,12 @@ async def wa_login(page, account="wa2", logs=None):
     
     # 로그인 요소 정의 및 동작
     username_input = page.locator('#username') 
-    await username_input.fill(username) # fill로 한번에 입력
+    username_input.fill(username) # fill로 한번에 입력
     password_input = page.locator('#password')
-    await password_input.fill(password)
+    password_input.fill(password)
 
     # login 버튼 클릭
-    await page.locator('button.btn-login', has_text="Member Login").click()
+    page.locator('button.btn-login', has_text="Member Login").click()
     logs.append("로그인 완료")
     print(f"☑ WA_{account} 계정 로그인 완료")
     

@@ -1,25 +1,25 @@
 import random
 
 # 전역에서 사용할 공통 함수 정의
-async def checkout_process(page):
+def checkout_process(page):
     """
     Cart 부터 시작
     """
     # Shopping BAG 클릭 후 URL 검증
     expected_url = 'https://beta-www.fashiongo.net/cart'
-    await page.wait_for_url(expected_url)
+    page.wait_for_url(expected_url)
 
     assert page.url == expected_url, f"Fail: Expected URL {expected_url}, but got {page.url}."
     print(f"Success: {expected_url} matched the expected value!")
 
     # Cart > Proceed To Checkout 버튼 클릭
-    await page.locator('.btn-dark_grey.btn-checkoutAll.nclick').click()
+    page.locator('.btn-dark_grey.btn-checkoutAll.nclick').click()
 
     # You Have Promotions! 팝업 있으면 클릭 없으면 스킵
     try:
         popup_promotion = page.locator_popup('button.btn-sure', has_text="Continue To Checkout")
-        if await popup_promotion.is_visible() and await popup_promotion.count() > 0 and await popup_promotion.is_enabled():
-            await popup_promotion.click()
+        if popup_promotion.is_visible() and popup_promotion.count() > 0 and popup_promotion.is_enabled():
+            popup_promotion.click()
             print("You Have Promotions! 팝업이 표시되었습니다.")
         else:
             print("You Have Promotions! 팝업이 표시되지 않았습니다.")
@@ -29,13 +29,13 @@ async def checkout_process(page):
     """
     🟢 Step1 Shipping
     """
-    await page.locator('button.btn-dark_grey.btn-goToPayment.nclick').click()
+    page.locator('button.btn-dark_grey.btn-goToPayment.nclick').click()
     
     # Verify Your Address 팝업 있으면 클릭 없으면 스킵
     try:
         popup_verify = page.locator_popup('.common-btn.c-black', has_text="Keep This Address")
-        if await popup_verify.is_visible() and await popup_verify.count() > 0 and await popup_verify.is_enabled():
-            await popup_verify.click()
+        if popup_verify.is_visible() and popup_verify.count() > 0 and popup_verify.is_enabled():
+            popup_verify.click()
             print("Verify Your Address 팝업이 표시되었습니다.")
         else:
             print("Verify Your Address 팝업이 표시되지 않았습니다.")
@@ -45,16 +45,16 @@ async def checkout_process(page):
     """
     🟢 Step2 Payment
     """
-    await page.locator('button.btn-dark_grey.btn-goToReview.nclick').click()
+    page.locator('button.btn-dark_grey.btn-goToReview.nclick').click()
 
     """
     🟢 Order Review
     """
-    await page.locator('button.btn-dark_grey.btn-checkout.nclick').click()
+    page.locator('button.btn-dark_grey.btn-checkout.nclick').click()
 
     # 주문 완료 후 Thank you for your order! 텍스트가 포함된 h2 요소 확인
-    await page.wait_for_load_state('networkidle')
-    if await page.locator('h2.order-title').count() > 0:
+    page.wait_for_load_state('networkidle')
+    if page.locator('h2.order-title').count() > 0:
         print("Order successful! Test passed.")
     else:
         print("Order not found! Test failed.")
@@ -64,24 +64,24 @@ async def checkout_promotion(page):
     Cart 부터 시작
     """
     expected_url = 'https://beta-www.fashiongo.net/cart'
-    await page.wait_for_url(expected_url)
+    page.wait_for_url(expected_url)
 
     assert page.url == expected_url, f"Fail: Expected URL {expected_url}, but got {page.url}."
     print(f"Success: {expected_url} matched the expected value!")
 
     # Cart > Select Vendor Promotions 버튼 클릭(Vendor ID 16502 Allium)
-    # await page.locator('button.btn-vendor.size-medium_blue[data-nclick-extra*="vid=16502"]').click()
+    # page.locator('button.btn-vendor.size-medium_blue[data-nclick-extra*="vid=16502"]').click()
     # 60% Off & Free Shipping $50.00+ Orders
-    # await page.locator('button.btn-coupon-apply').first.click()
+    # page.locator('button.btn-coupon-apply').first.click()
 
     # Cart > Proceed To Checkout 버튼 클릭
-    await page.locator('.btn-dark_grey.btn-checkoutAll.nclick').click()
+    page.locator('.btn-dark_grey.btn-checkoutAll.nclick').click()
 
     # You Have Promotions! 팝업
-    await page.locator_popup('button.btn-sure', has_text="Continue To Checkout")
+    page.locator_popup('button.btn-sure', has_text="Continue To Checkout")
 
-    if await page.locator('button.btn-sure').count() > 0 and await page.locator('button.btn-sure').is_visible():
-        await page.locator('button.btn-sure').click()
+    if page.locator('button.btn-sure').count() > 0 and page.locator('button.btn-sure').is_visible():
+        page.locator('button.btn-sure').click()
         print("You Have Promotions! 팝업이 표시되었습니다.")
     else:
         print("You Have Promotions! 팝업이 표시되지 않았습니다.")
@@ -89,12 +89,12 @@ async def checkout_promotion(page):
     """
     🟢 Step1 Shipping
     """
-    await page.locator('button.btn-dark_grey.btn-goToPayment.nclick').click()
+    page.locator('button.btn-dark_grey.btn-goToPayment.nclick').click()
     
     popup_verify = page.locator_popup('.common-btn.c-black', has_text="Keep This Address")
 
-    if await popup_verify.is_visible() and await popup_verify.count() > 0 and await popup_verify.is_enabled():
-        await popup_verify.click()
+    if popup_verify.is_visible() and popup_verify.count() > 0 and popup_verify.is_enabled():
+        popup_verify.click()
         print("Verify Your Address 팝업이 표시되었습니다.")
     else:
         print("Verify Your Address 팝업이 표시되지 않았습니다.")    
@@ -102,15 +102,15 @@ async def checkout_promotion(page):
     """
     🟢 Step2 Payment
     """
-    await page.locator('button.btn-dark_grey.btn-goToReview.nclick').click()
+    page.locator('button.btn-dark_grey.btn-goToReview.nclick').click()
 
     """
     🟢 Order Review
     """
-    await page.locator('button.btn-dark_grey.btn-checkout.nclick').click()
+    page.locator('button.btn-dark_grey.btn-checkout.nclick').click()
 
-    await page.wait_for_load_state('networkidle')
-    if await page.locator('h2.order-title').count() > 0:
+    page.wait_for_load_state('networkidle')
+    if page.locator('h2.order-title').count() > 0:
         print("Order successful! Test passed.")
     else:
         print("Order not found! Test failed.")
@@ -127,20 +127,20 @@ async def va_Create_items(page, image_prefix="", size="", pack=""):
     inactive_radio = page.locator('input[type="radio"][ng-reflect-value="false"]')
 
     # 3. Active가 체크 안 되어 있으면
-    if not await active_radio.first.is_checked():
+    if not active_radio.first.is_checked():
         label = active_radio.first.locator('..')
-        await label.click(force=True)
-        await page.wait_for_timeout(300)
-        if not await active_radio.first.is_checked():
-            await active_radio.first.evaluate("""
+        label.click(force=True)
+        page.wait_for_timeout(300)
+        if not active_radio.first.is_checked():
+            active_radio.first.evaluate("""
                 el => {
                     el.checked = true;
                     el.dispatchEvent(new Event('input', { bubbles: true }));
                     el.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             """)
-            await page.wait_for_timeout(300)
-            if await active_radio.first.is_checked():
+            page.wait_for_timeout(300)
+            if active_radio.first.is_checked():
                 print("☑ JS로 Active checked 상태 됨")
             else:
                 print("❌ JS로도 Active checked 안 됨")
@@ -149,43 +149,43 @@ async def va_Create_items(page, image_prefix="", size="", pack=""):
     else:
         print("☑ 이미 Active checked 상태")
 
-    if await inactive_radio.first.is_checked():
+    if inactive_radio.first.is_checked():
         print("❌ 여전히 Inactive checked 상태임")
 
     # Style No 입력
     input_styleNo = page.locator('input[formcontrolname="productName"]')
-    await input_styleNo.click()
-    await input_styleNo.type(f"AutoSN-{image_prefix}{random_number}", delay=50)
+    input_styleNo.click()
+    input_styleNo.type(f"AutoSN-{image_prefix}{random_number}", delay=50)
 
     # Item Name 입력
     input_ItemName = page.locator('input[formcontrolname="itemName"]')
-    await input_ItemName.click()
-    await input_ItemName.type(f"Auto_{image_prefix}{random_number}", delay=50)
+    input_ItemName.click()
+    input_ItemName.type(f"Auto_{image_prefix}{random_number}", delay=50)
 
-    await page.select_option('select[formcontrolname="selCat1"]', label="Women's Apparel")
-    await page.select_option('select[formcontrolname="selCat2"]', label="Tops")
-    await page.select_option('select[formcontrolname="selCat3"]', label="Graphic T-shirts")
+    page.select_option('select[formcontrolname="selCat1"]', label="Women's Apparel")
+    page.select_option('select[formcontrolname="selCat2"]', label="Tops")
+    page.select_option('select[formcontrolname="selCat3"]', label="Graphic T-shirts")
 
-    await page.locator('textarea[formcontrolname="description"]').type('Write Description!', delay=50)
+    page.locator('textarea[formcontrolname="description"]').type('Write Description!', delay=50)
 
     random_price = str(random.randint(10,101))
     price = page.locator('input[formcontrolname="sellingPrice"]')
-    await price.type(random_price, delay=50)
+    price.type(random_price, delay=50)
     print(f"price ${random_price}로 입력 했습니다.")
 
-    await page.select_option('select[formcontrolname="sizeId"]', label=size)
-    await page.select_option('select[formcontrolname="packId"]', label=pack)
+    page.select_option('select[formcontrolname="sizeId"]', label=size)
+    page.select_option('select[formcontrolname="packId"]', label=pack)
 
-    await page.locator('a.view-color-list-btn').click()
-    await page.wait_for_timeout(1000)
+    page.locator('a.view-color-list-btn').click()
+    page.wait_for_timeout(1000)
 
     from random import sample
 
     checkbox_divs = page.locator("div.check-square")
-    checkbox_count = await checkbox_divs.count()
+    checkbox_count = checkbox_divs.count()
     print(f"☑ 클릭 가능한 Color 체크박스 수: {checkbox_count} 개")
 
-    visible_indices = [i for i in range(checkbox_count) if await checkbox_divs.nth(i).is_visible()]
+    visible_indices = [i for i in range(checkbox_count) if checkbox_divs.nth(i).is_visible()]
 
     if len(visible_indices) < 2:
         print("화면에 보이는 체크박스가 2개 미만 입니다.")
@@ -196,14 +196,14 @@ async def va_Create_items(page, image_prefix="", size="", pack=""):
 
     for i in random_indices:
         checkbox_div = checkbox_divs.nth(i)
-        await checkbox_div.click()
+        checkbox_div.click()
         print(f"✔ div.check-square #{i} 클릭 시도")
 
-    await page.locator('i.btn-close').click()
-    await page.wait_for_timeout(3000)
+    page.locator('i.btn-close').click()
+    page.wait_for_timeout(3000)
 
     input_selector = 'input[type="file"][name="multiple"]'
-    await page.eval_on_selector(input_selector, 'el => el.style.display = "block"')
+    page.eval_on_selector(input_selector, 'el => el.style.display = "block"')
 
     # 이미지 파일 url로 가져와서 output에 저장한 다음에 업로드 하도록 추가
     image_dir = 'C:\\playwright\\autoplay\\fg_image'
@@ -216,25 +216,25 @@ async def va_Create_items(page, image_prefix="", size="", pack=""):
         print("❌ 이미지 파일 없음.")
         return
 
-    await page.set_input_files(input_selector, image_paths)
+    page.set_input_files(input_selector, image_paths)
 
     for image_path in image_paths:
         print(f"☑ 이미지 업로드 완료: {image_path}")
-    await page.wait_for_timeout(3000)
+    page.wait_for_timeout(3000)
 
     save_button = page.locator("button.btn-blue", has_text="Save").first
-    await save_button.wait_for(state="visible")
+    save_button.wait_for(state="visible")
     def is_item_create_response(response):
         return (
             "item" in response.url and
             response.request.method == "POST"
         )
     async with page.expect_response(is_item_create_response) as resp_info:
-        await save_button.click()
+        save_button.click()
 
-    response = await resp_info.value
+    response = resp_info.value
     try:
-        data = await response.json()
+        data = response.json()
         print("XHR 응답 데이터:", data)
         product_id = data.get("data")
         
@@ -260,7 +260,7 @@ async def va_Create_items(page, image_prefix="", size="", pack=""):
         openpack_product_id = None
         prepack_product_id = None
 
-    await page.wait_for_timeout(3000)
+    page.wait_for_timeout(3000)
     print(f"Auto_item{random_number} 생성이 완료 되었습니다.")
 
     return {

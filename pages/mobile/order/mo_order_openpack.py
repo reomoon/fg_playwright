@@ -3,25 +3,25 @@ from core.page_wrapper import create_highlighted_page
 from core.page_mobile_common import MO_checkout
 
 # Pages/front openpack order
-async def mobile_order_openpack(page, product_openpack_id):
+def mobile_order_openpack(page, product_openpack_id):
 
     # openpack item url 이동
-    await page.goto(f'https://beta-www.fashiongo.net/Item/{product_openpack_id}')
+    page.goto(f'https://beta-www.fashiongo.net/Item/{product_openpack_id}')
 
     # 수량 버튼이 나타날 때까지 대기
-    await page.wait_for_selector('.btn_openPack', timeout=10000)
+    page.wait_for_selector('.btn_openPack', timeout=10000)
 
     # 옵션 선택
-    await page.locator('.btn_openPack').first.click()
+    page.locator('.btn_openPack').first.click()
     
     # 1번째칸 수량 
     item_input1 = page.locator('input.num_input.ng-untouched.ng-pristine.ng-valid')
     random_quantity = random.randint(1, 101)  # 1 ~ 100 랜덤값
-    await item_input1.first.type(str(random_quantity))  # type 랜덤값 입력
-    await page.wait_for_timeout(2000)  # 2초 대기
+    item_input1.first.type(str(random_quantity))  # type 랜덤값 입력
+    page.wait_for_timeout(2000)  # 2초 대기
     
     # Add 버튼
-    await page.locator('button.btn-base.black').click() 
+    page.locator('button.btn-base.black').click() 
 
     # 장바구니 추가 API 응답 감지하는 함수
     def check_add_to_cart_response(response):
@@ -47,15 +47,15 @@ async def mobile_order_openpack(page, product_openpack_id):
             # page.locator('button.btn_add_bag.nclick', has_text="Add to shopping bag").click()
             # JavaScript로 직접 클릭
             add_bag_button = page.locator('button.btn_add_bag.nclick')
-            await add_bag_button.evaluate("el => el.click()")
+            add_bag_button.evaluate("el => el.click()")
             print("☑ Add to shopping bag 클릭 성공!")
 
         # with 블록이 끝나면 API 응답이 response_info.value에 저장됨
-        response = await response_info.value
+        response = response_info.value
 
         # HTTP 상태 코드가 200(성공)인지 확인
         if response.status == 200:
-            data = await response.json()  # JSON 응답을 파싱하여 Python 딕셔너리로 변환
+            data = response.json()  # JSON 응답을 파싱하여 Python 딕셔너리로 변환
             print(f"장바구니 추가 API 응답: {data}")
 
             # data.get('success'): 'success' 키가 없으면 None 반환 (KeyError 방지)
@@ -69,11 +69,11 @@ async def mobile_order_openpack(page, product_openpack_id):
         print(f"❌ 장바구니 추가 API 응답 대기 실패:{e}")
 
     # back 버튼 클릭
-    await page.locator('button.btn_back').click()
+    page.locator('button.btn_back').click()
 
     # Footer Bag 아이콘 선택
-    await page.locator('ion-tab-button span.icon.bag').click()
+    page.locator('ion-tab-button span.icon.bag').click()
     print("☑ footer Bag 버튼 클릭 성공")
 
     # checkout_process 호출
-    await MO_checkout(page)
+    MO_checkout(page)

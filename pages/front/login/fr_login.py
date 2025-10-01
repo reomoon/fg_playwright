@@ -1,6 +1,6 @@
 from core.page_wrapper import HighlightPageWrapper
 
-async def front_login(page, account="fr"):
+def front_login(page, account="fr"):
     from core.page_account import LOGIN_CREDENTIALS
 
     # 키 이름 생성
@@ -21,35 +21,35 @@ async def front_login(page, account="fr"):
     # 쿠키 동의 버튼
     try:
         cookie_button = page.locator('#onetrust-accept-btn-handler')
-        if await cookie_button.is_visible():
-            await cookie_button.click()
+        if cookie_button.is_visible():
+            cookie_button.click()
     except:
         pass
 
     # 헤더 로그인 버튼 클릭
-    await page.locator('a.header_signIn').click()
-    await page.wait_for_timeout(3000) # 3초 대기
+    page.locator('a.header_signIn').click()
+    page.wait_for_timeout(3000) # 3초 대기
     
     # username / password 입력
     username_input = page.locator('input[name="userName"]') # fill은 채우기만 해서 이벤트가 트리거가 안됨
-    await username_input.fill(username)
+    username_input.fill(username)
     password_input = page.locator('input[name="password"]')
-    await password_input.fill(password)
+    password_input.fill(password)
 
     # 로그인 버튼 클릭
     
-    await page.locator('.signin_btn').click()
+    page.locator('.signin_btn').click()
     print(f"☑ Front: {account} 계정 로그인 완료")
     
     # 1초 대기
-    await page.wait_for_timeout(3000)
+    page.wait_for_timeout(3000)
 
     # Needs Attention 팝업 24시간 안보이기( # 'for="personal-2"' 속성으로 label을 클릭)
     # try:
-    #     await page.locator('label[for="personal-2"]').last.click()
+    #     page.locator('label[for="personal-2"]').last.click()
     # except:
     #     pass  # 팝업이 없으면 무시하고 계속 진행
 
     # Free Shipping 팝업 24시간 안보이기
-    # await page.locator_popup('a.link-footer-sub.btn-hide-popup').click()
+    # page.locator_popup('a.link-footer-sub.btn-hide-popup').click()
 

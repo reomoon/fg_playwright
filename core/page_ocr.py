@@ -59,10 +59,10 @@ async def captcha_capture(page, ouput_image='captcha.png'):
     captcha 캡처 함수 (비동기)
     """
     # 🔹 캡챠 이미지 로드 대기
-    await page.wait_for_selector("#card_captcha_img", state="attached", timeout=15000)
-    await page.wait_for_selector("#card_captcha_img", state="visible", timeout=15000)
+    page.wait_for_selector("#card_captcha_img", state="attached", timeout=15000)
+    page.wait_for_selector("#card_captcha_img", state="visible", timeout=15000)
 
     # 🔹 캡챠 이미지 스크린샷 캡처
     captcha_element = page.locator("#card_captcha_img")
-    await captcha_element.screenshot(path=ouput_image)
+    captcha_element.screenshot(path=ouput_image)
     print(f"캡챠 이미지 캡처 완료: {ouput_image}")

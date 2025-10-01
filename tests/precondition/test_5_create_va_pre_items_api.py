@@ -5,7 +5,7 @@ from core.page_wrapper import HighlightPageWrapper
 from tests.va.test_va_login_fixture import va_login_fixture
 
 # 상품 생성 API를 호출하는 비동기 함수
-async def call_item_save_api(token):
+def call_item_save_api(token):
     url = "https://beta-vendoradmin.fashiongo.net/api/item/save"
 
     # 현재 시간을 이용해 상품 이름 생성
@@ -96,22 +96,22 @@ async def call_item_save_api(token):
     }
 
     # 비동기로 API 요청 보내고 응답 받기
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url, headers=headers, json=payload) as response:
-            resp_json = await response.json()
+    with aiohttp.ClientSession() as session:
+        with session.post(url, headers=headers, json=payload) as response:
+            resp_json = response.json()
             return response.status, resp_json
 
 # 실제 테스트 함수 (비동기)
-@pytest.mark.asyncio
-async def test_create_item_api(login_fixture: HighlightPageWrapper):
+@pytest.mark.syncio
+def test_create_item_api(login_fixture: HighlightPageWrapper):
     page = login_fixture
 
     # 1. localStorage에서 토큰 추출 (로그인 인증용)
-    token = await page.evaluate("() => localStorage.getItem('token')")
+    token = page.evaluate("() => localStorage.getItem('token')")
 
     # 2. localStorage에 없으면 쿠키에서 토큰 추출 시도
     if not token:
-        cookies = await page.context.cookies()
+        cookies = page.context.cookies()
         for c in cookies:
             if c["name"] == "BETA_FG_TOKEN":
                 token = c["value"]
@@ -122,7 +122,7 @@ async def test_create_item_api(login_fixture: HighlightPageWrapper):
     print(f"[토큰 추출 완료] 앞 50자: {token[:50]}...")
 
     # 4. 상품 생성 API 호출 (비동기)
-    status_code, json_data = await call_item_save_api(token)
+    status_code, json_data = call_item_save_api(token)
 
     # 5. 결과 확인 및 출력
     print(f"[응답 코드] {status_code}")

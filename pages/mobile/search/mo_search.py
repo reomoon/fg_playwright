@@ -2,18 +2,18 @@ import random
 import asyncio
 from core.page_wrapper import create_highlighted_page
 
-async def mobile_text_search(page):
+def mobile_text_search(page):
     # 홈 페이지로 이동
-    await page.goto('https://beta-mobile.fashiongo.net/home')
+    page.goto('https://beta-mobile.fashiongo.net/home')
     
     # 헤더의 Search 입력란을 찾아 클릭하여 포커스
     header_search_input = page.locator('input[placeholder="Search"]')
-    await header_search_input.click()
+    header_search_input.click()
 
     # 검색어 후보 리스트에서 랜덤하게 하나 선택
     random_search = ['diamante jeans', 'floral crop top', 'bodycon dress']
     random_text = random.choice(random_search)  # 랜덤 검색어 선택
-    await header_search_input.type(random_text, delay=50)  # 검색어 입력 (타이핑 효과)
+    header_search_input.type(random_text, delay=50)  # 검색어 입력 (타이핑 효과)
 
     result = {"found": False}  # 검색어 일치 여부 결과 저장용
 
@@ -22,7 +22,7 @@ async def mobile_text_search(page):
         # 최근 검색어 API 응답만 처리
         if "api/mobile/keyword/recent-search-history" in response.url:
             try:
-                data = await response.json() # JSON → dict로 변환
+                data = response.json() # JSON → dict로 변환
                 print("API 응답:", data)  # 응답 전체 출력
                 # data["data"]가 리스트인지 확인
                 if isinstance(data.get("data"), list) and data["data"]:
@@ -44,8 +44,8 @@ async def mobile_text_search(page):
     def on_response(response):
         asyncio.create_task(handle_response(response))
     page.on("response", on_response)
-    await page.locator('.btn_search').click()  # 검색 버튼 클릭
-    await page.wait_for_timeout(10000)  # 응답 대기 (10초)
+    page.locator('.btn_search').click()  # 검색 버튼 클릭
+    page.wait_for_timeout(10000)  # 응답 대기 (10초)
 
     # 더 이상 필요 없으니 핸들러 해제
     page.remove_listener("response", on_response)

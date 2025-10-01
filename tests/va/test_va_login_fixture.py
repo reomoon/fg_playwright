@@ -4,24 +4,24 @@ from pages.va.va_login import va_login
 from core.page_wrapper import create_highlighted_page
 
 @pytest.fixture(scope="function")
-async def va_login_fixture(request):
+def va_login_fixture(request):
     print("☑ va_login fixture 실행됨")
 
     account = request.param if hasattr(request, 'param') else "va1"
     # Playwright 컨텍스트와 브라우저를 초기화
-    playwright, browser = await launch_browser()
+    playwright, browser = launch_browser()
 
     # 새 페이지 생성 후 하이라이트 래퍼로 감싸기
-    page = await create_highlighted_page(browser) 
+    page = create_highlighted_page(browser) 
 
     # va페이지 이동
-    await page.goto("https://beta-vendoradmin.fashiongo.net", timeout=90000, wait_until="domcontentloaded")
+    page.goto("https://beta-vendoradmin.fashiongo.net", timeout=90000, wait_until="domcontentloaded")
 
     # 페이지 뷰포트를 최대화 크기로 설정
-    await page.set_viewport_size({"width": 1680, "height": 900})
+    page.set_viewport_size({"width": 1680, "height": 900})
 
     # 로그인 함수 호출
-    await va_login(page, account=account)
+    va_login(page, account=account)
 
     # 로그인 후 URL 검증
     # assert 검증
@@ -29,4 +29,4 @@ async def va_login_fixture(request):
     print("🅿 Beta VA URL 접속 성공")
 
     yield page #로그인된 페이지를 반환    
-    await close_browser(playwright, browser) # Playwright 컨텍스트와 브라우저 닫기
+    close_browser(playwright, browser) # Playwright 컨텍스트와 브라우저 닫기
