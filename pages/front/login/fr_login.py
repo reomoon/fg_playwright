@@ -37,11 +37,12 @@ async def front_login(page, account="fr"):
     await password_input.fill(password)
 
     # 로그인 버튼 클릭
+    
     await page.locator('.signin_btn').click()
-    print(f"☑ FR_{account} 계정 로그인 완료")
+    print(f"☑ Front: {account} 계정 로그인 완료")
     
     # 1초 대기
-    await page.wait_for_timeout(1000)
+    await page.wait_for_timeout(3000)
 
     # Needs Attention 팝업 24시간 안보이기( # 'for="personal-2"' 속성으로 label을 클릭)
     # try:
