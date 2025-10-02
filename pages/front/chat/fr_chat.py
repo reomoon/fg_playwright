@@ -1,8 +1,7 @@
-from playwright.sync_api import sync_playwright           
 from core.page_wrapper import HighlightPageWrapper
 import time
 
-def Chat(page):
+def fr_chat(page):
     context = page.context
 
     # 채팅 아이콘 클릭하여 채팅 페이지로 이동 > 새창으로 이동하여 추적
@@ -24,7 +23,7 @@ def Chat(page):
     # 검색 결과에 노출된 bibi 벤더 클릭
     user_items = chat_page.locator(".user-item")
     count = user_items.count()
-    print("📦 user-item count:", count)
+    print("☑ user-item count:", count)
 
     found = False
     for i in range(count):
@@ -48,9 +47,9 @@ def Chat(page):
     # 메시지 전송 여부 확인
     try:
         chat_page.wait_for_selector(f"text={message}", timeout=5000)
-        print("메시지 전송 성공")
+        print("☑ 메시지 전송 성공")
     except:
-        print("메시지 전송 실패 또는 응답 없음")
+        print("☑ 메시지 전송 실패 또는 응답 없음")
 
     # 4. 이미지 파일 전송
     # page.set_input_files("input[type='file']", "C:\Users\NHN\Pictures\item test image/2025-03-18 15 35 14.jpg")

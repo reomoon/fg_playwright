@@ -1,6 +1,6 @@
 import pytest
 from tests.front.login.test_front_login_fixture import front_login_fixture
-from pages.front.chat import fr_chat
+from pages.front.chat.fr_chat import fr_chat
 
 def test_front_chat(front_login_fixture):
     page = front_login_fixture    # 로그인된 페이지 사용
