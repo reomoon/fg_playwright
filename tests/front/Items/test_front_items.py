@@ -1,9 +1,8 @@
-import pytest
-from tests.web.FR_tests.test_login import login_fixture
 from playwright.sync_api import Page
-from Pages.web.FR_Pages.Items.Addtocart import add_item_to_cart
+from pages.front.items.fr_AddtoCart import add_item_to_cart
+from tests.front.login.test_front_login_fixture import front_login_fixture
 
-def test_FR_9_items(login_fixture):
+def test_items(login_fixture):
     page = login_fixture  # 로그인된 페이지 사용
 
     # 1. Best of Best 페이지 이동

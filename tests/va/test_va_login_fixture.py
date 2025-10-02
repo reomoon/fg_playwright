@@ -7,15 +7,24 @@ from core.page_wrapper import create_highlighted_page
 def va_login_fixture(request):
     print("☑ va_login fixture 실행됨")
 
-    account = request.param if hasattr(request, 'param') else "va1"
+    account = request.param if hasattr(request, 'param') else "va"
     # Playwright 컨텍스트와 브라우저를 초기화
     playwright, browser = launch_browser()
 
     # 새 페이지 생성 후 하이라이트 래퍼로 감싸기
     page = create_highlighted_page(browser) 
 
+    # 불필요한 리소스 차단
+    def block_resource(route):
+        if route.request.resource_type in ["image"]:
+            route.abort()
+        else:
+            route.continue_()
+
+    page.route("**/*", block_resource)
+
     # va페이지 이동
-    page.goto("https://beta-vendoradmin.fashiongo.net", timeout=90000, wait_until="domcontentloaded")
+    page.goto("https://beta-vendoradmin.fashiongo.net", timeout=120000, wait_until="domcontentloaded")
 
     # 페이지 뷰포트를 최대화 크기로 설정
     page.set_viewport_size({"width": 1680, "height": 900})

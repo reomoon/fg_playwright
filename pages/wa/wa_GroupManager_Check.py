@@ -1,4 +1,4 @@
-from Lib.browser_utils import HighlightPageWrapper
+from core.page_wrapper import HighlightPageWrapper
 
 # Group Manager 권한주기
 def wa_groupManager(page, logs=None):

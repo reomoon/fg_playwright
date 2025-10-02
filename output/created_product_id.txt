@@ -1,1 +1,1 @@
-<coroutine object va_create_items_prepack at 0x0000021E6E183880>
+{'product_id': 24643441, 'openpack_product_id': None, 'prepack_product_id': 24643441}

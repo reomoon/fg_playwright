@@ -10,21 +10,21 @@ def checkout_process(page):
     page.wait_for_url(expected_url)
 
     assert page.url == expected_url, f"Fail: Expected URL {expected_url}, but got {page.url}."
-    print(f"Success: {expected_url} matched the expected value!")
+    print(f"🅿 Success: {expected_url} matched the expected value!")
 
     # Cart > Proceed To Checkout 버튼 클릭
     page.locator('.btn-dark_grey.btn-checkoutAll.nclick').click()
 
     # You Have Promotions! 팝업 있으면 클릭 없으면 스킵
     try:
-        popup_promotion = page.locator_popup('button.btn-sure', has_text="Continue To Checkout")
+        popup_promotion = page.locator('button.btn-sure', has_text="Continue To Checkout", log_if_not_found=False)
         if popup_promotion.is_visible() and popup_promotion.count() > 0 and popup_promotion.is_enabled():
             popup_promotion.click()
-            print("You Have Promotions! 팝업이 표시되었습니다.")
+            print("☑ You Have Promotions! 팝업이 표시되었습니다.")
         else:
-            print("You Have Promotions! 팝업이 표시되지 않았습니다.")
+            print("☑ You Have Promotions! 팝업이 표시되지 않았습니다.")
     except Exception as e:
-        print(f"팝업 처리 중 예외발생, 스킵하고 진행합니다:{e}")
+        print(f"☑ 팝업 처리 중 예외발생, 스킵하고 진행합니다:{e}")
 
     """
     🟢 Step1 Shipping
@@ -33,14 +33,14 @@ def checkout_process(page):
     
     # Verify Your Address 팝업 있으면 클릭 없으면 스킵
     try:
-        popup_verify = page.locator_popup('.common-btn.c-black', has_text="Keep This Address")
+        popup_verify = page.locator('.common-btn.c-black', has_text="Keep This Address", log_if_not_found=False)
         if popup_verify.is_visible() and popup_verify.count() > 0 and popup_verify.is_enabled():
             popup_verify.click()
-            print("Verify Your Address 팝업이 표시되었습니다.")
+            print("☑ Verify Your Address 팝업이 표시되었습니다.")
         else:
-            print("Verify Your Address 팝업이 표시되지 않았습니다.")
+            print("☑ Verify Your Address 팝업이 표시되지 않았습니다.")
     except Exception as e:
-        print(f"팝업 처리 중 예외발생, 스킵하고 진행합니다:{e}")
+        print(f"☑ 팝업 처리 중 예외발생, 스킵하고 진행합니다:{e}")
 
     """
     🟢 Step2 Payment
@@ -59,7 +59,7 @@ def checkout_process(page):
     else:
         print("Order not found! Test failed.")
 
-async def checkout_promotion(page):
+def checkout_promotion(page):
     """
     Cart 부터 시작
     """
@@ -78,26 +78,26 @@ async def checkout_promotion(page):
     page.locator('.btn-dark_grey.btn-checkoutAll.nclick').click()
 
     # You Have Promotions! 팝업
-    page.locator_popup('button.btn-sure', has_text="Continue To Checkout")
+    page.locator('button.btn-sure', has_text="Continue To Checkout")
 
     if page.locator('button.btn-sure').count() > 0 and page.locator('button.btn-sure').is_visible():
         page.locator('button.btn-sure').click()
-        print("You Have Promotions! 팝업이 표시되었습니다.")
+        print("☑ You Have Promotions! 팝업이 표시되었습니다.")
     else:
-        print("You Have Promotions! 팝업이 표시되지 않았습니다.")
+        print("☑ You Have Promotions! 팝업이 표시되지 않았습니다.")
 
     """
     🟢 Step1 Shipping
     """
     page.locator('button.btn-dark_grey.btn-goToPayment.nclick').click()
     
-    popup_verify = page.locator_popup('.common-btn.c-black', has_text="Keep This Address")
+    popup_verify = page.locator('.common-btn.c-black', has_text="Keep This Address", log_if_not_found=False)
 
     if popup_verify.is_visible() and popup_verify.count() > 0 and popup_verify.is_enabled():
         popup_verify.click()
-        print("Verify Your Address 팝업이 표시되었습니다.")
+        print("☑ Verify Your Address 팝업이 표시되었습니다.")
     else:
-        print("Verify Your Address 팝업이 표시되지 않았습니다.")    
+        print("☑ Verify Your Address 팝업이 표시되지 않았습니다.")    
 
     """
     🟢 Step2 Payment
@@ -111,12 +111,12 @@ async def checkout_promotion(page):
 
     page.wait_for_load_state('networkidle')
     if page.locator('h2.order-title').count() > 0:
-        print("Order successful! Test passed.")
+        print("☑ Order successful! Test passed.")
     else:
-        print("Order not found! Test failed.")
+        print("☑ Order not found! Test failed.")
 
 # Create Items
-async def va_Create_items(page, image_prefix="", size="", pack=""):
+def va_Create_items(page, image_prefix="", size="", pack=""):
     from random import sample, randint
     import os
 
@@ -171,7 +171,7 @@ async def va_Create_items(page, image_prefix="", size="", pack=""):
     random_price = str(random.randint(10,101))
     price = page.locator('input[formcontrolname="sellingPrice"]')
     price.type(random_price, delay=50)
-    print(f"price ${random_price}로 입력 했습니다.")
+    print(f"☑ price ${random_price}로 입력 했습니다.")
 
     page.select_option('select[formcontrolname="sizeId"]', label=size)
     page.select_option('select[formcontrolname="packId"]', label=pack)
@@ -188,7 +188,7 @@ async def va_Create_items(page, image_prefix="", size="", pack=""):
     visible_indices = [i for i in range(checkbox_count) if checkbox_divs.nth(i).is_visible()]
 
     if len(visible_indices) < 2:
-        print("화면에 보이는 체크박스가 2개 미만 입니다.")
+        print("☑ 화면에 보이는 체크박스가 2개 미만 입니다.")
         random_indices = []
     else:
         number_select = random.randint(2, min(5, len(visible_indices)))
@@ -197,7 +197,7 @@ async def va_Create_items(page, image_prefix="", size="", pack=""):
     for i in random_indices:
         checkbox_div = checkbox_divs.nth(i)
         checkbox_div.click()
-        print(f"✔ div.check-square #{i} 클릭 시도")
+        print(f"☑ div.check-square #{i} 클릭 시도")
 
     page.locator('i.btn-close').click()
     page.wait_for_timeout(3000)
@@ -229,13 +229,13 @@ async def va_Create_items(page, image_prefix="", size="", pack=""):
             "item" in response.url and
             response.request.method == "POST"
         )
-    async with page.expect_response(is_item_create_response) as resp_info:
+    with page.expect_response(is_item_create_response) as resp_info:
         save_button.click()
 
     response = resp_info.value
     try:
         data = response.json()
-        print("XHR 응답 데이터:", data)
+        print("☑ XHR 응답 데이터:", data)
         product_id = data.get("data")
         
         openpack_product_id = None
@@ -261,7 +261,7 @@ async def va_Create_items(page, image_prefix="", size="", pack=""):
         prepack_product_id = None
 
     page.wait_for_timeout(3000)
-    print(f"Auto_item{random_number} 생성이 완료 되었습니다.")
+    print(f"🅿 Auto_item{random_number} 생성이 완료 되었습니다.")
 
     return {
         "product_id": product_id,

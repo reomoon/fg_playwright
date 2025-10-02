@@ -1,5 +1,5 @@
 from playwright.sync_api import Page
-from Lib.browser_utils import HighlightPageWrapper
+from core.page_wrapper import HighlightPageWrapper
 from pathlib import Path
 import os
 

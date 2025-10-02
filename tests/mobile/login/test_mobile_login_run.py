@@ -4,9 +4,7 @@ from core.page_wrapper import create_highlighted_page
 from core.browser_devices import custom_devices
 from pages.mobile.login.mo_login import mo_login
 
-@pytest.fixture(scope="function")
-def mo_login_fixture(request):
-    print("☑ mo_login fixture 실행됨")
+def mo_login(request):
 
     account = request.param if hasattr(request, 'param') else "mo"
     # Playwright 컨텍스트와 브라우저를 초기화

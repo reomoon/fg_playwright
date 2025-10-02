@@ -1,4 +1,4 @@
-from core.page_wrapper import create_highlighted_page
+from core.page_wrapper import HighlightPageWrapper
 
 def create_vendor_account(page):
     vendor_account = "allium1" # 벤더 ID

@@ -1,12 +1,11 @@
 # FR TC_7
-import pytest
-from tests.web.FR_tests.test_login import login_fixture
 from playwright.sync_api import Page
-from Pages.web.FR_Pages.Items.Itemlist import check_itemlist
+from pages.front.items.fr_ItemList import check_itemlist
+from tests.front.login.test_front_login_fixture import front_login_fixture
 
-def test__FR_7_ItemList(login_fixture):
+def test_ItemList(front_login_fixture):
    
-    page = login_fixture  # 로그인된 상태의 page 객체 사용
+    page = front_login_fixture  # 로그인된 상태의 page 객체 사용
 
     # 1. Women 카테고리
     check_itemlist(page, "https://beta-www.fashiongo.net/Catalog?cid=12")

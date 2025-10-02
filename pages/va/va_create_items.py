@@ -17,7 +17,7 @@ def va_create_items_openpack(page):  # Size, Pack 인수 지정
     # va_Create_items(page, size, pack) # va_create_items_openpack 함수 호출
 
 # PrePack Item
-async def va_create_items_prepack(page):
+def va_create_items_prepack(page):
     # Va > items 메뉴 클릭
     menu_items = page.locator('div.nav__item__title', has_text="Items")
     menu_items.wait_for(state='visible', timeout=5000)  # 최대 5초 대기
@@ -34,7 +34,7 @@ async def va_create_items_prepack(page):
    
 
 # PrePack Item (XL 포함)
-async def va_create_items_prepack1(page):  # Size, Pack 인수 지정
+def va_create_items_prepack1(page):  # Size, Pack 인수 지정
     # Va > items 메뉴 클릭
     menu_items = page.locator('div.nav__item__title', has_text="Items")
     menu_items.wait_for(state='visible', timeout=5000)  # 최대 5초 대기

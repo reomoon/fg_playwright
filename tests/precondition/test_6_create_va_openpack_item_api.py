@@ -1,5 +1,4 @@
-import pytest
-import aiohttp
+import requests
 from datetime import datetime
 from core.page_wrapper import HighlightPageWrapper
 from tests.va.test_va_login_fixture import va_login_fixture
@@ -127,14 +126,12 @@ def call_item_save_api_openpack(token):
         }
     }
 
-    with aiohttp.ClientSession() as session:
-        with session.post(url, headers=headers, json=payload) as response:
-            resp_json = response.json()
-            return response.status, resp_json
+    response = requests.post(url, headers=headers, json=payload)
+    return response
         
 # 실제 테스트 함수
-def test_create_openpack_item_api(login_fixture: HighlightPageWrapper):
-    page = login_fixture
+def test_create_openpack_item_api(va_login_fixture: HighlightPageWrapper):
+    page = va_login_fixture
     token = page.evaluate("() => localStorage.getItem('token')")
     if not token:
         cookies = page.context.cookies()
@@ -143,16 +140,17 @@ def test_create_openpack_item_api(login_fixture: HighlightPageWrapper):
                 token = c["value"]
                 break
     assert token is not None, "BETA_FG_TOKEN not found"
-    print(f"[토큰 추출 완료] 앞 50자: {token[:50]}...")
+    print(f"☑ [토큰 추출 완료] 앞 50자: {token[:50]}...")
 
-    status_code, json_data = call_item_save_api_openpack(token)
+    response = call_item_save_api_openpack(token)
 
-    print(f"[응답 코드] {status_code}")
+    print(f"☑ [응답 코드] {response.status_code}")
     try:
-        print("[응답 결과]", json_data)
-        assert status_code == 200
+        json_data = response.json()
+        print("☑ [응답 결과]", json_data)
+        assert response.status_code == 200
         assert json_data.get("success", True)
     except Exception as e:
-        print("[응답 파싱 실패]", e)
-        print(json_data)
+        print("❌ [응답 파싱 실패]", e)
+        print(response.text)
         assert False, "응답을 JSON으로 파싱하지 못함"

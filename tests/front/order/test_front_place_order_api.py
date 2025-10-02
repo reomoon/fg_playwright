@@ -1,12 +1,12 @@
 import pytest
-from Pages.web.FR_Pages.Items.Addtocart_api import add_item_to_cart
-from Pages.web.FR_Pages.orders.Proceed_checkout_api import proceed_to_checkout
-from Pages.web.FR_Pages.orders.Placeorder_api import place_order
-from test_login import login_fixture
+from pages.front.items.fr_AddtoCart import add_item_to_cart
+from pages.front.orders.fr_Proceed_checkout_api import proceed_to_checkout
+from pages.front.orders.fr_PlaceOrder_api import place_order
+from tests.front.login.test_front_login_fixture import front_login_fixture
 
-@pytest.mark.parametrize("login_fixture", ["fr"], indirect=True)
-def test_place_order_flow(login_fixture):
-    page = login_fixture
+@pytest.mark.parametrize("front_login_fixture", ["fr"], indirect=True)
+def test_place_order_flow(front_login_fixture):
+    page = front_login_fixture
 
     # 1. 장바구니에 상품 추가
     add_item_to_cart(page)

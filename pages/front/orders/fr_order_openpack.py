@@ -1,6 +1,6 @@
 import random # 랜덤함수 추가
-from Lib.browser_utils import HighlightPageWrapper
-from Lib.common_utils import checkout_process
+from core.page_wrapper import HighlightPageWrapper
+from core.page_front_common import checkout_process
 
 # Pages/front openpack order
 def order_openpack(page, product_openpack_id):

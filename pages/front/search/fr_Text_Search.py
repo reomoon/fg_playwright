@@ -1,5 +1,5 @@
 from playwright.sync_api import Page
-from Lib.browser_utils import HighlightPageWrapper
+from core.page_wrapper import HighlightPageWrapper
 
 def Text_search(page: Page, search_text: str):
     # 1. 검색창 클릭

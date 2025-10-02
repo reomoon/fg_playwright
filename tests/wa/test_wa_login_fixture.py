@@ -6,12 +6,24 @@ from pages.wa.wa_login import wa_login
 # account 파라미터에 따라 로그인하는 fixture
 @pytest.fixture(scope="function")
 def wa_login_fixture(request):
+    print("☑ wa_login fixture 실행됨")
     # pytest.mark.parametrize()에서 넘겨준 account 값을 가져옴
     account = request.param if hasattr(request, 'param') else "wa1"  # 기본값은 "wa2"
 
     # Playwright 컨텍스트와 브라우저를 초기화
     playwright, browser = launch_browser()
-    page = create_highlighted_page(browser)  # 래핑된 페이지 사용
+
+    # 래핑된 페이지 사용
+    page = create_highlighted_page(browser)  
+
+    # 불필요한 리소스 차단
+    def block_resource(route):
+        if route.request.resource_type in ["image"]:
+            route.abort()
+        else:
+            route.continue_()
+
+    page.route("**/*", block_resource)
 
     # beta 어드민 페이지 이동
     page.goto('https://beta-webadmin.fashiongo.net/', timeout=90000, wait_until="domcontentloaded") # 타임아웃 및 로드 이벤트 설정

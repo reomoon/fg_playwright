@@ -1,5 +1,4 @@
-import pytest
-import aiohttp
+import requests
 from datetime import datetime
 from core.page_wrapper import HighlightPageWrapper
 from tests.va.test_va_login_fixture import va_login_fixture
@@ -95,20 +94,17 @@ def call_item_save_api(token):
         }
     }
 
-    # 비동기로 API 요청 보내고 응답 받기
-    with aiohttp.ClientSession() as session:
-        with session.post(url, headers=headers, json=payload) as response:
-            resp_json = response.json()
-            return response.status, resp_json
+    response = requests.post(url, headers=headers, json=payload)
+    return response
 
 # 실제 테스트 함수
-def test_create_item_api(login_fixture: HighlightPageWrapper):
-    page = login_fixture
+def test_create_item_api(va_login_fixture: HighlightPageWrapper):
+    page = va_login_fixture
 
-    # 1. localStorage에서 토큰 추출 (로그인 인증용)
+    # Step 1: localStorage에서 토큰 추출
     token = page.evaluate("() => localStorage.getItem('token')")
 
-    # 2. localStorage에 없으면 쿠키에서 토큰 추출 시도
+    # Step 2: 없으면 cookie에서 추출 시도
     if not token:
         cookies = page.context.cookies()
         for c in cookies:
@@ -116,17 +112,22 @@ def test_create_item_api(login_fixture: HighlightPageWrapper):
                 token = c["value"]
                 break
 
-    # 3. 토큰이 없으면 테스트 실패
+    # Step 3: 최종 확인
     assert token is not None, "BETA_FG_TOKEN not found in localStorage or cookies"
-    print(f"[토큰 추출 완료] 앞 50자: {token[:50]}...")
+    print(f"☑ [토큰 추출 완료] 앞 50자: {token[:50]}...")
 
-    # 4. 상품 생성 API 호출 (비동기)
-    status_code, json_data = call_item_save_api(token)
+    # Step 4: 상품 생성 API 호출
+    response = call_item_save_api(token)
 
-    # 5. 결과 확인 및 출력
-    print(f"[응답 코드] {status_code}")
-    print("[응답 결과]", json_data)
+    # Step 5: 결과 확인
+    print(f"☑ [응답 코드] {response.status_code}")
+    try:
+        json_data = response.json()
+        print("☑ [응답 결과]", json_data)
 
-    # 6. 응답 코드와 성공 여부 검증
-    assert status_code == 200, "응답 코드가 200이 아님"
-    assert json_data.get("success", True), "API 응답 내 success=false"
+        assert response.status_code == 200, "응답 코드가 200이 아님"
+        assert json_data.get("success", True), "API 응답 내 success=false"
+    except Exception as e:
+        print("❌ [응답 파싱 실패]", e)
+        print(response.text)
+        assert False, "응답을 JSON으로 파싱하지 못함"
