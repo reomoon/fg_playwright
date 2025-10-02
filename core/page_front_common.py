@@ -55,9 +55,9 @@ def checkout_process(page):
     # 주문 완료 후 Thank you for your order! 텍스트가 포함된 h2 요소 확인
     page.wait_for_load_state('networkidle')
     if page.locator('h2.order-title').count() > 0:
-        print("Order successful! Test passed.")
+        print("🅿 Order successful! Test passed.")
     else:
-        print("Order not found! Test failed.")
+        print("❌ Order not found! Test failed.")
 
 def checkout_promotion(page):
     """
@@ -111,9 +111,9 @@ def checkout_promotion(page):
 
     page.wait_for_load_state('networkidle')
     if page.locator('h2.order-title').count() > 0:
-        print("☑ Order successful! Test passed.")
+        print("🅿 Order successful! Test passed.")
     else:
-        print("☑ Order not found! Test failed.")
+        print("❌ Order not found! Test failed.")
 
 # Create Items
 def va_Create_items(page, image_prefix="", size="", pack=""):
