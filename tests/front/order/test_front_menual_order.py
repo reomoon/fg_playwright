@@ -7,7 +7,7 @@ from tests.front.login.test_front_login_fixture import front_login_fixture
 def test_order_openpack(front_login_fixture):
     page = front_login_fixture    # 로그인된 페이지 사용
     # root에서 product_id 읽기
-    with open("created_openpack_id.txt", "r") as f:
+    with open("output\\created_openpack_id.txt", "r") as f:
         product_id = f.read().strip()
     order_openpack(page, product_id)
 
@@ -15,7 +15,7 @@ def test_order_openpack(front_login_fixture):
 def test_order_prepack(front_login_fixture):
     page = front_login_fixture    # 로그인된 페이지 사용
     # root에서 product_id 읽기
-    with open("created_prepack_id.txt", "r") as f:
+    with open("output\\created_prepack_id.txt", "r") as f:
         product_id = f.read().strip()
     order_prepack(page, product_id)
 
