@@ -3,7 +3,6 @@ from pages.va.va_create_promotion import va_create_promotion
 from api_request.promotion_startdate import patch_promotion_start_date
 from tests.va.test_va_login_fixture import va_login_fixture
 
-@pytest.mark.parametrize("va_login_fixture", ["va"], indirect=True)  # account 파라미터 설정
 def test_va_create_promotion(va_login_fixture):
     page = va_login_fixture # 로그인된 페이지 사용
 

@@ -19,6 +19,8 @@ def add_item_to_cart(page):
     }
 
     payload = {
+        # 3064 = 1 funky
+        # 16502 = allium
         "wholeSalerId": "3064",
         "retailerId": "566735",
         "productId": "24266430",

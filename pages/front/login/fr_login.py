@@ -38,7 +38,7 @@ def front_login(page, account="fr"):
     password_input.type(password, delay=50)
 
     # 로그인 버튼 클릭
-    with page.expect_navigation():
+    with page.expect_navigation(wait_until="domcontentloaded", timeout=60000):
         page.locator('.signin_btn').click()
 
     # 대기

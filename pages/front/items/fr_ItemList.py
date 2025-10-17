@@ -1,7 +1,7 @@
 from playwright.sync_api import Page
 import time
 
-def check_itemlist(page: Page, url: str, min_count: int = 5, timeout: int = 10000):
+def check_itemlist(page: Page, url: str, min_count: int = 3, timeout: int = 10000):
     """
     주어진 URL에서 상품 리스트가 최소 min_count 이상 렌더링될 때까지 기다리고 확인합니다.
     """

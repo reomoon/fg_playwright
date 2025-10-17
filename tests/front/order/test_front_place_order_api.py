@@ -1,10 +1,9 @@
 import pytest
-from pages.front.items.fr_AddtoCart import add_item_to_cart
+from pages.front.items.fr_AddtoCart_api import add_item_to_cart
 from pages.front.orders.fr_Proceed_checkout_api import proceed_to_checkout
 from pages.front.orders.fr_PlaceOrder_api import place_order
 from tests.front.login.test_front_login_fixture import front_login_fixture
 
-@pytest.mark.parametrize("front_login_fixture", ["fr"], indirect=True)
 def test_place_order_flow(front_login_fixture):
     page = front_login_fixture
 

@@ -1,4 +1,5 @@
 from core.page_wrapper import create_highlighted_page
+import re
 
 # Pages/front login
 def va_login(page, account="va"):
@@ -26,7 +27,9 @@ def va_login(page, account="va"):
     print(f"☑ VA_{account} 계정 로그인 완료")
 
     # 페이지 로딩 상태를 기다림
-    page.wait_for_url("**/home", timeout=30000)
+    # page.wait_for_url("**/home", timeout=30000)
+    page.wait_for_url(re.compile(r"https://beta-vendoradmin\.fashiongo\.net/#/home(?:\?.*)?$"), timeout=60000)
+    print("🅿 VA URL ok:", page.url)
 
     # Net Terms 팝업 닫기
     netterms_popup_element = page.locator('div.label', has_text = "Don't show again today")

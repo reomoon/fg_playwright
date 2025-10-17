@@ -8,7 +8,7 @@ def test_ItemList(front_login_fixture):
     page = front_login_fixture  # 로그인된 상태의 page 객체 사용
 
     # 1. Women 카테고리
-    check_itemlist(page, "https://beta-www.fashiongo.net/Catalog?cid=12")
+    check_itemlist(page, "https://beta-www.fashiongo.net/Catalog/womens-apparel/activewear#cid=1510")
 
     # 2. New In 페이지
     check_itemlist(page, "https://beta-www.fashiongo.net/NewArrival/catalog")
