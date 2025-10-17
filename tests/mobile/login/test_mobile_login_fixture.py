@@ -18,7 +18,7 @@ def mo_login_fixture(request):
     page = create_highlighted_page(context)
 
     # 3. 테스트할 사이트로 이동
-    page.goto("https://beta-www.fashiongo.net", timeout=90000, wait_until='domcontentloaded')
+    page.goto("https://www.fashiongo.net", timeout=90000, wait_until='domcontentloaded')
 
     # 4. 로그인 함수 실행
     mo_login(page, account=account)

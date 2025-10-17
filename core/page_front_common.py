@@ -6,7 +6,7 @@ def checkout_process(page):
     Cart 부터 시작
     """
     # Shopping BAG 클릭 후 URL 검증
-    expected_url = 'https://beta-www.fashiongo.net/cart'
+    expected_url = 'https://www.fashiongo.net/cart'
     page.wait_for_url(expected_url)
 
     assert page.url == expected_url, f"Fail: Expected URL {expected_url}, but got {page.url}."
@@ -63,7 +63,7 @@ def checkout_promotion(page):
     """
     Cart 부터 시작
     """
-    expected_url = 'https://beta-www.fashiongo.net/cart'
+    expected_url = 'https://www.fashiongo.net/cart'
     page.wait_for_url(expected_url)
 
     assert page.url == expected_url, f"Fail: Expected URL {expected_url}, but got {page.url}."
@@ -123,34 +123,10 @@ def va_Create_items(page, image_prefix="", size="", pack=""):
     random_number = random.randint(1,999)
 
     # 2. Active/Inactive 라디오버튼 locator
-    active_radio = page.locator('input[type="radio"][ng-reflect-value="true"]')
-    inactive_radio = page.locator('input[type="radio"][ng-reflect-value="false"]')
-
-    # 3. Active가 체크 안 되어 있으면
-    if not active_radio.first.is_checked():
-        label = active_radio.first.locator('..')
-        label.click(force=True)
-        page.wait_for_timeout(300)
-        if not active_radio.first.is_checked():
-            active_radio.first.evaluate("""
-                el => {
-                    el.checked = true;
-                    el.dispatchEvent(new Event('input', { bubbles: true }));
-                    el.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-            """)
-            page.wait_for_timeout(300)
-            if active_radio.first.is_checked():
-                print("☑ JS로 Active checked 상태 됨")
-            else:
-                print("❌ JS로도 Active checked 안 됨")
-        else:
-            print("☑ label 클릭 후 Active checked 상태 됨")
-    else:
-        print("☑ 이미 Active checked 상태")
-
-    if inactive_radio.first.is_checked():
-        print("❌ 여전히 Inactive checked 상태임")
+    # input의 부모(label)를 찾아 클릭
+    active_radio = page.locator('input[formcontrolname="active"][type="radio"]').first # 첫 번째 버튼
+    label = active_radio.locator('..')  # 부모(label)로 이동
+    label.click(force=True)
 
     # Style No 입력
     input_styleNo = page.locator('input[formcontrolname="productName"]')

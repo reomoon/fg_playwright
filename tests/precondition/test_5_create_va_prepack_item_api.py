@@ -5,7 +5,7 @@ from tests.va.test_va_login_fixture import va_login_fixture
 
 # 상품 생성 API를 호출하는 비동기 함수
 def call_item_save_api(token):
-    url = "https://beta-vendoradmin.fashiongo.net/api/item/save"
+    url = "https://vendoradmin.fashiongo.net/api/item/save"
 
     # 현재 시간을 이용해 상품 이름 생성
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -16,8 +16,8 @@ def call_item_save_api(token):
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
         "Accept": "application/json, text/plain, */*",
-        "Origin": "https://beta-vendoradmin.fashiongo.net",
-        "Referer": "https://beta-vendoradmin.fashiongo.net/",
+        "Origin": "https://vendoradmin.fashiongo.net",
+        "Referer": "https://vendoradmin.fashiongo.net/",
         "User-Agent": "Mozilla/5.0"
     }
 

@@ -101,7 +101,7 @@ def MO_checkout(page):
     print(f"☑ order confirm URL: {order_confirm_url}")
 
     # 주문 성공 여부 판정
-    expected_url = f"https://beta-mobile.fashiongo.net/checkout/confirm/{cart_id}"
+    expected_url = f"https://mobile.fashiongo.net/checkout/confirm/{cart_id}"
     if order_confirm_url.startswith(expected_url):
         print(f"🅿 Card Id: '{cart_id}' 주문 성공")
     else:

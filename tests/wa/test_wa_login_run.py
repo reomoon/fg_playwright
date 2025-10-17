@@ -14,7 +14,7 @@ def test_wa_login():
     page = create_highlighted_page(browser) 
 
     # 페이지 이동
-    page.goto("https://beta-webadmin.fashiongo.net", timeout=90000, wait_until="domcontentloaded")
+    page.goto("https://webadmin.fashiongo.net", timeout=90000, wait_until="domcontentloaded")
 
     # wa_log 함수 실행
     wa_login(page, account="wa2")

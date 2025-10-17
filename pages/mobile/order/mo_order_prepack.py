@@ -6,7 +6,7 @@ from core.page_mobile_common import MO_checkout
 def mobile_order_prepack(page, product_prepack_id):
 
     # openpack item url 이동
-    page.goto(f'https://beta-www.fashiongo.net/Item/{product_prepack_id}')
+    page.goto(f'https://www.fashiongo.net/Item/{product_prepack_id}')
 
     # 첫 번째 수량 버튼 클릭
     click_count = random.randint(1,6) # 1~5번 랜덤int(정수)

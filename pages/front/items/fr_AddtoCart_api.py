@@ -11,8 +11,8 @@ def add_item_to_cart(page):
     headers = {
         "Accept": "application/json, text/javascript, */*; q=0.01",
         "Content-Type": "application/json; charset=UTF-8",
-        "Origin": "https://beta-www.fashiongo.net",
-        "Referer": "https://beta-www.fashiongo.net/Item/24266430?paKey=20250804c1680d1e58a65570597ab09f7266ad6c",
+        "Origin": "https://www.fashiongo.net",
+        "Referer": "https://www.fashiongo.net/Item/24266430?paKey=20250804c1680d1e58a65570597ab09f7266ad6c",
         "X-Requested-With": "XMLHttpRequest",
         "User-Agent": "Mozilla/5.0",
         "Cookie": cookie_header,
@@ -41,7 +41,7 @@ def add_item_to_cart(page):
     }
 
     response = requests.post(
-        url="https://beta-www.fashiongo.net/Cart/AddCart",
+        url="https://www.fashiongo.net/Cart/AddCart",
         headers=headers,
         data=json.dumps(payload)
     )

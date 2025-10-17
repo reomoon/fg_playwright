@@ -28,7 +28,7 @@ def front_login_fixture(request):
 
     # HighlightPageWrapper를 사용하여 새 페이지 생성 및 래핑
     page = create_highlighted_page(browser)
-    page.goto("https://beta-www.fashiongo.net", timeout=90000, wait_until='domcontentloaded')  # 페이지 로딩 대기
+    page.goto("https://www.fashiongo.net", timeout=90000, wait_until='domcontentloaded')  # 페이지 로딩 대기
     
     # 페이지 뷰포트 크기 설정
     page.set_viewport_size({"width": 1680, "height": 900})

@@ -21,7 +21,7 @@ def test_front_login():
     page = create_highlighted_page(browser)
 
     # 3. 테스트할 사이트로 이동 (비동기)
-    page.goto("https://beta-www.fashiongo.net", timeout=90000, wait_until='domcontentloaded')
+    page.goto("https://www.fashiongo.net", timeout=90000, wait_until='domcontentloaded')
 
     # 4. 브라우저 창 크기 설정 (비동기 함수이므로 필요)
     page.set_viewport_size({"width": 1680, "height": 900})

@@ -18,7 +18,7 @@ def get_credit_card_and_buyer_id(page, referer=None):
     creditCardId와 buyerId(retailerId)를 반환
     """
     ts = int(time.time() * 1000)
-    url = f"https://beta-www.fashiongo.net/MyAccount/CreditCard/GetCreditCardListSimple?_={ts}"
+    url = f"https://www.fashiongo.net/MyAccount/CreditCard/GetCreditCardListSimple?_={ts}"
 
     headers = {
         "Accept": "application/json",
@@ -52,14 +52,14 @@ def get_default_shipping_address_id(page):
     배송지의 saId 또는 said 값을 반환
     """
     ts = int(time.time() * 1000)
-    url = f"https://beta-www.fashiongo.net/MyAccount/ShipAddress/json/Get?act=1&_={ts}"
+    url = f"https://www.fashiongo.net/MyAccount/ShipAddress/json/Get?act=1&_={ts}"
 
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
         "X-Requested-With": "XMLHttpRequest",
         "User-Agent": "Mozilla/5.0",
-        "Referer": "https://beta-www.fashiongo.net/MyAccount/ShipAddress",
+        "Referer": "https://www.fashiongo.net/MyAccount/ShipAddress",
         "Cookie": get_cookie_header(page),
     }
 
@@ -93,7 +93,7 @@ def place_order(page, session_id, vendor_id="3064", ship_method_id=3):
       2. 기본 배송지 ID 조회
       3. 주문 생성 API 호출
     """
-    referer = f"https://beta-www.fashiongo.net/Checkout/{session_id}?premiumCouponIssueId=0&allCouponIssueId=0"
+    referer = f"https://www.fashiongo.net/Checkout/{session_id}?premiumCouponIssueId=0&allCouponIssueId=0"
     cookie = get_cookie_header(page)
 
     # 1. 카드 정보 조회
@@ -109,11 +109,11 @@ def place_order(page, session_id, vendor_id="3064", ship_method_id=3):
         return False
 
     # 3. 주문 요청
-    url = f"https://beta-www.fashiongo.net/Checkout/PlaceOrder/{session_id}"
+    url = f"https://www.fashiongo.net/Checkout/PlaceOrder/{session_id}"
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
-        "Origin": "https://beta-www.fashiongo.net",
+        "Origin": "https://www.fashiongo.net",
         "Referer": referer,
         "X-Requested-With": "XMLHttpRequest",
         "User-Agent": "Mozilla/5.0",

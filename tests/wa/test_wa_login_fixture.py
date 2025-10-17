@@ -26,7 +26,7 @@ def wa_login_fixture(request):
     page.route("**/*", block_resource)
 
     # beta 어드민 페이지 이동
-    page.goto('https://beta-webadmin.fashiongo.net/', timeout=90000, wait_until="domcontentloaded") # 타임아웃 및 로드 이벤트 설정
+    page.goto('https://webadmin.fashiongo.net/', timeout=90000, wait_until="domcontentloaded") # 타임아웃 및 로드 이벤트 설정
     # 페이지 뷰포트를 최대화 크기로 설정
     page.set_viewport_size({"width": 1680, "height": 900})
 

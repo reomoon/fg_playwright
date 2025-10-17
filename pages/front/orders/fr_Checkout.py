@@ -21,7 +21,7 @@ def click_button_safe(page: Page, selector: str, name: str, timeout=5000):
 
 def Checkout_flow(page: Page):
     # 1. 쇼핑백 페이지 진입
-    page.goto("https://beta-www.fashiongo.net/cart")
+    page.goto("https://www.fashiongo.net/cart")
 
     # 1-1. Checkout 버튼 클릭
     if not click_button_safe(page, 'button.btn-checkoutAll', "Checkout Vendor"):
@@ -89,7 +89,7 @@ def Checkout_flow(page: Page):
         return False
 
     # 6. 오더 히스토리에서 오더번호 확인
-    page.goto("https://beta-www.fashiongo.net/MyAccount/OrderHistory")
+    page.goto("https://www.fashiongo.net/MyAccount/OrderHistory")
     try:
         for _ in range(50):
             order_sn_locator = page.locator("span.order-sn").filter(has_text=order_no)

@@ -15,7 +15,7 @@ def create_card(page):
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     })
     # playwright 내장함수 goto로 이동
-    page.goto('https://beta-www.fashiongo.net/MyAccount/CreditCard', timeout=90000)
+    page.goto('https://www.fashiongo.net/MyAccount/CreditCard', timeout=90000)
     print("☑ /MyAccount/CreditCard 이동")
 
     """

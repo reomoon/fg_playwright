@@ -6,7 +6,7 @@ from core.page_mobile_common import MO_checkout
 def mobile_order_openpack(page, product_openpack_id):
 
     # openpack item url 이동
-    page.goto(f'https://beta-www.fashiongo.net/Item/{product_openpack_id}')
+    page.goto(f'https://www.fashiongo.net/Item/{product_openpack_id}')
 
     # 수량 버튼이 나타날 때까지 대기
     page.wait_for_selector('.btn_openPack', timeout=10000)

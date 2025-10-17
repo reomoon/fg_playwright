@@ -3,7 +3,7 @@ from core.page_wrapper import create_highlighted_page
 
 def mobile_text_search(page):
     # 홈 페이지로 이동
-    page.goto('https://beta-mobile.fashiongo.net/home')
+    page.goto('https://mobile.fashiongo.net/home')
     
     # 헤더의 Search 입력란을 찾아 클릭하여 포커스
     header_search_input = page.locator('input[placeholder="Search"]')

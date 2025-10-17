@@ -6,7 +6,7 @@ def test_items(front_login_fixture):
     page = front_login_fixture  # 로그인된 페이지 사용
 
     # 1) Best of Best 페이지로 이동
-    page.goto("https://beta-www.fashiongo.net/Best")
+    page.goto("https://www.fashiongo.net/Best")
     page.wait_for_load_state("networkidle")
 
     # 2) 첫 번째 상품 타일 클릭 (안정적인 셀렉터 사용)
@@ -31,7 +31,7 @@ def test_items(front_login_fixture):
     print("추출한 Product ID:", product_id)
 
     # 6) 장바구니 페이지로 이동
-    page.goto("https://beta-www.fashiongo.net/cart")
+    page.goto("https://www.fashiongo.net/cart")
     page.wait_for_load_state("networkidle")
 
     # 7) 장바구니 내 해당 상품이 존재하는지 확인

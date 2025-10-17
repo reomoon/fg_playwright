@@ -7,7 +7,7 @@ def va_create_promotion(page: Page):
     # page.locator("div.nav__item__title", has_text="Marketing Tools").click()
     # page.locator("a.nav__group__item__title", has_text="Promotions").click()
     # page.locator("a.nav__sub-group2__item__title", has_text="Vendor Promotion").click()
-    page.goto("https://beta-vendoradmin.fashiongo.net/#/marketing/special/promotion/vendor", timeout=10000, wait_until="domcontentloaded")
+    page.goto("https://vendoradmin.fashiongo.net/#/marketing/special/promotion/vendor", timeout=10000, wait_until="domcontentloaded")
     # page.wait_for_url("**/marketing/special/promotion/vendor")
 
     # 2. 'Create Promotion' 클릭

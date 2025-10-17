@@ -3,7 +3,7 @@ import re
 
 def apply_vendor_promotion(page: Page):
     # 1. 아이템 디테일 페이지로 이동
-    page.goto("https://beta-www.fashiongo.net/Item/21748958")
+    page.goto("https://www.fashiongo.net/Item/21748958")
     page.wait_for_load_state("domcontentloaded")
 
     # 2. qty 입력필드에 4 입력
@@ -24,7 +24,7 @@ def apply_vendor_promotion(page: Page):
     page.wait_for_timeout(3000)  # 네트워크 응답이 느릴 수 있어서 약간 대기
 
     # 4. 쇼핑백 페이지로 이동
-    page.goto("https://beta-www.fashiongo.net/cart")
+    page.goto("https://www.fashiongo.net/cart")
 
     # 5. Vendor Promotion 버튼 클릭 및 cartItemId 추출
     try:

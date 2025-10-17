@@ -6,7 +6,7 @@ from core.page_front_common import checkout_process
 def order_openpack(page, product_openpack_id):
 
     # allium vendor 페이지로 이동
-    page.goto(f"https://beta-www.fashiongo.net/Item/{product_openpack_id}")
+    page.goto(f"https://www.fashiongo.net/Item/{product_openpack_id}")
     print(f"Navigated to Openpack: {page.url}")
     # 수량 입력 필드 중 하나가 나타날 때까지 대기
     page.wait_for_selector("#openPackEachSizePc00, #openPackEachSizePc10, #openPackEachSizePc20, #openPackEachSizePc30", timeout=10000) 

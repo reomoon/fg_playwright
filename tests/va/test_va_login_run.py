@@ -14,7 +14,7 @@ def test_va_login():
     page = create_highlighted_page(browser) 
 
     # va페이지 이동
-    page.goto("https://beta-vendoradmin.fashiongo.net", timeout=90000, wait_until="domcontentloaded")
+    page.goto("https://vendoradmin.fashiongo.net", timeout=90000, wait_until="domcontentloaded")
 
     # 페이지 뷰포트를 최대화 크기로 설정
     page.set_viewport_size({"width": 1680, "height": 900})

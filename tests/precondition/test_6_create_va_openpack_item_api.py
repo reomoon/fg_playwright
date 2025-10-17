@@ -5,7 +5,7 @@ from tests.va.test_va_login_fixture import va_login_fixture
 
 # 상품 생성 API 호출 함수 (비동기)
 def call_item_save_api_openpack(token):
-    url = "https://beta-vendoradmin.fashiongo.net/api/item/save"
+    url = "https://vendoradmin.fashiongo.net/api/item/save"
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     item_name = f"test openpack {now_str}"
 
@@ -13,8 +13,8 @@ def call_item_save_api_openpack(token):
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
         "Accept": "application/json, text/plain, */*",
-        "Origin": "https://beta-vendoradmin.fashiongo.net",
-        "Referer": "https://beta-vendoradmin.fashiongo.net/",
+        "Origin": "https://vendoradmin.fashiongo.net",
+        "Referer": "https://vendoradmin.fashiongo.net/",
         "User-Agent": "Mozilla/5.0"
     }
 
@@ -52,10 +52,10 @@ def call_item_save_api_openpack(token):
             "update": [{
                 "active": True,
                 "imageName": "16502-1756101330184-2025-03-18 15 35 14.jpg",
-                "imageUrl": "https://beta-volatile-download.fashiongo.net/vendor-upload/item/16502/16502-1756101330184-2025-03-18 15 35 14.jpg",
+                "imageUrl": "https://volatile-download.fashiongo.net/vendor-upload/item/16502/16502-1756101330184-2025-03-18 15 35 14.jpg",
                 "listOrder": 1,
                 "productId": 0,
-                "download": "https://beta-volatile-download.fashiongo.net/vendor-upload/item/16502/16502-1756101330184-2025-03-18 15 35 14.jpg",
+                "download": "https://volatile-download.fashiongo.net/vendor-upload/item/16502/16502-1756101330184-2025-03-18 15 35 14.jpg",
                 "loaded": True
             }],
             "delete": []
