@@ -169,12 +169,23 @@ def va_Create_items(page, image_prefix="", size="", pack=""):
     else:
         number_select = random.randint(2, min(5, len(visible_indices)))
         random_indices = random.sample(visible_indices, number_select)
-
+    # color 팝업에서 클릭
     for i in random_indices:
         checkbox_div = checkbox_divs.nth(i)
-        checkbox_div.click()
-        print(f"☑ div.check-square #{i} 클릭 시도")
+        if checkbox_div.is_visible() and checkbox_div.is_enabled():
+            checkbox_div.click()
+            print(f"☑ div.check-square #{i} 클릭 시도")
+        else:
+            print(f"❌ div.check-square #{i} 클릭 불가 (visible={checkbox_div.is_visible()}, enabled={checkbox_div.is_enabled()})")
 
+    # color 체크박스 체크 확인
+    page.wait_for_timeout(100)
+    if checkbox_div.get_attribute("class") and "checked" in checkbox_div.get_attribute("class"):
+        print(f"☑ div.check-square #{i} 체크됨")
+    else:
+        print(f"❌ div.check-square #{i} 체크 안됨")
+
+    # color 팝업 닫기
     page.locator('i.btn-close').click()
     page.wait_for_timeout(3000)
 

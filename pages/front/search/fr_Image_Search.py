@@ -14,7 +14,7 @@ def Image_search(page: Page):
     upload_button.click()
 
     # 3. 청바지 이미지 파일 업로드 (본인 컴퓨터에 맞는 절대경로로 입력 필수)
-    file_path = Path("C:/playwrightauto/autoplay/Pages/web/FR_Pages/Search/jeans.jpg").resolve()
+    file_path = Path("C:\\playwright\\fg_playwright\\pages\\front\\search\\jeans.jpg").resolve()
 
     page.click("#search_file")
     page.set_input_files("#search_file", file_path)
