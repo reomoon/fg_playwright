@@ -13,7 +13,7 @@ jobs:
     steps:
       # 1. 저장소 체크아웃
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
       
       # 2. Python 설정
       - name: Set up Python
@@ -48,7 +48,7 @@ jobs:
       # 6. 테스트 결과 업로드 (실패시 스크린샷 등)
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: |
