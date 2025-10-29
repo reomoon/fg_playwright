@@ -1,4 +1,5 @@
 from core.page_wrapper import HighlightPageWrapper
+from core.close_by_close_buttons import close_by_close_buttons
 
 def front_login(page, account="fr"):
     from core.page_account import LOGIN_CREDENTIALS
@@ -46,6 +47,7 @@ def front_login(page, account="fr"):
 
     assert "www.fashiongo" in page.url.lower()
     print("🅿 Beta Front URL 접속 성공")
+    close_by_close_buttons(page)
 
     # Needs Attention 팝업 24시간 안보이기( # 'for="personal-2"' 속성으로 label을 클릭)
     # try:

@@ -13,14 +13,14 @@ def fr_chat(page):
     search_input = chat_page.locator("input.input-search")
     search_input.wait_for(state="visible", timeout=10000)
 
-    for char in "bibi":
+    for char in "allium":
         search_input.type(char)
         chat_page.wait_for_timeout(1500)
 
     # 결과 늦게 뜰 수 있으니 명시적으로 대기
     chat_page.wait_for_selector(".user-item", state="attached", timeout=15000)
 
-    # 검색 결과에 노출된 bibi 벤더 클릭
+    # 검색 결과에 노출된 allium 벤더 클릭
     user_items = chat_page.locator(".user-item")
     count = user_items.count()
     print("☑ user-item count:", count)
