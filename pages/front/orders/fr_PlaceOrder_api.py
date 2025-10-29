@@ -85,7 +85,7 @@ def get_default_shipping_address_id(page):
     return None
 
 
-def place_order(page, session_id, vendor_id="3064", ship_method_id=3):
+def place_order(page, session_id, vendor_id="16502", ship_method_id=3):
     """
     PlaceOrder API 호출
     순서:

@@ -55,3 +55,4 @@ utils/screenshots/
 test-screenshots/
 *.png
 *.jpg
+*.txt
