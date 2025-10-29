@@ -9,6 +9,22 @@ def proceed_to_checkout(page: Page):
     # 2. Checkout 버튼 클릭
     page.locator("button.btn-checkoutAll").click()
 
+    # 2-1. 프로모션 모달 확인 및 처리
+    try:
+        # 모달이 표시될 가능성이 있으므로 잠시 대기
+        modal_visible = page.wait_for_selector(
+            "div.modal_beforeCheckout",
+            state="visible",
+            timeout=3000
+        )
+        if modal_visible:
+            print("☑ 프로모션 모달 감지됨")
+            # "Continue To Checkout" 버튼 클릭
+            page.locator("div.modal_beforeCheckout button.btn-sure").click()
+            print("🅿 Continue To Checkout 버튼 클릭 완료")
+    except:
+        print("☑ 프로모션 모달 없음 → 바로 진행")
+
     # 3. 이동한 URL에서 sessionId 추출
     page.wait_for_url(re.compile(r"^https://beta-www\.fashiongo\.net/Checkout/.*"))
     checkout_url = page.url

@@ -7,17 +7,7 @@ def close_by_close_buttons(page: Page, rounds: int = 3):
     - 너무 오래 기다리지 않게 짧은 timeout만 사용
     """
     close_selectors = [
-        # 텍스트 기반
-        "button:has-text('닫기')",
-        "button:has-text('Close')",
-        "button:has-text('확인')",
-        "a:has-text('닫기')",
-        "a:has-text('Close')",
-        "a:has-text('확인')",
-        # aria 라벨/X 버튼들
-        "[aria-label='닫기']",
-        "[aria-label='Close']",
-        ".item-close", ".btn-close", ".close", ".ant-modal-close"
+        ".item-close"
     ]
 
     for r in range(rounds):
