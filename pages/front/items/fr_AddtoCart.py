@@ -19,7 +19,7 @@ def add_item_to_cart(page: Page):
         field = prepack_fields.nth(i)
         try:
             field.scroll_into_view_if_needed()
-            field.fill("1")
+            field.fill("5")
             success = True
             print(f"Prepack 수량 입력 성공 (index={i})")
             break
@@ -34,7 +34,7 @@ def add_item_to_cart(page: Page):
             try:
                 field.scroll_into_view_if_needed()
                 field.click(timeout=1000)
-                field.fill("1")
+                field.fill("5")
                 success = True
                 print(f"Openpack 수량 입력 성공 (index={i})")
                 break
