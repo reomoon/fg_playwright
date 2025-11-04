@@ -1,4 +1,5 @@
 from core.page_wrapper import HighlightPageWrapper
+from core.close_by_close_buttons import close_by_close_buttons
 
 # Pages/mobile_login
 def mo_login(page, account="mo"):
@@ -17,11 +18,13 @@ def mo_login(page, account="mo"):
     app_popup = page.locator('a.close-get-app-bnr', has_text="close")
     if app_popup.is_visible():
         app_popup.click()
+
+    close_by_close_buttons(page)
            
-    # EPP 팝업 24시간 닫기
-    epp_popup = page.locator('.link-footer-sub', has_text="Don't show again for 24 hours")
-    if epp_popup.is_visible():
-        epp_popup.click()
+    # # EPP 팝업 24시간 닫기
+    # epp_popup = page.locator('.link-footer-sub', has_text="Don't show again for 24 hours")
+    # if epp_popup.is_visible():
+    #     epp_popup.click()
 
     # page.screenshot(path="output/debug_epp_popup.png") # 페이지 스샷
 
@@ -51,13 +54,13 @@ def mo_login(page, account="mo"):
     # 페이지 로딩 상태를 기다림(로그인 후 로딩 딜레이 있어 조건 추가)
     page.wait_for_timeout(1000) # 1초 대기
 
-    # Needs Attention 팝업 24시간 안보이기( # 'for="personal-2"' 속성으로 label을 클릭)
-    Needs_Attention_popup = page.locator('label[for="personal-2"]', log_if_not_found=False)
-    if Needs_Attention_popup.is_visible():
-        Needs_Attention_popup.last.click()
+    # # Needs Attention 팝업 24시간 안보이기( # 'for="personal-2"' 속성으로 label을 클릭)
+    # Needs_Attention_popup = page.locator('label[for="personal-2"]', log_if_not_found=False)
+    # if Needs_Attention_popup.is_visible():
+    #     Needs_Attention_popup.last.click()
 
-    # Free Shipping 팝업 닫기
-    free_shipping_popup = page.locator('span.icon_close', log_if_not_found=False)
-    if free_shipping_popup.is_visible():
-        free_shipping_popup.click()
+    # # Free Shipping 팝업 닫기
+    # free_shipping_popup = page.locator('span.icon_close', log_if_not_found=False)
+    # if free_shipping_popup.is_visible():
+    #     free_shipping_popup.click()
  

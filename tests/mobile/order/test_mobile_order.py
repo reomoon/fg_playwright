@@ -7,8 +7,10 @@ from tests.mobile.login.test_mobile_login_fixture import mo_login_fixture
 def test_order_openpack(mo_login_fixture):
     page = mo_login_fixture    # 로그인된 페이지 사용
     # root에서 product_id 읽기
-    with open("output\\created_openpack_id.txt", "r") as f:
-        product_id = f.read().strip()
+    with open("productid.txt", "r") as f:
+        lines = [line.strip() for line in f if line.strip()]
+        product_id = lines[-1] if lines else ""
+    print(f"☑ item productId: {product_id}")
     mobile_order_openpack(page, product_id)    # order_openpack 실행
     # 브라우저 닫기 (pytest fixture에서 자동으로 닫기 처리)
 
@@ -16,6 +18,8 @@ def test_order_openpack(mo_login_fixture):
 def test_order_prepack(mo_login_fixture):
     page = mo_login_fixture    # 로그인된 페이지 사용
     # root에서 product_id 읽기
-    with open("output\\created_prepack_id.txt", "r") as f:
-        product_id = f.read().strip()
+    with open("productid.txt", "r") as f:
+        lines = [line.strip() for line in f if line.strip()]
+        product_id = lines[-1] if lines else ""
+    print(f"☑ item productId: {product_id}")
     mobile_order_prepack(page, product_id)    # order_prepack 실행
