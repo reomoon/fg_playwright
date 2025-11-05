@@ -30,7 +30,7 @@ def _extract_product_id(data):
     return found[0] if found else None
 
 # ✅ [추가] productId를 productid.txt에 저장 (파일 없으면 자동 생성)
-def _save_product_id(product_id, filepath="productid.txt"):
+def _save_product_id(product_id, filepath="prepack_productid.txt"):
     try:
         with open(filepath, "a", encoding="utf-8") as f:
             f.write(f"{product_id}\n")
@@ -164,7 +164,7 @@ def test_create_item_api(va_login_fixture: HighlightPageWrapper):
         # productId = json_data["data"] 우선 확인 → 없으면 fallback
         product_id = _extract_product_id(json_data)
         if product_id is not None:
-            _save_product_id(product_id, "productid.txt")
+            _save_product_id(product_id, "prepack_productid.txt")
         else:
             print("❌ [상품ID 추출 실패] 응답 내 data/productId 없음")
 
