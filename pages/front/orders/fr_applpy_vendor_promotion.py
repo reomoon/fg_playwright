@@ -2,7 +2,7 @@ from playwright.sync_api import Page, expect
 import re
 
 # ✅ 1) productid.txt에서 마지막 productId 읽기
-def get_last_product_id(filepath="productid.txt"):
+def get_last_product_id(filepath="prepack_productid.txt"):
     try:
         with open(filepath, "r", encoding="utf-8") as f:
             lines = f.read().strip().splitlines()
@@ -12,7 +12,7 @@ def get_last_product_id(filepath="productid.txt"):
             print(f"🅿 [마지막 상품ID 읽기 성공] {last_id}")
             return last_id
     except FileNotFoundError:
-        print("❌ [productid.txt 없음] 먼저 상품 생성 테스트를 실행하세요.")
+        print("❌ [prepack_productid.txt 없음] 먼저 상품 생성 테스트를 실행하세요.")
         return None
     except Exception as e:
         print(f"❌ [상품ID 읽기 실패] {e}")
