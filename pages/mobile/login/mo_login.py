@@ -39,7 +39,7 @@ def mo_login(page, account="mo"):
     
     # 로그인 요소 정의 및 동작
     
-    page.locator('button.btn-sign-in.nclick').click()
+    page.locator('button.btn-sign-in.nclick', log_if_not_found=False).click()
     # 3초 대기
     page.wait_for_timeout(3000)
 

@@ -6,18 +6,10 @@ from core.page_ocr import captcha_mobile_capture, remove_lines, perform_easyocr
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 # Pages/front openpack order
-def mo_create_card(page):
+def mo_add_new_card(page):
     """
     My Account > My Cards 이동
     """
-    # 자동화 탐지 방지를 위한 HTTP 헤더 추가(goto 전에 설정)
-    page.set_extra_http_headers({
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    })
-    # Footer Bag 아이콘 선택
-    page.locator('span.icon.account').click()
-    print("☑ footer Account 버튼 클릭 성공")
-
     # /account 페이지 출력되면 성공
     page.wait_for_url("**/account", timeout=5000)
     if "/account" in page.url: # /account가 페이지 url안에 있으면
@@ -29,26 +21,31 @@ def mo_create_card(page):
     카드 추가 여부에 따른 if문 실행
     """
 
-
     # My Card 메뉴 이동
     mycards_menu = page.locator('a[routerlink="/myaccount/mycard"]')
     mycards_menu.click()
 
     # Add New Card 버튼
-    page.locator('p.add-new-card-con').click()
+    page.locator('p.add-new-card-con', log_if_not_found=False).click()
 
+    # iframe으로 전환되었는지 확인 (Stripe 결제 폼의 경우)
+    iframe = page.frame_locator('iframe[name^="__privateStripeFrame"]').first
+    print(f"iframe 객체: {iframe}")
+    
     # 웹폰트 로딩 대기
     page.evaluate("document.fonts.ready.then(() => console.log('모든 글꼴이 로드됨'))")
+    page.wait_for_timeout(2000)  # 추가 대기
 
     # Name on Card 입력
     Name_on_Card = page.locator('ion-input[formcontrolname="name"] input')
+    Name_on_Card.wait_for(state="visible", timeout=10000)
     Name_on_Card.click()
     Name_on_Card.type('Home')
 
-    # Card Number 입력
-    Card_number = page.locator('input[name="cardnumber"]')
+    # iframe 내부로 진행
+    Card_number = iframe.locator('input[name="cardnumber"]')
+    Card_number.wait_for(state="visible", timeout=5000)
     Card_number.click()
-    Card_number.fill('4242424242424242')
 
     for attempt in range(5):
         Card_number.fill("") # 입력란 초기화
@@ -63,24 +60,33 @@ def mo_create_card(page):
     else:
         print("❌ 카드번호 입력이 실패 하였습니다.")
     
-    card_exp = page.locator('input[name="exp-date"]')
+    # iframe 내부의 카드 정보 입력 필드들
+    card_exp = iframe.locator('input[name="exp-date"]')
     card_exp.click()
     card_exp.type('0128', delay=100)
-    card_secu_code = page.locator('input[name="cvc"')
+    
+    card_secu_code = iframe.locator('input[name="cvc"]')
     card_secu_code.click()
     card_secu_code.type('123', delay=100)
-    card_zipcode = page.locator('input[name="postal"')
+    
+    card_zipcode = iframe.locator('input[name="postal"]')
     card_zipcode.click()
     card_zipcode.type('11201')
     
     # 주소 정보 입력
     page.locator('ion-input[formcontrolname="address1"] input').type('38 Henry St')
-    page.locator('ion-input[formcontrolname="city').type('Brooklyn')
+    page.locator('ion-input[formcontrolname="city"] input').type('Brooklyn')
 
-    # 드롭다운에서 "New York" 옵션 선택
-    page.locator('.select-text').select_option('New York')
-    page.locator('ion-input[formcontrolname="zip').type('11201')
-    # page.locator('#country').select_option('United States') # 드롭다운에서 United States" 옵션 선택 value 속성 사용
+    # "State" 드롭다운 아이콘 클릭
+    page.locator('.select-icon').nth(0).click(force=True) # 첫 번째 클릭
+    page.wait_for_timeout(500)  # 옵션 표시 대기
+
+    # "New York" 옵션 클릭
+    page.locator('div.alert-radio-label', has_text="New York").click()
+    page.locator('span.alert-button-inner', has_text="OK").click()
+
+    # Zip Code 입력
+    page.locator('ion-input[formcontrolname="zip"] input').type('11201')
 
     # captcha 캡처 함수 불러오기
     captcha_mobile_capture(page)
@@ -101,19 +107,19 @@ def mo_create_card(page):
     captcha_text = perform_easyocr(output_image_path)
 
     # 캡챠 입력
-    page.locator('#card_captcha_answer').type(captcha_text)
+    page.locator('ion-input[formcontrolname="captchaAnswer"] input').type(captcha_text)
 
     # Invalid Verification Code(Captcha) 팝업 처리 및 OCR 재시도
     for attempt in range(3):  # 최대 3번 시도
         # Save 버튼 클릭
-        page.locator('.save-btn nclick').click()
+        page.locator('button.save-btn.nclick').click()
         page.wait_for_timeout(3000)  # 3초 대기
 
         # 팝업 확인(log_if_not_found=False로 실제 팝업이 안나와도 ❌ 출력 안함)
         if page.locator('#close-showInfoError', log_if_not_found=False).is_visible():
             print(f"Invalid Verification Code 팝업 감지됨. OCR 재시도 중... (시도 {attempt + 1}/3)")
             # 팝업 닫기
-            page.locator('#close-showInfoError').click()
+            # page.locator('#close-showInfoError').click()
 
             # 새로운 캡챠 이미지 캡처
             captcha_mobile_capture(page)

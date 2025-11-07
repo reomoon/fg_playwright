@@ -99,8 +99,8 @@ def captcha_mobile_capture(page, output_image='captcha.png'):
     output_path = os.path.join(output_dir, output_image)
 
     # 캡챠 이미지 로드 대기
-    page.wait_for_selector("#card_captcha_img", state="attached", timeout=15000)
-    page.wait_for_selector("#card_captcha_img", state="visible", timeout=15000)
+    page.wait_for_selector('img[alt="CAPTCHA Image"]', state="attached", timeout=15000)
+    page.wait_for_selector('img[alt="CAPTCHA Image"]', state="visible", timeout=15000)
 
     # 캡챠 이미지 스크린샷 캡처
     captcha_element = page.locator('img[alt="CAPTCHA Image"]')
