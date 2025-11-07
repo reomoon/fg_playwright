@@ -1,7 +1,7 @@
 from core.page_wrapper import HighlightPageWrapper
 
 def create_vendor_account(page):
-    vendor_account = "allium1" # 벤더 ID
+    vendor_account = "alliumtest" # 벤더 ID
 
     # Go To Vendor Admin 클릭 새 탭 열림
     with page.context.expect_page() as new_page_into: # 새 탭이 열릴때까지 기다림
