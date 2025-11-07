@@ -76,27 +76,27 @@ def mobile_add_to_cart_openpack(page, product_id):
 
 # Cart에서 프로모션 선택 
 def mobile_promotion_cart(page):
-    # Add To Shopping Bag 버튼이 나타날 때까지 대기 후 클릭
-    if page.locator('button.btn-base.black').is_visible():
-        page.locator('button.btn-base.black').click()
-    else:
-        print("Add To Shopping Bag 버튼을 찾지 못했습니다.")
+    # Cart 페이지 이동
+    page.goto('https://beta-mobile.fashiongo.net/cart')
 
     # Promotion 선택
     page.locator('.cart-order__promo').click() # Select Promotion 드롭다운 클릭
-    page.locator('input[type="radio"][name="discount"]').first.check() # 첫 번째 프로모션 클릭
-    page.locator('.btn-row') # Apply Promotion 클릭
+    page.locator('label.radio').first.click(force=True) # 첫 번째 프로모션의 텍스트 라벨 클릭
+    page.locator('.btn-row').click() # Apply Promotion 클릭
 
     # 할인 전 금액 추출
     sale_price_text = page.locator('em.sale-price').inner_text()  # "$2,574.00"
     sale_price = float(sale_price_text.replace("$", "").replace(",", ""))
+    print(f"할인 전 금액: {sale_price}")
 
     # 할인 금액 추출
-    saved_text = page.locator('span.total-saved').inner_text()    # "Saved $286.00"
+    saved_text = page.locator('span.total-saved', log_if_not_found=False).inner_text()    # "Saved $286.00"
     saved_amount = float(saved_text.replace("Saved $", "").replace(",", ""))
+    print(f"할인금액: {saved_text}")
 
     # 할인 후 금액 추출
     total_money_text = page.locator('div.col.total-money').inner_text()  # "... $2,574.00"
+    print(f"할인 후 금액: {total_money_text}")
     # 마지막 $금액만 추출
     import re
     match = re.findall(r"\$[\d,]+\.\d{2}", total_money_text)
@@ -111,6 +111,6 @@ def mobile_promotion_cart(page):
 
     # 결과 판정
     if abs(saved_amount - expected_saved) < 0.01 and abs(total_money - expected_total) < 0.01:
-        print(f"🅿 할인 금액 및 최종 금액이 정확합니다. (할인: ${saved_amount}, 최종: ${total_money})")
+        print(f"🅿 할인금액 및 최종금액이 일치합니다. (할인: ${saved_amount}, 최종: ${total_money})")
     else:
         print(f"❌ 할인 계산 불일치. (예상 할인: ${expected_saved}, 실제 할인: ${saved_amount}, 예상 최종: ${expected_total}, 실제 최종: ${total_money})")
