@@ -1,6 +1,9 @@
 from datetime import datetime, timedelta
 from playwright.sync_api import Page
 
+#프로모션 생성 시 할인율
+promotion_discount = 5
+
 # Pages/front openpack order
 def va_create_promotion(page: Page):
     # 1. 메뉴 진입
@@ -35,7 +38,7 @@ def va_create_promotion(page: Page):
     }""", one_week_later)
 
     # 5. 할인율 입력
-    page.fill('input#percent-input-3', '10')
+    page.fill('input#percent-input-3', str(promotion_discount))
 
     # 6. Save 클릭 (POST 발생 X)
     page.locator('button.btn.btn-lg.btn-blue', has_text='Save Promotion').click()
