@@ -1,24 +1,25 @@
-import random # 랜덤함수 추가
+import random  # 랜덤함수 추가
 from core.page_wrapper import create_highlighted_page
 from core.page_mobile_common import MO_checkout
 
 # Pages/front openpack order
-def mobile_order_prepack(page, product_id):
+def mobile_orderDetail_openpack(page, product_id):
 
     # openpack item url 이동
     page.goto(f'https://beta-www.fashiongo.net/Item/{product_id}')
 
-    # 첫 번째 수량 버튼 클릭
-    click_count = random.randint(1,6) # 1~5번 랜덤int(정수)
-    plus_btn = page.locator('button.btn_plus.nclick').first # 첫 번째 + 버튼
-    for _ in range(click_count):
-        plus_btn.click() # 버튼 클릭
-        page.wait_for_timeout(300) # 대기
+    # 수량 버튼이 나타날 때까지 대기
+    page.wait_for_selector('.btn_openPack', timeout=10000)
 
-    # 수량 클릭 후 충분히 대기
-    page.wait_for_timeout(1000)
-    print(f"첫 번째 수량 +버튼을 {click_count}번 클릭 하였습니다.")
+    # 옵션 선택
+    page.locator('.btn_openPack').first.click()
     
+    # 1번째칸 수량 
+    item_input1 = page.locator('input.num_input.ng-untouched.ng-pristine.ng-valid')
+    random_quantity = random.randint(1, 101)  # 1 ~ 100 랜덤값
+    item_input1.first.type(str(random_quantity))  # type 랜덤값 입력
+    page.wait_for_timeout(2000)  # 2초 대기
+ 
     # Add To Shopping Bag 버튼이 나타날 때까지 대기 후 클릭
     if page.locator('button.btn-base.black').is_visible():
         page.locator('button.btn-base.black').click()
@@ -34,10 +35,11 @@ def mobile_order_prepack(page, product_id):
         Returns:
             bool: add-to-cart API이고 POST 요청이면 True, 아니면 False
         """
-        return(
-            'add-to-cart' in response.url and # URL에 'add-to-cart'가 포함되어 있고
-            response.request.method == "POST" # HTTP 메서드가 POST인 경우
+        return (
+            'add-to-cart' in response.url and  # URL에 'add-to-cart'가 포함되어 있고
+            response.request.method == "POST"  # HTTP 메서드가 POST인 경우
         )
+
     # Add to Shopping Bag 버튼 클릭과 동시에 API 응답 대기
     print("장바구니 추가 중..")
     try:
@@ -56,7 +58,7 @@ def mobile_order_prepack(page, product_id):
 
         # HTTP 상태 코드가 200(성공)인지 확인
         if response.status == 200:
-            data = response.json() # JSON 응답을 파싱하여 Python 딕셔너리로 변환
+            data = response.json()  # JSON 응답을 파싱하여 Python 딕셔너리로 변환
             print(f"장바구니 추가 API 응답: {data}")
 
             # data.get('success'): 'success' 키가 없으면 None 반환 (KeyError 방지)
@@ -78,3 +80,23 @@ def mobile_order_prepack(page, product_id):
 
     # checkout_process 호출
     MO_checkout(page)
+
+    # PO Number 추출
+    PO_number = page.locator('a.link_order').inner_text()
+    print(f"PO Number: {PO_number}")
+
+    # Order List 이동
+    page.goto("https://beta-mobile.fashiongo.net/order")
+
+    # 해당 PO Number가 있는 리스트 선택
+    page.locator('div.po-number > span', has_text=PO_number).click()
+
+    # 상세 페이지 URL 확인
+    expected_url = f"https://beta-mobile.fashiongo.net/order/{PO_number}"
+    page.wait_for_url(expected_url, timeout=5000)
+    if page.url == expected_url:
+        print(f"🅿 Order Info URL이 맞습니다: {page.url}")
+    else:
+        print(f"❌ 주문 상세 URL 불일치: {page.url} (예상: {expected_url})")
+
+
