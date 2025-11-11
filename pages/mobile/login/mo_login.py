@@ -1,5 +1,4 @@
 from core.page_wrapper import HighlightPageWrapper
-from core.close_by_close_buttons import close_by_close_buttons
 
 # Pages/mobile_login
 def mo_login(page, account="mo"):
@@ -18,8 +17,6 @@ def mo_login(page, account="mo"):
     app_popup = page.locator('a.close-get-app-bnr', has_text="close")
     if app_popup.is_visible():
         app_popup.click()
-
-    close_by_close_buttons(page)
            
     # # EPP 팝업 24시간 닫기
     # epp_popup = page.locator('.link-footer-sub', has_text="Don't show again for 24 hours")
@@ -33,8 +30,9 @@ def mo_login(page, account="mo"):
     account_label = page.locator('ion-label', has_text="Account", log_if_not_found=False)
     if account_label.is_visible():
         account_label.click()
+        print("☑ Footer Account를 클릭 하였습니다.")
     else:
-        print("❌ Account label이 보이지 않습니다.")
+        print("❌ Footer Account label이 보이지 않습니다.")
         page.wait_for_timeout(1000) # 3초 대기
     
     # 로그인 요소 정의 및 동작

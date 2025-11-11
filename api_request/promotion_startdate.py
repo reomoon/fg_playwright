@@ -1,5 +1,5 @@
 import pytest
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 import uuid
 
@@ -9,8 +9,11 @@ def patch_promotion_start_date(promotion_id: int, vendor_id: int):
     url = "http://10.230.40.7:17301/v1.0/qa/vendors/promotion/from-date"
 
     # 오늘 날짜를 yyyy-MM-dd 포맷 문자열로 생성 (예: '2025-07-24')
-    today_str = datetime.today().strftime("%Y-%m-%d")
+    # today_str = datetime.today().strftime("%Y-%m-%d")
 
+    # 오늘 날짜 -1일로 생성
+    today_str = (datetime.today() - timedelta(days=1)).strftime("%Y-%m-%d")
+    
     # 요청 헤더 구성
     headers = {
         # QA 시스템에서 사용하는 고정 어플리케이션 타입

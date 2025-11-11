@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from playwright.sync_api import Page
 
 #프로모션 생성 시 할인율
-promotion_discount = 5
+promotion_discount = 7
 
 # Pages/front openpack order
 def va_create_promotion(page: Page):

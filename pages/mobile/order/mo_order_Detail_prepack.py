@@ -72,10 +72,10 @@ def mobile_orderDetail_prepack(page, product_id):
 
     # back 버튼 클릭
     page.locator('button.btn_back').click()
+    page.wait_for_timeout(1000)  # 1초 대기
 
-    # Footer Bag 아이콘 선택
-    page.locator('ion-tab-button span.icon.bag').click()
-    print("☑ footer Bag 버튼 클릭 성공")
+    # Cart 페이지 이동
+    page.goto('https://beta-mobile.fashiongo.net/cart')
 
     # checkout_process 호출
     MO_checkout(page)
