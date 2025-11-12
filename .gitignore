@@ -57,3 +57,6 @@ test-screenshots/
 *.png
 *.jpg
 *.txt
+
+# gitignore 제외
+!image/top.jpg
