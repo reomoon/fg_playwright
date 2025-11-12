@@ -50,3 +50,5 @@ def mobile_text_search(page):
     # 결과가 없으면 오류 메시지 출력
     if not result["found"]:
         print("❌ API 응답 오류 또는 데이터 없음")
+
+        page.screenshot(path="output/mobile_search.png") # 페이지 스샷

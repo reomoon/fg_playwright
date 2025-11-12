@@ -3,10 +3,10 @@ from core.page_wrapper import create_highlighted_page
 from core.page_mobile_common import MO_checkout
 
 # Pages/front openpack order
-def mobile_order_prepack(page, product_prepack_id):
+def mobile_order_prepack(page, product_id):
 
     # openpack item url 이동
-    page.goto(f'https://beta-www.fashiongo.net/Item/{product_prepack_id}')
+    page.goto(f'https://beta-www.fashiongo.net/Item/{product_id}')
 
     # 첫 번째 수량 버튼 클릭
     click_count = random.randint(1,6) # 1~5번 랜덤int(정수)
@@ -17,7 +17,6 @@ def mobile_order_prepack(page, product_prepack_id):
 
     # 수량 클릭 후 충분히 대기
     page.wait_for_timeout(1000)
-    
     print(f"첫 번째 수량 +버튼을 {click_count}번 클릭 하였습니다.")
     
     # Add To Shopping Bag 버튼이 나타날 때까지 대기 후 클릭

@@ -83,3 +83,28 @@ def captcha_capture(page, output_image='captcha.png'):
     print(f"☑ 캡챠 이미지 캡처 완료: {output_path}")
     
     return output_path  # 저장된 파일 경로 반환
+
+def captcha_mobile_capture(page, output_image='captcha.png'):
+    import os
+    
+    """
+    captcha 캡처 함수 (동기)
+    output 폴더에 이미지 저장
+    """
+    # output 폴더 생성 (없으면)
+    output_dir = os.path.join(os.getcwd(), "output")
+    os.makedirs(output_dir, exist_ok=True)
+
+    # 저장 경로 지정
+    output_path = os.path.join(output_dir, output_image)
+
+    # 캡챠 이미지 로드 대기
+    page.wait_for_selector('img[alt="CAPTCHA Image"]', state="attached", timeout=15000)
+    page.wait_for_selector('img[alt="CAPTCHA Image"]', state="visible", timeout=15000)
+
+    # 캡챠 이미지 스크린샷 캡처
+    captcha_element = page.locator('img[alt="CAPTCHA Image"]')
+    captcha_element.screenshot(path=output_path)
+    print(f"☑ 캡챠 이미지 캡처 완료: {output_path}")
+    
+    return output_path  # 저장된 파일 경로 반환

@@ -1,1 +1,0 @@
-{'product_id': 24643441, 'openpack_product_id': None, 'prepack_product_id': 24643441}

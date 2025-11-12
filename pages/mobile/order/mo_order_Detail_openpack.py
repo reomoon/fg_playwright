@@ -3,7 +3,7 @@ from core.page_wrapper import create_highlighted_page
 from core.page_mobile_common import MO_checkout
 
 # Pages/front openpack order
-def mobile_order_openpack(page, product_id):
+def mobile_orderDetail_openpack(page, product_id):
 
     # openpack item url 이동
     page.goto(f'https://beta-www.fashiongo.net/Item/{product_id}')
@@ -80,3 +80,23 @@ def mobile_order_openpack(page, product_id):
 
     # checkout_process 호출
     MO_checkout(page)
+
+    # PO Number 추출
+    PO_number = page.locator('a.link_order').inner_text()
+    print(f"PO Number: {PO_number}")
+
+    # Order List 이동
+    page.goto("https://beta-mobile.fashiongo.net/order")
+
+    # 해당 PO Number가 있는 리스트 선택
+    page.locator('div.po-number > span', has_text=PO_number).click()
+
+    # 상세 페이지 URL 확인
+    expected_url = f"https://beta-mobile.fashiongo.net/order/{PO_number}"
+    page.wait_for_url(expected_url, timeout=5000)
+    if page.url == expected_url:
+        print(f"🅿 Order Info URL이 맞습니다: {page.url}")
+    else:
+        print(f"❌ 주문 상세 URL 불일치: {page.url} (예상: {expected_url})")
+
+
