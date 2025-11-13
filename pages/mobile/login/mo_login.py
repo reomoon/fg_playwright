@@ -32,8 +32,9 @@ def mo_login(page, account="mo"):
         account_label.click()
         print("☑ Footer Account를 클릭 하였습니다.")
     else:
-        print("❌ Footer Account label이 보이지 않습니다.")
-        page.wait_for_timeout(1000) # 3초 대기
+        print("❌ Footer Account label이 보이지 않습니다. 로그인 페이지로 이동합니다.")
+        page.goto('https://beta-mobile.fashiongo.net/login')
+        page.wait_for_timeout(1000)  # 1초 대기
     
     # 로그인 요소 정의 및 동작
     

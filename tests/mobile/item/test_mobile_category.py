@@ -1,5 +1,5 @@
 import pytest
-from pages.mobile.item.mo_category import mo_category_check
+from pages.mobile.item.mo_category_check import mo_category_check
 from tests.mobile.login.test_mobile_login_fixture import mo_login_fixture
 
 @pytest.mark.parametrize("mo_login_fixture", ["mo"], indirect=True)
