@@ -41,7 +41,7 @@ def MO_checkout(page):
     🟢 Step1 Shipping
     """
     # Save & Continue
-    page.locator('button.base-btn.primary.medium.ng-star-inserted').click()
+    page.locator('button.base-btn.primary.medium.ng-star-inserted', log_if_not_found=False).click()
     page.wait_for_timeout(2000)  # 2초 대기
 
     # Verify Your Address 팝업 있으면 클릭 없으면 스킵

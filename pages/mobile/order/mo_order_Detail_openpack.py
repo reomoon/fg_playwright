@@ -15,7 +15,7 @@ def mobile_orderDetail_openpack(page, product_id):
     page.locator('.btn_openPack').first.click()
     
     # 1번째칸 수량 
-    item_input1 = page.locator('input.num_input.ng-untouched.ng-pristine.ng-valid')
+    item_input1 = page.locator('input.num_input.ng-untouched.ng-pristine.ng-valid', log_if_not_found=False)
     random_quantity = random.randint(1, 101)  # 1 ~ 100 랜덤값
     item_input1.first.type(str(random_quantity))  # type 랜덤값 입력
     page.wait_for_timeout(2000)  # 2초 대기
@@ -73,10 +73,10 @@ def mobile_orderDetail_openpack(page, product_id):
 
     # back 버튼 클릭
     page.locator('button.btn_back').click()
+    page.wait_for_timeout(1000)  # 1초 대기
 
-    # Footer Bag 아이콘 선택
-    page.locator('ion-tab-button span.icon.bag').click()
-    print("☑ footer Bag 버튼 클릭 성공")
+    # Cart 페이지 이동
+    page.goto('https://beta-mobile.fashiongo.net/cart')
 
     # checkout_process 호출
     MO_checkout(page)
