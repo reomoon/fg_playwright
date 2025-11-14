@@ -32,6 +32,9 @@ def wa_login_fixture(request):
 
     # 로그인 함수 호출(account 인수 그대로 호출)
     wa_login(page, account=account)
+
+    # 페이지 로딩 3초 대기
+    page.wait_for_timeout(3000)
   
     # assert 검증
     assert "webadmin.fashiongo" in page.url.lower()
