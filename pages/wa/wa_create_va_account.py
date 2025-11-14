@@ -5,7 +5,7 @@ def create_vendor_account(page):
 
     # Go To Vendor Admin 클릭 새 탭 열림
     with page.context.expect_page() as new_page_into: # 새 탭이 열릴때까지 기다림
-        page.locator('a.header__userinfo__user-info__wholesale').click()
+        page.locator('a.header__userinfo__user-info__wholesale', has_text="VENDOR ADMIN").click()
 
     vendor_page = new_page_into.value # 새로 열린 페이지 비동기로 객체 지정
     vendor_page.set_viewport_size({"width": 1680, "height": 900}) # 화면 사이즈 조절
