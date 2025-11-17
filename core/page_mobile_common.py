@@ -245,7 +245,7 @@ def Order_detail_cancel(page):
         page.wait_for_timeout(500)
         
         # 네트워크 안정화 대기
-        page.wait_for_load_state('networkidle', timeout=5000)
+        # page.wait_for_load_state('networkidle', timeout=5000)
         page.wait_for_timeout(1000)
     
         # 여러 방식으로 클릭 시도
