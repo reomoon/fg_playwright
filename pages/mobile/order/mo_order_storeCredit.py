@@ -1,9 +1,9 @@
 import random  # 랜덤함수 추가
 from core.page_wrapper import create_highlighted_page
-from core.page_mobile_common import MO_checkout, Order_detail_cancel
+from core.page_mobile_common import MO_checkout, MO_checkout_StoreCredit
 
 # Pages/front openpack order
-def mobile_orderDetail_openpack_cancel(page, product_id):
+def mobile_order_storeCredit(page, product_id):
 
     # openpack item url 이동
     page.goto(f'https://beta-www.fashiongo.net/Item/{product_id}')
@@ -15,7 +15,7 @@ def mobile_orderDetail_openpack_cancel(page, product_id):
     page.locator('.btn_openPack').first.click()
     
     # 1번째칸 수량 
-    item_input1 = page.locator('input.num_input.ng-untouched.ng-pristine.ng-valid', log_if_not_found=False)
+    item_input1 = page.locator('input.num_input.ng-untouched.ng-pristine.ng-valid')
     random_quantity = random.randint(1, 101)  # 1 ~ 100 랜덤값
     item_input1.first.type(str(random_quantity))  # type 랜덤값 입력
     page.wait_for_timeout(2000)  # 2초 대기
@@ -73,31 +73,10 @@ def mobile_orderDetail_openpack_cancel(page, product_id):
 
     # back 버튼 클릭
     page.locator('button.btn_back').click()
-    page.wait_for_timeout(1000)  # 1초 대기
 
     # Cart 페이지 이동
     page.goto('https://beta-mobile.fashiongo.net/cart')
+    print("☑ /cart 페이지로 이동 하였습니다.")
 
     # checkout_process 호출
-    MO_checkout(page)
-
-    # PO Number 추출
-    PO_number = page.locator('a.link_order').inner_text()
-    print(f"PO Number: {PO_number}")
-
-    # Order List 이동
-    page.goto("https://beta-mobile.fashiongo.net/order")
-
-    # 해당 PO Number가 있는 리스트 선택
-    page.locator('div.po-number > span', has_text=PO_number).click()
-
-    # 상세 페이지 URL 확인
-    expected_url = f"https://beta-mobile.fashiongo.net/order/{PO_number}"
-    page.wait_for_url(expected_url, timeout=5000)
-    if page.url == expected_url:
-        print(f"🅿 Order Info URL이 맞습니다: {page.url}")
-    else:
-        print(f"❌ 주문 상세 URL 불일치: {page.url} (예상: {expected_url})")
-
-    # Order Detail cancel 공통함수 사용
-    Order_detail_cancel(page)
+    MO_checkout_StoreCredit(page)
