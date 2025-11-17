@@ -15,7 +15,7 @@ def mo_add_new_card(page):
     if "/account" in page.url: # /account가 페이지 url안에 있으면
         print("☑ /account 페이지 진입 성공")
     else: # url이 없다면
-        print("❌ /account 페이지 진입 실패")
+        print("🗙 /account 페이지 진입 실패")
         return False
     """
     카드 추가 여부에 따른 if문 실행

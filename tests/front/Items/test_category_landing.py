@@ -19,7 +19,7 @@ def test_womens_category_page(front_login_fixture):
     print("☑ 상단 타이틀 텍스트 확인")
     title_sel = 'span[name="categories-note"]'
     page.wait_for_selector(title_sel, timeout=5000)
-    assert page.locator(title_sel).inner_text().strip() == "Women's Apparel", "❌ 타이틀 텍스트가 일치하지 않습니다."
+    assert page.locator(title_sel).inner_text().strip() == "Women's Apparel", "🗙 타이틀 텍스트가 일치하지 않습니다."
     print("🅿 'Women's Apparel' 텍스트 확인")
 
     # 3) 서브카테고리(스와이퍼) 요소 확인

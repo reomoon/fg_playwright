@@ -38,6 +38,6 @@ def mobile_image_search(page):
     response = response_info.value
     data = response.json()
     if "data" in data and "searchProvider" in data["data"] and data["data"]["searchProvider"] == "AI_FASHION":
-        print("🅿 AI_FASHION로 불러오기를 성공 하였습니다.(이미지 검색 API 성공)")
+        print("🅿 AI_FASHION으로 불러오기를 성공 하였습니다.(이미지 검색 API 성공)")
     else:
-        print("❌ AI_FASHION로 불러오기를 실패 하였습니다.(이미지 검색 API 실패)")
+        print("❌ AI_FASHION으로 불러오기를 실패 하였습니다.(이미지 검색 API 실패)")

@@ -54,7 +54,7 @@ def display_manager2(page):
             return True
         else:
             # success 값이 False이거나 없으면 실패 처리
-            print(f"❌ main-schedule API success 값이 False 또는 없음: {data.get('success')}")
+            print(f"🗙 main-schedule API success 값이 False 또는 없음: {data.get('success')}")
             return False
     else:
         # 응답 상태 코드가 200이 아니면 실패 처리

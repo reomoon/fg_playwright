@@ -107,7 +107,8 @@ def mobile_orderDetail_openpack_cancel(page, product_id):
     cancel_order.wait_for(state='visible', timeout=10000)
     cancel_order.scroll_into_view_if_needed()
     cancel_order.focus()
-    
+    page.wait_for_timeout(2000) # 팝업 뜰때까지 대기
+
     # 상태 확인 (디버깅용)
     print(f"is_visible: {cancel_order.is_visible()}")
     print(f"is_enabled: {cancel_order.is_enabled()}")

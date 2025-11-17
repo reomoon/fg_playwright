@@ -79,6 +79,6 @@ def create_vendor_account(page):
 
     # allium1 계정이 있으면 성공
     if vendor_page.locator("td", has_text=vendor_account).count() > 0:
-        print(f"Pass: '{vendor_account}' account created successfully.")
+        print(f"🅿 '{vendor_account}' account created successfully.")
     else:
-        print(f"Fail: '{vendor_account}' account creation failed.")
+        print(f"❌ '{vendor_account}' account creation failed.")

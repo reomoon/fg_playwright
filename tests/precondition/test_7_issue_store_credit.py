@@ -48,20 +48,17 @@ def save_store_credit(page, rid: int, reason: str, amount: float):
     print("🅿 스토어 크레딧 지급 성공")
 
 
-@pytest.mark.parametrize(
-    "reason,amount",
-    [
-        ("API test", 200),
-    ],
-)
-def test_save_store_credit_api(va_login_fixture, reason, amount):
-    """벤더 어드민 로그인 후 스토어 크레딧 지급"""
+def test_save_store_credit_api_both(va_login_fixture):
     page = va_login_fixture
     print("☑ va_login_fixture 실행됨 (벤더 어드민 로그인 OK)")
 
-    # ✅ .env에서 fr_user_id 읽기
-    fr_user_id = os.getenv("fr_user_id")
-    assert fr_user_id, "❌ .env 파일에 fr_user_id가 없습니다."
-    rid = int(fr_user_id)
-
-    save_store_credit(page, rid=rid, reason=reason, amount=amount)
+    # 두 환경변수(fr_user_id, fr_user_mobile_id)를 읽어서 각각 스토어 크레딧 지급 테스트
+    for env_key, reason, amount in [
+        ("fr_user_id", "API test", 200),              
+        ("fr_user_mobile_id", "API test (mobile)", 200),  
+    ]:
+        user_id = os.getenv(env_key)  # .env에서 해당 환경변수 값 읽기
+        assert user_id, f"❌ .env 파일에 {env_key}가 없습니다."  # 환경변수 없으면 실패
+        user_id_num = user_id.split()[0]  # 공백 앞의 숫자만 추출
+        rid = int(user_id_num)  # 문자열을 int로 변환 (API에 넘길 ID)
+        save_store_credit(page, rid=rid, reason=reason, amount=amount)  # 실제 API 호출 및 검증

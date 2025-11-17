@@ -32,10 +32,10 @@ class HighlightPageWrapper:
                 self._apply_highlight(selector)
                 print(f"☑ {selector} found ({count}개)")
                 
-                # log_if_not_found=True가 기본값으로 True일 때만 ❌ 출력
+                # log_if_not_found=True가 기본값으로 True일 때만 🗙 출력
                 # log_if_not_found=False로 하면 ❌ 출력 안함
             elif log_if_not_found: 
-                print(f"❌ {selector} not found")
+                print(f"🗙 {selector} not found")
                 
         except Exception as e:
             if log_if_not_found:

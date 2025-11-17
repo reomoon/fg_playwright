@@ -25,7 +25,7 @@ def wa_vendor_list(page):
             return True
         else:
             # table에 값이 없거나 message가 success가 아니면
-            print(f"❌ Vendor List 조건 불충족. Table: {table}, message: {message}")
+            print(f"🗙 Vendor List 조건 불충족. Table: {table}, message: {message}")
             return False
     else:
         # 호출 실패하면

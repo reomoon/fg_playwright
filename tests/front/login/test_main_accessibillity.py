@@ -25,7 +25,7 @@ def test_main_accessibility():
         # 4️⃣ 콘솔 에러 없으면 성공
         assert not errors, f"❌ 콘솔 에러 발생: {errors}"
 
-        print("🅿 메인페이지 접근 성공 ✅")
+        print("🅿 메인페이지 접근 성공")
         browser.close()
 
         
