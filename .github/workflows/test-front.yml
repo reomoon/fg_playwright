@@ -1,0 +1,89 @@
+name: Daily Playwright Front Test
+
+on:
+  workflow_dispatch:
+  # schedule:
+  #   - cron: '0 0 * * *'
+
+jobs:
+  test:
+    runs-on: [self-hosted]
+    env:
+      PYTHON_PATH: C:\Users\NHN\AppData\Local\Programs\Python\Python311
+      PYTHONIOENCODING: utf-8
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Install dependencies
+        shell: cmd
+        run: |
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip install --user -r requirements.txt
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip install --user pytest-html
+          "${{ env.PYTHON_PATH }}\python.exe" -m playwright install
+      
+      - name: Create .env file
+        shell: cmd
+        run: |
+          (
+            echo fr_username=${{ secrets.FR_USERNAME }}
+            echo fr_password=${{ secrets.FR_PASSWORD }}
+            echo va_username=${{ secrets.VA_USERNAME }}
+            echo va_password=${{ secrets.VA_PASSWORD }}
+            echo wa1_username=${{ secrets.WA1_USERNAME }}
+            echo wa1_password=${{ secrets.WA1_PASSWORD }}
+            echo wa2_username=${{ secrets.WA2_USERNAME }}
+            echo wa2_password=${{ secrets.WA2_PASSWORD }}
+            echo mo_username=${{ secrets.MO_USERNAME }}
+            echo mo_password=${{ secrets.MO_PASSWORD }}
+            echo fr_user_id=${{ secrets.FR_USER_ID }}
+            echo fr_user_mobile_id=${{ secrets.FR_USER_MOBILE_ID }}
+          ) > .env
+      
+      - name: Run Precondition tests
+        shell: cmd
+        run: |
+          chcp 65001
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html
+        continue-on-error: true
+
+      - name: Run Front tests
+        shell: cmd
+        run: |
+          chcp 65001
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/front -v -s --tb=short --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html
+        continue-on-error: true
+      
+      - name: Generate test summary
+        if: always()
+        shell: pwsh
+        run: |
+          & ./scripts/generate-test-summary.ps1 -OutputPath "output"
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: output/
+          retention-days: 7
+
+      - name: Send email with results
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.dooray.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USER }}
+          password: ${{ secrets.MAIL_PASS }}
+          subject: FG Automation Playwright Front Test Results
+          to: taehyung-moon@nhnservice.com, seungbin.an@nhnservice.com
+          from: ${{ secrets.MAIL_USER }}
+          body: |
+            FG Automation Playwright Front 테스트가 완료되었습니다.
+
+            ${{ steps.summary.outputs.summary }}
+
+            상세 결과는 Artifacts에서 HTML 리포트를 다운로드하여 확인하세요.
+            GitHub Actions: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
