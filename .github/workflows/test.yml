@@ -1,4 +1,4 @@
-name: Daily Playwright Test
+name: Playwright Github Action Runner
 
 on:
   workflow_dispatch:
@@ -16,9 +16,10 @@ jobs:
         uses: actions/checkout@v3
       
       - name: Install dependencies
+        shell: pwsh
         run: |
-          ${{ env.PYTHON_PATH }}\python.exe -m pip install -r requirements.txt
-          ${{ env.PYTHON_PATH }}\python.exe -m playwright install chromium
+          & "${{ env.PYTHON_PATH }}\python.exe" -m pip install -r requirements.txt
+          & "${{ env.PYTHON_PATH }}\python.exe" -m playwright install chromium
       
       - name: Create .env file
         shell: pwsh
@@ -37,7 +38,8 @@ jobs:
           "@ | Out-File -FilePath .env -Encoding UTF8
       
       - name: Run Playwright tests
-        run: ${{ env.PYTHON_PATH }}\python.exe -m pytest tests/ -v -s --tb=short
+        shell: pwsh
+        run: & "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/ -v -s --tb=short
       
       - name: Upload test results
         if: always()
