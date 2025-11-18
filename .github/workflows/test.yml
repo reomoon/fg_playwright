@@ -2,26 +2,23 @@ name: Daily Playwright Test
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 0 * * *'
+  # schedule:
+  #   - cron: '0 0 * * *'
 
 jobs:
   test:
     runs-on: [self-hosted, vpn]
+    env:
+      PYTHON_PATH: C:\Users\NHN\AppData\Local\Programs\Python\Python311
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
       
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      
       - name: Install dependencies
         run: |
-          python -m pip install -r requirements.txt
-          playwright install chromium
+          ${{ env.PYTHON_PATH }}\python.exe -m pip install -r requirements.txt
+          ${{ env.PYTHON_PATH }}\python.exe -m playwright install chromium
       
       - name: Create .env file
         shell: pwsh
@@ -40,7 +37,7 @@ jobs:
           "@ | Out-File -FilePath .env -Encoding UTF8
       
       - name: Run Playwright tests
-        run: pytest tests/ -v -s --tb=short
+        run: ${{ env.PYTHON_PATH }}\python.exe -m pytest tests/ -v -s --tb=short
       
       - name: Upload test results
         if: always()
@@ -52,4 +49,9 @@ jobs:
       
       - name: Notify on failure
         if: failure()
-        run: echo "❌ 테스트 실패! output/ 폴더에서 스크린샷을 확인하세요."
+        shell: pwsh
+        run: |
+          $OutputEncoding = [System.Text.Encoding]::UTF8
+          Write-Host "❌ Test failed!"
+          Write-Host "Check output/ folder for screenshots."
+          Write-Host "Visit GitHub Actions for Artifacts: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
