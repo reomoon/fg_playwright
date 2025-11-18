@@ -18,8 +18,8 @@ jobs:
       - name: Install dependencies
         shell: cmd
         run: |
-          "${{ env.PYTHON_PATH }}\python.exe" -m pip install -r requirements.txt
-          "${{ env.PYTHON_PATH }}\python.exe" -m playwright install chromium
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip install --user -r requirements.txt
+          "${{ env.PYTHON_PATH }}\python.exe" -m playwright install
       
       - name: Create .env file
         shell: cmd
