@@ -38,11 +38,17 @@ jobs:
             echo mo_password=${{ secrets.MO_PASSWORD }}
           ) > .env
       
-      - name: Run Playwright tests
+      - name: Run precondition tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/ -v -s --tb=short
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short
+
+      - name: Run main Playwright tests
+        shell: cmd
+        run: |
+          chcp 65001
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/ --ignore=tests/precondition -v -s --tb=short
       
       - name: Upload test results
         if: always()
@@ -56,3 +62,22 @@ jobs:
         if: failure()
         shell: cmd
         run: echo Test failed! Check output/ folder for screenshots.
+
+      - name: Send email with results
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.dooray.com        # 사내 SMTP 주소로 변경
+          server_port: 465                            # 포트(보통 587 또는 25, SSL은 465)
+          username: ${{ secrets.MAIL_USER }}          # 사내 메일 계정 (Secrets에 등록)
+          password: ${{ secrets.MAIL_PASS }}          # 사내 메일 비밀번호 (Secrets에 등록)
+          subject: FG Automation Playwright Test Results
+          to: taehyung-moon@nhnservice.com, seungbin.an@nhnservice.com                         # 받을 사람 메일 주소
+          from: ${{ secrets.MAIL_USER }}              # 보낼 사람 메일 주소
+          body: |
+            FG Automation Playwright 테스트가 완료되었습니다.
+            📎 결과 파일은 GitHub Actions Artifacts에서 확인하세요.
+
+            실행 일시: ${{ github.run_started_at }}
+            워크플로 링크: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          attachments: output/
