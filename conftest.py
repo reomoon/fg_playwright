@@ -1,4 +1,13 @@
+import sys
+import io
+
+# UTF-8 인코딩 설정
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
 import pytest
+import os
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
@@ -17,6 +26,8 @@ def pytest_runtest_makereport(item, call):
         )
         if page:
             try:
+                # output 폴더 생성 (없으면)
+                os.makedirs("output", exist_ok=True)
                 # 실패 시 현재 화면을 캡처해서 output 폴더에 저장
                 page.screenshot(path=f"output/{item.name}_pytest_fail.png")
                 print(f"☑ 캡처 저장: output/{item.name}_pytest_fail.png")
