@@ -36,6 +36,8 @@ jobs:
             echo wa2_password=${{ secrets.WA2_PASSWORD }}
             echo mo_username=${{ secrets.MO_USERNAME }}
             echo mo_password=${{ secrets.MO_PASSWORD }}
+            echo fr_user_id=${{ secrets.FR_USER_ID }}
+            echo fr_user_mobile_id=${{ secrets.FR_USER_MOBILE_ID }}
           ) > .env
       
       - name: Run precondition tests
