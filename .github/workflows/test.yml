@@ -39,7 +39,8 @@ jobs:
       
       - name: Run Playwright tests
         shell: pwsh
-        run: & "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/ -v -s --tb=short
+        run: |
+          & "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/ -v -s --tb=short
       
       - name: Upload test results
         if: always()
@@ -54,6 +55,6 @@ jobs:
         shell: pwsh
         run: |
           $OutputEncoding = [System.Text.Encoding]::UTF8
-          Write-Host "❌ Test failed!"
+          Write-Host "Test failed!"
           Write-Host "Check output/ folder for screenshots."
           Write-Host "Visit GitHub Actions for Artifacts: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
