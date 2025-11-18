@@ -18,10 +18,10 @@ def test_add_item_to_cart(front_login_fixture):
     search_input.type("Allium", delay=80)  # ms 단위 지연(원하면 40~120 사이로 조절 가능)
 
     vendor_suggestion = page.locator(
-        'div.autoSuggestBox.searchNew ._resultBox li.srch'
+        'div.autoSuggestBox.searchNew ._resultBox li.srch[data-nclick-name="site.keyword.vsuggest"]'
     ).filter(has_text="Allium")
     vendor_suggestion.wait_for(state="visible", timeout=15000)
-    print("☑ 자동완성 'Vendor > Allium' 항목 노출")
+    print("☑ 자동완성 'Vendor > Allium' 항목 노출") 
 
     with page.expect_navigation():
         vendor_suggestion.first.click()
