@@ -6,8 +6,18 @@ def proceed_to_checkout(page: Page):
     page.goto("https://beta-www.fashiongo.net/Cart")
     page.wait_for_selector("button.btn-checkoutAll", timeout=10000)
 
-    # 2. Checkout 버튼 클릭
-    page.locator("button.btn-checkoutAll").click()
+    # 👉 2. 특정 벤더의 "Check Out This Vendor Only" 버튼 클릭
+    #    - 현재 예시: div id="order16502" 안에 있는 btn-checkoutVendor
+    vendor_order_id = "16502"
+    vendor_checkout_sel = f'div#order{vendor_order_id} button.btn-checkoutVendor'
+
+    # 버튼이 뜰 때까지 대기
+    page.wait_for_selector(vendor_checkout_sel, timeout=10000)
+    print("☑ Check Out This Vendor Only 버튼 찾음")
+
+    # 버튼 클릭
+    page.locator(vendor_checkout_sel).click()
+    print("🅿 특정 벤더 체크아웃 버튼 클릭 완료")
 
     # 2-1. 프로모션 모달 확인 및 처리
     try:

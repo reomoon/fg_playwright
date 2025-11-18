@@ -24,8 +24,16 @@ def Checkout_flow(page: Page):
     page.goto("https://beta-www.fashiongo.net/cart")
 
     # 1-1. Checkout 버튼 클릭
-    if not click_button_safe(page, 'button.btn-checkoutAll', "Checkout Vendor"):
+    # if not click_button_safe(page, 'button.btn-checkoutAll', "Checkout Vendor"):
+    #    return False
+    
+    # 1-1. Checkout this vendor only 버튼 클릭
+    order_id = "16502"  # 이미 있다면 이 줄은 생략
+    selector = f'#order{order_id} button.btn-checkoutVendor'
+
+    if not click_button_safe(page, selector, "Checkout Vendor Only"):
         return False
+
 
     # 1-2. 모달 확인
     modal_detected = False
