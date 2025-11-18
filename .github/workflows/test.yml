@@ -16,31 +16,31 @@ jobs:
         uses: actions/checkout@v3
       
       - name: Install dependencies
-        shell: pwsh
+        shell: cmd
         run: |
-          & "${{ env.PYTHON_PATH }}\python.exe" -m pip install -r requirements.txt
-          & "${{ env.PYTHON_PATH }}\python.exe" -m playwright install chromium
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip install -r requirements.txt
+          "${{ env.PYTHON_PATH }}\python.exe" -m playwright install chromium
       
       - name: Create .env file
-        shell: pwsh
+        shell: cmd
         run: |
-          @"
-          fr_username=${{ secrets.FR_USERNAME }}
-          fr_password=${{ secrets.FR_PASSWORD }}
-          va_username=${{ secrets.VA_USERNAME }}
-          va_password=${{ secrets.VA_PASSWORD }}
-          wa1_username=${{ secrets.WA1_USERNAME }}
-          wa1_password=${{ secrets.WA1_PASSWORD }}
-          wa2_username=${{ secrets.WA2_USERNAME }}
-          wa2_password=${{ secrets.WA2_PASSWORD }}
-          mo_username=${{ secrets.MO_USERNAME }}
-          mo_password=${{ secrets.MO_PASSWORD }}
-          "@ | Out-File -FilePath .env -Encoding UTF8
+          (
+            echo fr_username=${{ secrets.FR_USERNAME }}
+            echo fr_password=${{ secrets.FR_PASSWORD }}
+            echo va_username=${{ secrets.VA_USERNAME }}
+            echo va_password=${{ secrets.VA_PASSWORD }}
+            echo wa1_username=${{ secrets.WA1_USERNAME }}
+            echo wa1_password=${{ secrets.WA1_PASSWORD }}
+            echo wa2_username=${{ secrets.WA2_USERNAME }}
+            echo wa2_password=${{ secrets.WA2_PASSWORD }}
+            echo mo_username=${{ secrets.MO_USERNAME }}
+            echo mo_password=${{ secrets.MO_PASSWORD }}
+          ) > .env
       
       - name: Run Playwright tests
-        shell: pwsh
+        shell: cmd
         run: |
-          & "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/ -v -s --tb=short
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/ -v -s --tb=short
       
       - name: Upload test results
         if: always()
@@ -52,9 +52,5 @@ jobs:
       
       - name: Notify on failure
         if: failure()
-        shell: pwsh
-        run: |
-          $OutputEncoding = [System.Text.Encoding]::UTF8
-          Write-Host "Test failed!"
-          Write-Host "Check output/ folder for screenshots."
-          Write-Host "Visit GitHub Actions for Artifacts: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        shell: cmd
+        run: echo Test failed! Check output/ folder for screenshots.
