@@ -1,8 +1,8 @@
 # FG Auto - Playwright 자동화 테스트 프레임워크
 
-Fashion Go 웹사이트의 자동화 테스트를 위한 Playwright 기반 프레임워크입니다.
+FashionGo 웹사이트의 자동화 테스트를 위한 Playwright 기반 프레임워크입니다.
 
-## 📋 목차
+## 목차
 
 - [프로젝트 구조](#프로젝트-구조)
 - [주요 기능](#주요-기능)
@@ -12,7 +12,7 @@ Fashion Go 웹사이트의 자동화 테스트를 위한 Playwright 기반 프�
 - [테스트 실행](#테스트-실행)
 - [주요 컴포넌트](#주요-컴포넌트)
 
-## 📁 프로젝트 구조
+## 프로젝트 구조
 
 ```
 fgauto/
@@ -42,9 +42,9 @@ fgauto/
 - Front(`fr`), Mobile('mo'), Vendor Admin(`va`), Web Admin(`wa`) 등 다양한 계정 타입 지원
 - 계정별 로그인 정보 자동 관리
 
-### 🚀 **비동기 처리**
-- Playwright의 비동기 특성을 활용한 효율적인 테스트
-- pytest-asyncio를 통한 비동기 테스트 지원
+### Playwright 
+- Playwright 특성을 활용한 효율적인 테스트
+- pytest-asyncio를 통한 비동기 테스트 지원 (추후 업데이트)
 
 ## 🛠 설치 및 설정
 
@@ -67,7 +67,7 @@ LOGIN_CREDENTIALS = {
 }
 ```
 
-## 🎮 사용 방법
+## 사용 방법
 
 ### **기본 사용법**
 
@@ -78,41 +78,39 @@ from pages.web.front.front_login import front_login
 
 async def main():
     # 브라우저 시작
-    playwright, browser = await launch_browser()
+    playwright, browser =   launch_browser()
     
     # 하이라이트 기능이 있는 페이지 생성
-    page = await create_highlighted_page(browser)
+    page = create_highlighted_page(browser)
     
     # 웹사이트 접속
-    await page.goto("https://beta-www.fashiongo.net")
+      page.goto("https://beta-www.fashiongo.net")
     
     # 로그인 수행
-    await front_login(page, account="fr")
+      front_login(page, account="fr")
     
     # 브라우저 종료
-    await close_browser(playwright, browser)
+      close_browser(playwright, browser)
 ```
 
 ### **다양한 계정으로 로그인**
 
 ```python
 # Front 계정으로 로그인
-await front_login(page, account="fr")
+  front_login(page, account="fr")
 
 # VA 계정으로 로그인  
-await front_login(page, account="va")
+  front_login(page, account="va")
 
 # WA 계정으로 로그인
-await front_login(page, account="wa")
+  front_login(page, account="wa")
 ```
 
-## ⚙️ 설정 파일
+## 설정 파일
 
 ### **pytest.ini**
 ```ini
 [pytest]
-asyncio_mode = auto
-asyncio_default_fixture_loop_scope = function
 addopts = -s -v --tb=short
 ```
 
@@ -129,9 +127,9 @@ args=[
 ]
 ```
 
-## 🧪 테스트 실행
+## 테스트 실행
 
-### **단일 테스트 실행**
+### 단일 테스트 실행
 ```bash
 python -m pytest test/front_test/test_front_login_run.py
 ```
@@ -175,7 +173,7 @@ python -m pytest
 ```python
 # 요소 선택 시 자동으로 빨간색 테두리 표시
 button = page.locator('button')  # 자동 하이라이트!
-await button.click()
+  button.click()
 
 # JavaScript로 실행되는 하이라이트 로직
 element.style.border = '2px solid red';
@@ -189,21 +187,21 @@ setTimeout(() => {
 ### **완전한 로그인 테스트**
 ```python
 async def test_front_login():
-    playwright, browser = await launch_browser()
-    page = await create_highlighted_page(browser)
+    playwright, browser =   launch_browser()
+    page =   create_highlighted_page(browser)
 
-    await page.goto("https://beta-www.fashiongo.net")
-    await front_login(page, account="fr")
+      page.goto("https://beta-www.fashiongo.net")
+      front_login(page, account="fr")
 
     assert "fashiongo" in page.url.lower()
     print("✅ 로그인 성공!")
 
-    await close_browser(playwright, browser)
+      close_browser(playwright, browser)
 ```
 
-## 🐛 문제 해결
+## 문제 해결
 
-### **일반적인 오류들**
+### 일반적인 오류들
 
 1. **`pytest-asyncio` 설치 필요**
    ```bash
@@ -217,7 +215,7 @@ async def test_front_login():
    - 요소가 존재하는지 확인
    - 브라우저 콘솔 메시지 확인
 
-## 🚀 확장 가능성
+## 확장 가능성
 
 - 추가 페이지 자동화 모듈
 - 다양한 브라우저 지원 (Firefox, Safari)
@@ -227,7 +225,7 @@ async def test_front_login():
 
 ---
 
-**개발자**: Fashion Go 자동화 팀  
+**개발자**: FashionGo 자동화팀  
 **버전**: 1.0.0  
 **최종 업데이트**: 2025년 9월  
 
