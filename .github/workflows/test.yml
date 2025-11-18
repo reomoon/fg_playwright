@@ -1,56 +1,55 @@
 name: Daily Playwright Test
 
-# 워크플로우 실행 조건
 on:
-  workflow_dispatch:  # 수동 실행 (GitHub UI에서 버튼 클릭)
-#   schedule:
-#     - cron: '0 0 * * *'  # 매일 자정(UTC) 실행 (한국 시간 오전 9시)
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   test:
-    runs-on: [self-hosted, vpn]  # Self-hosted runner 사용 (vpn 라벨 설치한 PC에서 실행)
+    runs-on: [self-hosted, vpn]
     
     steps:
-      # 1. 저장소 체크아웃
       - name: Checkout repository
         uses: actions/checkout@v3
       
-    #   # 2. Python 설정
-    #   - name: Set up Python
-    #     uses: actions/setup-python@v4
-    #     with:
-    #       python-version: '3.11'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
       
-      # 3. 의존성 설치
       - name: Install dependencies
         run: |
           python -m pip install -r requirements.txt
           playwright install chromium
       
-      # 4. 환경변수 설정 (.env 파일 생성)
       - name: Create .env file
+        shell: pwsh
         run: |
-          echo "fr_username=${{ secrets.FR_USERNAME }}" > .env
-          echo "fr_password=${{ secrets.FR_PASSWORD }}" >> .env
-          echo "va_username=${{ secrets.VA_USERNAME }}" >> .env
-          echo "va_password=${{ secrets.VA_PASSWORD }}" >> .env
-          echo "wa1_username=${{ secrets.WA1_USERNAME }}" >> .env
-          echo "wa1_password=${{ secrets.WA1_PASSWORD }}" >> .env
-          echo "wa2_username=${{ secrets.WA2_USERNAME }}" >> .env
-          echo "wa2_password=${{ secrets.WA2_PASSWORD }}" >> .env
-          echo "mo_username=${{ secrets.MO_USERNAME }}" >> .env
-          echo "mo_password=${{ secrets.MO_PASSWORD }}" >> .env
+          @"
+          fr_username=${{ secrets.FR_USERNAME }}
+          fr_password=${{ secrets.FR_PASSWORD }}
+          va_username=${{ secrets.VA_USERNAME }}
+          va_password=${{ secrets.VA_PASSWORD }}
+          wa1_username=${{ secrets.WA1_USERNAME }}
+          wa1_password=${{ secrets.WA1_PASSWORD }}
+          wa2_username=${{ secrets.WA2_USERNAME }}
+          wa2_password=${{ secrets.WA2_PASSWORD }}
+          mo_username=${{ secrets.MO_USERNAME }}
+          mo_password=${{ secrets.MO_PASSWORD }}
+          "@ | Out-File -FilePath .env -Encoding UTF8
       
-      # 5. Pytest 실행
       - name: Run Playwright tests
-        run: pytest tests/ -v --tb=short
+        run: pytest tests/ -v -s --tb=short
       
-      # 6. 테스트 결과 업로드 (실패시 스크린샷 등)
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: |
-            output/
+          path: output/
           retention-days: 7
+      
+      - name: Notify on failure
+        if: failure()
+        run: echo "❌ 테스트 실패! output/ 폴더에서 스크린샷을 확인하세요."
