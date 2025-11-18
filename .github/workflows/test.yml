@@ -41,61 +41,120 @@ jobs:
             echo fr_user_mobile_id=${{ secrets.FR_USER_MOBILE_ID }}
           ) > .env
       
-      - name: Run precondition tests
+      - name: Run Precondition tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short --junitxml=output/precondition-results.xml
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html
         continue-on-error: true
 
-      - name: Run main Playwright tests
+      - name: Run Front tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/ --ignore=tests/precondition -v -s --tb=short --junitxml=output/test-results.xml
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/front -v -s --tb=short --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html
+        continue-on-error: true
+
+      - name: Run Mobile tests
+        shell: cmd
+        run: |
+          chcp 65001
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/mobile -v -s --tb=short --junitxml=output/mobile-results.xml --html=output/mobile-report.html --self-contained-html
+        continue-on-error: true
+
+      - name: Run Vendor Admin tests
+        shell: cmd
+        run: |
+          chcp 65001
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/va -v -s --tb=short --junitxml=output/va-results.xml --html=output/va-report.html --self-contained-html
+        continue-on-error: true
+
+      - name: Run Web Admin tests
+        shell: cmd
+        run: |
+          chcp 65001
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/wa -v -s --tb=short --junitxml=output/wa-results.xml --html=output/wa-report.html --self-contained-html
         continue-on-error: true
       
       - name: Generate test summary
         if: always()
-        shell: pwsh
+        shell: cmd
         run: |
-          $summary = @"
-          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-          FG Automation Test Results
-          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-          
-          "@
-          
-          # XML 파일 파싱
-          if (Test-Path "output/test-results.xml") {
-            [xml]$xml = Get-Content "output/test-results.xml"
-            $testsuite = $xml.testsuites.testsuite
+          powershell -Command {
+            $summary = @"
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            FG Automation Test Results
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             
-            $total = $testsuite.tests
-            $passed = [int]$total - [int]$testsuite.failures - [int]$testsuite.errors - [int]$testsuite.skipped
-            $failed = $testsuite.failures
-            $errors = $testsuite.errors
-            $skipped = $testsuite.skipped
+            "@
+            
+            $totalPassed = 0
+            $totalFailed = 0
+            $totalErrors = 0
+            $totalSkipped = 0
+            $totalTests = 0
+            
+            $xmlFiles = @("precondition-results.xml", "front-results.xml", "mobile-results.xml", "va-results.xml", "wa-results.xml")
+            
+            foreach ($xmlFile in $xmlFiles) {
+              $path = "output/$xmlFile"
+              if (Test-Path $path) {
+                [xml]$xml = Get-Content $path
+                $testsuite = $xml.testsuites.testsuite
+                
+                if ($testsuite -ne $null) {
+                  $total = [int]$testsuite.tests
+                  $passed = $total - [int]$testsuite.failures - [int]$testsuite.errors - [int]$testsuite.skipped
+                  $failed = [int]$testsuite.failures
+                  $errors = [int]$testsuite.errors
+                  $skipped = [int]$testsuite.skipped
+                  
+                  $totalPassed += $passed
+                  $totalFailed += $failed
+                  $totalErrors += $errors
+                  $totalSkipped += $skipped
+                  $totalTests += $total
+                  
+                  $testType = $xmlFile -replace "-results.xml"
+                  $status = if ($failed -eq 0 -and $errors -eq 0) { "✅" } else { "❌" }
+                  
+                  $summary += @"
+            $status $testType.ToUpper()
+               Passed:  $passed
+               Failed:  $failed
+               Errors:  $errors
+               Skipped: $skipped
+               
+            "@
+                }
+              }
+            }
             
             $summary += @"
-          ✅ Passed:  $passed
-          ❌ Failed:  $failed
-          ⚠️ Errors:  $errors
-           ⏭ Skipped: $skipped
-          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-             Total:   $total tests
-          
-          "@
-          } else {
-            $summary += "⚠️ 테스트 결과 파일을 찾을 수 없습니다.`n"
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            Total Summary
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            ✅ Total Passed:  $totalPassed
+            ❌ Total Failed:  $totalFailed
+            ⚠️ Total Errors:  $totalErrors
+             ⏭ Total Skipped: $totalSkipped
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+               Grand Total:  $totalTests tests
+            
+            HTML Reports:
+            - precondition-report.html
+            - front-report.html
+            - mobile-report.html
+            - va-report.html
+            - wa-report.html
+            
+            "@
+            
+            $summary | Out-File -FilePath output/summary.txt -Encoding UTF8
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "summary<<EOF"
+            Add-Content -Path $env:GITHUB_OUTPUT -Value $summary
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "EOF"
           }
-          
-          $summary | Out-File -FilePath output/summary.txt -Encoding UTF8
-          
-          # GitHub Output으로 전달
-          "summary<<EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-          $summary | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-          "EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
       
       - name: Upload test results
         if: always()
@@ -121,7 +180,5 @@ jobs:
 
             ${{ steps.summary.outputs.summary }}
 
-            상세 결과는 아래 링크에서 확인하세요:
-            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-            실행 일시: ${{ github.event.head_commit.timestamp || github.run_started_at }}
+            상세 결과는 Artifacts에서 HTML 리포트를 다운로드하여 확인하세요.
+            GitHub Actions: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
