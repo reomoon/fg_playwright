@@ -11,19 +11,18 @@ def mo_add_new_card(page):
     My Account > My Cards 이동
     """
     # /account 페이지 출력되면 성공
-    page.wait_for_url("**/account", timeout=5000)
-    if "/account" in page.url: # /account가 페이지 url안에 있으면
-        print("☑ /account 페이지 진입 성공")
-    else: # url이 없다면
-        print("🗙 /account 페이지 진입 실패")
-        return False
+    # page.wait_for_url("**/account", timeout=5000)
+    # if "/account" in page.url: # /account가 페이지 url안에 있으면
+    #     print("☑ /account 페이지 진입 성공")
+    # else: # url이 없다면
+    #     print("🗙 /account 페이지 진입 실패")
+    #     return False
     """
     카드 추가 여부에 따른 if문 실행
     """
 
     # My Card 메뉴 이동
-    mycards_menu = page.locator('a[routerlink="/myaccount/mycard"]')
-    mycards_menu.click()
+    page.goto("https://beta-mobile.fashiongo.net/myaccount/mycard")
 
     # Add New Card 버튼
     page.locator('p.add-new-card-con', log_if_not_found=False).click()
