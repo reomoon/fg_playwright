@@ -19,7 +19,7 @@ def launch_browser():
     
     # Chromium 브라우저 실행 (키오스크 모드, 화면 표시)
     browser = playwright.chromium.launch(
-        headless=True,  # Headless True는 백단에서 실행
+        headless=False,  # Headless True는 백단에서 실행
         args=[
             # "--kiosk", # 전체화면 키오스크 모드
             "--disable-web-security",  # 보안 제한 해제

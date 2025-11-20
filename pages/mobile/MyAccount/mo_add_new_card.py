@@ -1,5 +1,6 @@
 import os
 import pytesseract            
+import pytest
 from core.page_ocr import captcha_mobile_capture, remove_lines, perform_easyocr
 
 # Tesseract-OCR 경로 설정 (윈도우 사용자만 필요)
@@ -23,6 +24,19 @@ def mo_add_new_card(page):
 
     # My Card 메뉴 이동
     page.goto("https://beta-mobile.fashiongo.net/myaccount/mycard")
+    page.wait_for_timeout(1000)
+    print("☑ /myaccount/mycard 이동")
+
+    # "VISA ending in 4242" 카드가 있는지 확인
+    try:
+        card_element = page.locator('p.card-num', has_text="VISA ending in 4242")
+        if card_element.is_visible():
+            print("🅿 VISA ending in 4242 카드가 이미 존재합니다.")
+            return True
+        else:
+            print("☑ VISA ending in 4242 카드가 없습니다. 새로운 카드를 추가합니다.")
+    except Exception as e:
+        print(f"☑ 카드 확인 중 오류 발생: {e}. 새로운 카드를 추가합니다.")
 
     # Add New Card 버튼
     page.locator('p.add-new-card-con', log_if_not_found=False).click()
@@ -145,7 +159,24 @@ def mo_add_new_card(page):
             page.locator('ion-input[formcontrolname="captchaAnswer"] input').fill("")  # 기존 입력값 초기화
             page.locator('ion-input[formcontrolname="captchaAnswer"] input').type(captcha_text)
         else:
-            print("🅿 카드 추가 완료")
+            print("☑ 카드저장 클릭")
             break  # 팝업이 없으면 루프 종료
     else:
         print("❌ 최대 시도 횟수를 초과했습니다. 카드 추가 실패.")
+
+    # 카드 등록 완료 확인
+    page.wait_for_timeout(2000)  # 페이지 업데이트 대기
+    page.goto("https://beta-mobile.fashiongo.net/myaccount/mycard") # 다시 한번 카드리스트 이동
+
+    # "VISA ending in 4242" 카드가 있는지 확인
+    try:
+        card_element = page.locator('p.card-num', has_text="VISA ending in 4242")
+        if card_element.is_visible():
+            print("🅿 카드 추가 완료 - VISA ending in 4242 확인됨")
+            return True
+        else:
+            print("❌ VISA ending in 4242 카드를 찾을 수 없습니다.")
+            pytest.fail("카드 추가 실패: VISA ending in 4242 요소를 찾을 수 없습니다.")
+    except Exception as e:
+        print(f"❌ 카드 확인 중 오류 발생: {e}")
+        pytest.fail(f"카드 확인 실패: {e}")
