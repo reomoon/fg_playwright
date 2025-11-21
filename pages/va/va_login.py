@@ -31,16 +31,25 @@ def va_login(page, account="va"):
     page.wait_for_url(re.compile(r"https://beta-vendoradmin\.fashiongo\.net/#/home(?:\?.*)?$"), timeout=60000)
     print("🅿 VA URL ok:", page.url)
 
-    # Net Terms 팝업 닫기
-    netterms_popup_element = page.locator('div.label', has_text = "Don't show again today")
+    # 팝업이 뜨기 전에 Net Terms 온보딩 쿠키 추가
+    page.context.add_cookies([{
+        "name": "hideBalanceOnboardingPopup",
+        "value": "true",
+        "domain": "beta-vendoradmin.fashiongo.net",
+        "path": "/"
+    }])
+    print("☑ Net Terms 온보딩 쿠키 적용")
 
-    if netterms_popup_element.is_visible(): # netterms_popup_element 실제 화면에 렌더링되어 보이는지 여부까지 체크 → 보일 때만 클릭 실행 → 클릭 에러 방지
-        try:
-            netterms_popup_element.click()  # 오늘 하루 보지 않기 체크박스 클릭
-            page.locator('i.modal-close-btn').nth(1).click()  # Net Terms팝업 닫기
-            print("☑ Net Terms 팝업 24시간 안보이기를 클릭 했습니다.")
-        except Exception as e:
-            print(f"Net Terms 팝업 클릭 중 에러 발생:{e}")
-    else:
-        print("☑ Net Terms 팝업이 없습니다.")
+    # # Net Terms 팝업 닫기
+    # netterms_popup_element = page.locator('div.label', has_text = "Don't show again today")
+
+    # if netterms_popup_element.is_visible(): # netterms_popup_element 실제 화면에 렌더링되어 보이는지 여부까지 체크 → 보일 때만 클릭 실행 → 클릭 에러 방지
+    #     try:
+    #         netterms_popup_element.click()  # 오늘 하루 보지 않기 체크박스 클릭
+    #         page.locator('i.modal-close-btn').nth(1).click()  # Net Terms팝업 닫기
+    #         print("☑ Net Terms 팝업 24시간 안보이기를 클릭 했습니다.")
+    #     except Exception as e:
+    #         print(f"Net Terms 팝업 클릭 중 에러 발생:{e}")
+    # else:
+    #     print("☑ Net Terms 팝업이 없습니다.")
     
