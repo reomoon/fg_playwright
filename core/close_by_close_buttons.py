@@ -7,7 +7,8 @@ def close_by_close_buttons(page: Page, rounds: int = 3):
     - 너무 오래 기다리지 않게 짧은 timeout만 사용
     """
     close_selectors = [
-        ".item-close"
+        ".item-close",
+        ".modal-close-btn"
     ]
 
     for r in range(rounds):

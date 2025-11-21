@@ -1,4 +1,5 @@
 from core.page_wrapper import HighlightPageWrapper
+from core.close_by_close_buttons import close_by_close_buttons
 
 def create_vendor_account(page):
     vendor_account = "alliumtest" # 벤더 ID
@@ -21,6 +22,9 @@ def create_vendor_account(page):
     # 검색 > "allium" 입력
     vendor_page.keyboard.type("allium", delay=50)    
     vendor_page.locator('div.vendor-name', has_text="Allium").click()
+
+    # Vendor Home 진입 시 팝업
+    close_by_close_buttons(page)
 
     # Account 메뉴 클릭
     # 1."Account"가 보이면 클릭
@@ -45,7 +49,7 @@ def create_vendor_account(page):
         print(f"{vendor_account} 계정 생성 진행 중...")
 
     """
-    Add a New Account > Allium1 계정 생성
+    Add a New Account > Allium 계정 생성
     """
     # + Add New Account 클릭
     vendor_page.locator('a.link.link-light', has_text="Add New Account").click()
@@ -59,6 +63,7 @@ def create_vendor_account(page):
     vendor_page.locator('input[formcontrolname="password"]').type("789456123qQ!", delay=50)
 
     vendor_page.wait_for_timeout(3000) # 3초 대기
+    close_by_close_buttons(page)
     
     # 권한 체크 요소 찾기
     checkboxs = vendor_page.locator('li >> div.check-square')
