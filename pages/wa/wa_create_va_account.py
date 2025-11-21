@@ -4,6 +4,18 @@ from core.close_by_close_buttons import close_by_close_buttons
 def create_vendor_account(page):
     vendor_account = "alliumtest" # 벤더 ID
 
+    # 팝업이 뜨기 전에 Net Terms 온보딩 쿠키 추가
+    page.context.add_cookies([{
+        "name": "hideBalanceOnboardingPopup",
+        "value": "true",
+        "domain": "beta-vendoradmin.fashiongo.net",
+        "path": "/"
+    }])
+    print("☑ Net Terms 온보딩 쿠키")
+
+    # 쿠키 적용을 위해 새로고침
+    page.reload()
+
     # Go To Vendor Admin 클릭 새 탭 열림
     with page.context.expect_page() as new_page_into: # 새 탭이 열릴때까지 기다림
         page.locator('a.header__userinfo__user-info__wholesale', has_text="VENDOR ADMIN").click()
@@ -22,9 +34,7 @@ def create_vendor_account(page):
     # 검색 > "allium" 입력
     vendor_page.keyboard.type("allium", delay=50)    
     vendor_page.locator('div.vendor-name', has_text="Allium").click()
-
-    # Vendor Home 진입 시 팝업
-    close_by_close_buttons(page)
+    print("☑ allium vendor 검색하여 클릭")
 
     # Account 메뉴 클릭
     # 1."Account"가 보이면 클릭
@@ -39,7 +49,6 @@ def create_vendor_account(page):
     manage_account = vendor_page.locator("a", has_text="Manage Account")
     manage_account.wait_for(state="visible", timeout=5000)
     manage_account.click()
-    vendor_page.wait_for_timeout(3000) # 3초 대기
 
     # allium1 계정이 있는지 확인
     if vendor_page.locator("td", has_text=vendor_account).count() > 0:
@@ -63,7 +72,6 @@ def create_vendor_account(page):
     vendor_page.locator('input[formcontrolname="password"]').type("789456123qQ!", delay=50)
 
     vendor_page.wait_for_timeout(3000) # 3초 대기
-    close_by_close_buttons(page)
     
     # 권한 체크 요소 찾기
     checkboxs = vendor_page.locator('li >> div.check-square')
