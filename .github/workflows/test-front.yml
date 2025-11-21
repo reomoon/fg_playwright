@@ -11,6 +11,7 @@ jobs:
     env:
       PYTHON_PATH: C:\Users\NHN\AppData\Local\Programs\Python\Python311
       PYTHONIOENCODING: utf-8
+      HEADLESS: "True"   # Headless 모드 True로 설정
     
     steps:
       - name: Checkout repository

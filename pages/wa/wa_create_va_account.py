@@ -50,7 +50,8 @@ def create_vendor_account(page):
     manage_account.wait_for(state="visible", timeout=5000)
     manage_account.click()
 
-    # allium1 계정이 있는지 확인
+    # alliumtest 계정이 있는지 확인
+    vendor_page.wait_for_timeout(3000) # 대기
     if vendor_page.locator("td", has_text=vendor_account).count() > 0:
         print(f"{vendor_account} 계정이 있습니다. 해당 케이스를 종료 합니다.")
         return # 더 이상 실행하지 않고 종료

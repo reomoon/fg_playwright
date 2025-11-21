@@ -1,4 +1,5 @@
 from playwright.sync_api import sync_playwright
+import os
 
 def launch_browser():
     """
@@ -17,9 +18,11 @@ def launch_browser():
     # Playwright 인스턴스 시작 (동기)
     playwright = sync_playwright().start()
     
+    # 환경변수 HEADLESS가 "True"면 True, 아니면 False
+    headless = os.getenv("HEADLESS", "True").lower() == "true"
     # Chromium 브라우저 실행 (키오스크 모드, 화면 표시)
     browser = playwright.chromium.launch(
-        headless=False,  # Headless True는 백단에서 실행
+        headless=headless,  # Headless True는 백단에서 실행
         args=[
             # "--kiosk", # 전체화면 키오스크 모드
             "--disable-web-security",  # 보안 제한 해제
