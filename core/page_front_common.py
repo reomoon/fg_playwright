@@ -176,14 +176,14 @@ def va_Create_items(page, image_prefix="", size="", pack=""):
             checkbox_div.click()
             print(f"☑ div.check-square #{i} 클릭 시도")
         else:
-            print(f"❌ div.check-square #{i} 클릭 불가 (visible={checkbox_div.is_visible()}, enabled={checkbox_div.is_enabled()})")
+            print(f"🗙 div.check-square #{i} 클릭 불가 (visible={checkbox_div.is_visible()}, enabled={checkbox_div.is_enabled()})")
 
     # color 체크박스 체크 확인
     page.wait_for_timeout(100)
     if checkbox_div.get_attribute("class") and "checked" in checkbox_div.get_attribute("class"):
         print(f"☑ div.check-square #{i} 체크됨")
     else:
-        print(f"❌ div.check-square #{i} 체크 안됨")
+        print(f"🗙 div.check-square #{i} 체크 안됨")
 
     # color 팝업 닫기
     page.locator('i.btn-close').click()
@@ -193,7 +193,7 @@ def va_Create_items(page, image_prefix="", size="", pack=""):
     page.eval_on_selector(input_selector, 'el => el.style.display = "block"')
 
     # 이미지 파일 url로 가져와서 output에 저장한 다음에 업로드 하도록 추가
-    image_dir = 'C:\\playwright\\fg_playwright\\output'
+    image_dir = 'C:\\playwright\\fg_playwright\\image'
     image_paths = [
         os.path.join(image_dir, f'{image_prefix}{i}.png')
         for i in range(1, 3)
