@@ -20,7 +20,7 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
-*.txt
+.txt
 
 # PyTest
 .pytest_cache/
@@ -60,3 +60,5 @@ test-screenshots/
 
 # gitignore 제외
 !image/top.jpg
+!requirements.txt
+!README.md

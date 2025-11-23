@@ -1,5 +1,6 @@
 import os
 import pytesseract            
+import pytest
 from core.page_ocr import captcha_capture, remove_lines, perform_easyocr
 
 # Tesseract-OCR 경로 설정 (윈도우 사용자만 필요)
@@ -16,19 +17,17 @@ def create_card(page):
     })
     # playwright 내장함수 goto로 이동
     page.goto('https://beta-www.fashiongo.net/MyAccount/CreditCard', timeout=90000)
+    page.wait_for_timeout(1000)
     print("☑ /MyAccount/CreditCard 이동")
 
-    """
-    카드 추가 여부에 따른 if문 실행
-    """
-    # all_card_cnt 요소의 숫자 가져오기
+    # "VISA ending in 4242" 카드가 이미 있는지 확인
     try:
-        card_count_text = (page.locator("#all_card_cnt").text_content()).strip()
-        card_count = int(card_count_text) if card_count_text.isdigit() else 0
-        print(f"☑ 감지된 카드 수: {card_count}")
+        card_element = page.locator('p.card-num', has_text="VISA ending in 4242")
+        if card_element.is_visible():
+            print("🅿 VISA ending in 4242 카드가 이미 존재합니다.")
+            return True
     except Exception as e:
-        print(f"❌ 등록된 카드 count 확인 실패: {e}")
-        card_count = 0  # 기본값 사용
+        print(f"☑ 카드 확인 중 오류: {e}")
 
     # Add New Card 버튼
     page.locator('button.btn.btn_m_blue.cls_add_card.add-new-card-btn.nclick').click()
@@ -133,7 +132,24 @@ def create_card(page):
             page.locator('#card_captcha_answer').fill("")  # 기존 입력값 초기화
             page.locator('#card_captcha_answer').type(captcha_text)
         else:
-            print("🅿 카드 추가 완료")
+            print("☑ 카드 저장클릭")
             break  # 팝업이 없으면 루프 종료
     else:
         print("❌ 최대 시도 횟수를 초과했습니다. 카드 추가 실패.")
+
+    # 카드 등록 완료 확인
+    page.wait_for_timeout(2000)  # 페이지 업데이트 대기
+    page.goto("https://beta-www.fashiongo.net/MyAccount/CreditCard") # 다시 한번 카드리스트 이동
+    
+    # "VISA ending in 4242" 카드가 있는지 확인
+    try:
+        card_element = page.locator('p.card-num', has_text="VISA ending in 4242")
+        if card_element.is_visible():
+            print("🅿 카드 추가 완료 - VISA ending in 4242 확인됨")
+            return True
+        else:
+            print("❌ VISA ending in 4242 카드를 찾을 수 없습니다.")
+            pytest.fail("카드 추가 실패: VISA ending in 4242 요소를 찾을 수 없습니다.")
+    except Exception as e:
+        print(f"❌ 카드 확인 중 오류 발생: {e}")
+        pytest.fail(f"카드 확인 실패: {e}")

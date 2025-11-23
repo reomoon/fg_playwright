@@ -1,7 +1,20 @@
 from core.page_wrapper import HighlightPageWrapper
+from core.close_by_close_buttons import close_by_close_buttons
 
 def create_vendor_account(page):
     vendor_account = "alliumtest" # 벤더 ID
+
+    # 팝업이 뜨기 전에 Net Terms 온보딩 쿠키 추가
+    page.context.add_cookies([{
+        "name": "hideBalanceOnboardingPopup",
+        "value": "true",
+        "domain": "beta-vendoradmin.fashiongo.net",
+        "path": "/"
+    }])
+    print("☑ Net Terms 온보딩 쿠키")
+
+    # 쿠키 적용을 위해 새로고침
+    page.reload()
 
     # Go To Vendor Admin 클릭 새 탭 열림
     with page.context.expect_page() as new_page_into: # 새 탭이 열릴때까지 기다림
@@ -21,6 +34,7 @@ def create_vendor_account(page):
     # 검색 > "allium" 입력
     vendor_page.keyboard.type("allium", delay=50)    
     vendor_page.locator('div.vendor-name', has_text="Allium").click()
+    print("☑ allium vendor 검색하여 클릭")
 
     # Account 메뉴 클릭
     # 1."Account"가 보이면 클릭
@@ -35,9 +49,9 @@ def create_vendor_account(page):
     manage_account = vendor_page.locator("a", has_text="Manage Account")
     manage_account.wait_for(state="visible", timeout=5000)
     manage_account.click()
-    vendor_page.wait_for_timeout(3000) # 3초 대기
 
-    # allium1 계정이 있는지 확인
+    # alliumtest 계정이 있는지 확인
+    vendor_page.wait_for_timeout(3000) # 대기
     if vendor_page.locator("td", has_text=vendor_account).count() > 0:
         print(f"{vendor_account} 계정이 있습니다. 해당 케이스를 종료 합니다.")
         return # 더 이상 실행하지 않고 종료
@@ -45,7 +59,7 @@ def create_vendor_account(page):
         print(f"{vendor_account} 계정 생성 진행 중...")
 
     """
-    Add a New Account > Allium1 계정 생성
+    Add a New Account > Allium 계정 생성
     """
     # + Add New Account 클릭
     vendor_page.locator('a.link.link-light', has_text="Add New Account").click()

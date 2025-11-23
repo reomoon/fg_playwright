@@ -1,9 +1,18 @@
 from core.page_wrapper import create_highlighted_page
+from core.close_by_close_buttons import close_by_close_mobile
 
 def mobile_myaccount(page):
-    # Footer Bag 아이콘 선택
-    page.locator('span.icon.account').click()
-    print("☑ footer Account 버튼 클릭 성공")
+    # App 배너 닫기
+    app_popup = page.locator('a.close-get-app-bnr', has_text="close")
+    if app_popup.is_visible():
+        app_popup.click()
+           
+    # 모든 팝업 닫기
+    close_by_close_mobile(page)
+    page.wait_for_timeout(1000)  # 1초 대기
+
+    # My Account 이동
+    page.goto("https://beta-mobile.fashiongo.net/account")
 
     # /account 페이지 출력되면 성공
     page.wait_for_url("**/account", timeout=5000)
