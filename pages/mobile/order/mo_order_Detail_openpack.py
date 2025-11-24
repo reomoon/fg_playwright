@@ -15,7 +15,7 @@ def mobile_orderDetail_openpack(page, product_id):
     page.locator('.btn_openPack').first.click()
     
     # 1번째칸 수량 
-    item_input1 = page.locator('input.num_input.ng-untouched.ng-pristine.ng-valid', log_if_not_found=False)
+    item_input1 = page.locator('input.num_input')
     random_quantity = random.randint(1, 101)  # 1 ~ 100 랜덤값
     item_input1.first.type(str(random_quantity))  # type 랜덤값 입력
     page.wait_for_timeout(2000)  # 2초 대기
