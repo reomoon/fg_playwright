@@ -24,7 +24,7 @@ def va_login_fixture(request):
     page.route("**/*", block_resource)
 
     # va페이지 이동
-    page.goto("https://beta-vendoradmin.fashiongo.net", timeout=120000, wait_until="domcontentloaded")
+    page.goto("https://beta-vendoradmin.fashiongo.net", timeout=120000, wait_until="load")
 
     # 페이지 뷰포트를 최대화 크기로 설정
     page.set_viewport_size({"width": 1680, "height": 900})
