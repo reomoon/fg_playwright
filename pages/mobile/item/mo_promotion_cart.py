@@ -1,4 +1,5 @@
 import random  # 랜덤함수 추가
+import re
 from core.page_wrapper import create_highlighted_page
 from core.page_mobile_common import MO_checkout
 from api_request.promotion_startdate import patch_promotion_start_date
@@ -102,20 +103,26 @@ def mobile_promotion_cart(page, promotion_discount=promotion_discount):
     # 할인 후 금액 추출
     total_money_text = page.locator('div.col.total-money').inner_text()  # "... $2,574.00"
     print(f"☑ 할인 후 금액: {total_money_text}")
+    
     # 마지막 $금액만 추출
-    import re
     match = re.findall(r"\$[\d,]+\.\d{2}", total_money_text)
     if match:
         total_money = float(match[-1].replace("$", "").replace(",", ""))
     else:
         total_money = None
 
-    # 할인 계산 (할인율을 인자로 받음)
+     # 할인 계산 (할인율을 인자로 받음)
     expected_saved = round(sale_price * (promotion_discount / 100), 2)
     expected_total = round(sale_price - expected_saved, 2)
 
+    # 소수점 둘째자리까지 반올림
+    saved_amount_2 = round(saved_amount, 2)
+    total_money_2 = round(total_money, 2)
+    expected_saved_2 = round(expected_saved, 2)
+    expected_total_2 = round(expected_total, 2)
+
     # 결과 판정
-    if abs(saved_amount - expected_saved) < 0.01 and abs(total_money - expected_total) < 0.01:
-        print(f"🅿 할인금액: ${saved_amount}(할인율: {promotion_discount}%), 최종: ${total_money}")
+    if saved_amount_2 == expected_saved_2 and total_money_2 == expected_total_2:
+        print(f"🅿 할인금액: ${saved_amount_2:.2f}(할인율: {promotion_discount}%), 최종: ${total_money_2:.2f}")
     else:
-        print(f"❌ 할인 계산 불일치. (예상 할인: ${expected_saved}, 실제 할인: ${saved_amount}, 예상 최종: ${expected_total}, 실제 최종: ${total_money})")
+        print(f"❌ 할인 계산 불일치. (예상 할인: ${expected_saved_2:.2f}, 실제 할인: ${saved_amount_2:.2f}, 예상 최종: ${expected_total_2:.2f}, 실제 최종: ${total_money_2:.2f})")
