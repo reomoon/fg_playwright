@@ -58,7 +58,7 @@ jobs:
       
       - name: Generate test summary
         if: always()
-        id: summary  # body {{ steps.summary.outputs.summary }}에 사용
+        id: summary  # body { steps.summary.outputs.summary }에 사용
         shell: pwsh
         run: |
           & ./scripts/generate-test-summary.ps1 -OutputPath "output"

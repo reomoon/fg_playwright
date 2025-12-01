@@ -58,7 +58,7 @@ Total Summary
 ✅ Total Passed:  $totalPassed
 ❌ Total Failed:  $totalFailed
 ⚠️ Total Errors:  $totalErrors
-⏭️ Total Skipped: $totalSkipped
+⏭ Total Skipped: $totalSkipped
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    Grand Total:  $totalTests tests
 
