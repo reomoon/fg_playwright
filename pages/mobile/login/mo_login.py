@@ -54,3 +54,12 @@ def mo_login(page, account="mo"):
 
     # 페이지 로딩 상태를 기다림(로그인 후 로딩 딜레이 있어 조건 추가)
     page.wait_for_timeout(3000) # 1초 대기
+
+    # 팝업이 뜨기 전에 Net Terms 온보딩 쿠키 추가
+    page.context.add_cookies([{
+        "name": "CYBER_MONDAY_POPUP",
+        "value": "HIDE",
+        "domain": "beta-mobile.fashiongo.net",
+        "path": "/"
+    }])
+    print("☑ CYBER_MONDAY_POPUP 쿠키 적용")
