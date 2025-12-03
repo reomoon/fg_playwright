@@ -3,5 +3,6 @@ playwright
 pytest-playwright
 requests
 python-dotenv
-pytesseract
+easyocr
 opencv-python # cv2 library for image processing
+Pillow

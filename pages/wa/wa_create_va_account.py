@@ -14,7 +14,7 @@ def create_vendor_account(page):
     print("☑ Net Terms 온보딩 쿠키")
 
     # 쿠키 적용을 위해 새로고침
-    page.reload()
+    # page.reload()
 
     # Go To Vendor Admin 클릭 새 탭 열림
     with page.context.expect_page() as new_page_into: # 새 탭이 열릴때까지 기다림
@@ -22,6 +22,15 @@ def create_vendor_account(page):
 
     vendor_page = new_page_into.value # 새로 열린 페이지 비동기로 객체 지정
     vendor_page.set_viewport_size({"width": 1680, "height": 900}) # 화면 사이즈 조절
+
+    # 리소스 차단 추가(페이지 로딩을 위한)
+    def block_resources(route):
+        if route.request.resource_type in ["image", "stylesheet", "font"]:
+            route.abort()
+        else:
+            route.continue_()
+
+    vendor_page.route("**/*", block_resources)
 
     # vendor list 화면 company name 요소 나올 때까지 기다리기
     vendor_page.wait_for_selector('select', timeout=90000) # timeout 90초

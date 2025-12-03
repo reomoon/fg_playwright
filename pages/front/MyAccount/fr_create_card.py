@@ -1,10 +1,6 @@
 import os
-import pytesseract            
 import pytest
 from core.page_ocr import captcha_capture, remove_lines, perform_easyocr
-
-# Tesseract-OCR 경로 설정 (윈도우 사용자만 필요)
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 # Pages/front openpack order
 def create_card(page):
@@ -89,8 +85,12 @@ def create_card(page):
     # 선 제거
     remove_lines(input_image_path, output_image_path)
     
-    # OCR 처리(인식하는데 좀 걸리지만 80%이상 성공)
+    # OCR 처리 - EasyOCR 사용
     captcha_text = perform_easyocr(output_image_path)
+    
+    if not captcha_text:
+        print("❌ OCR 인식 실패")
+        pytest.fail("CAPTCHA 인식 실패")
 
     # 캡챠 입력
     page.locator('#card_captcha_answer').type(captcha_text)
@@ -101,9 +101,9 @@ def create_card(page):
         page.locator('.btn.btn_m_blue.add_btn.cls_save_card').click()
         page.wait_for_timeout(3000)  # 3초 대기
 
-        # 팝업 확인(log_if_not_found=False로 실제 팝업이 안나와도 ❌ 출력 안함)
+        # 팝업 확인
         if page.locator('#close-showInfoError', log_if_not_found=False).is_visible():
-            print(f"Invalid Verification Code 팝업 감지됨. OCR 재시도 중... (시도 {attempt + 1}/3)")
+            print(f"⚠️ Invalid Verification Code 팝업 감지됨. OCR 재시도 중... (시도 {attempt + 1}/3)")
             # 팝업 닫기
             page.locator('#close-showInfoError').click()
 
@@ -116,8 +116,6 @@ def create_card(page):
 
             # 새로 생성
             remove_lines(input_image_path, output_image_path)
-
-            # 파일 생성 대기
             page.wait_for_timeout(500)
             
             # OCR 다시 수행
@@ -125,17 +123,19 @@ def create_card(page):
 
             # OCR 결과 검증
             if not captcha_text:
-                print("☒ OCR 결과가 유효하지 않아 재시도합니다.")
-                continue  # 다음 시도로 이동
+                print("☒ OCR 결과 유효하지 않음. 재시도합니다.")
+                continue
 
             # 캡챠 입력
-            page.locator('#card_captcha_answer').fill("")  # 기존 입력값 초기화
+            page.locator('#card_captcha_answer').fill("")
             page.locator('#card_captcha_answer').type(captcha_text)
+            print(f"✅ 새 CAPTCHA 입력: {captcha_text}")
         else:
-            print("☑ 카드 저장클릭")
-            break  # 팝업이 없으면 루프 종료
+            print("☑ 카드 저장 성공")
+            break
     else:
-        print("❌ 최대 시도 횟수를 초과했습니다. 카드 추가 실패.")
+        print("❌ 최대 시도 횟수 초과. 카드 추가 실패.")
+        pytest.fail("CAPTCHA 인식 실패로 카드 추가 실패")
 
     # 카드 등록 완료 확인
     page.wait_for_timeout(2000)  # 페이지 업데이트 대기

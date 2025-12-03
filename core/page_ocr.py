@@ -1,33 +1,39 @@
 import cv2
 import os
+from PIL import Image
+import numpy as np
 
 def perform_easyocr(input_image_path):
     """
-    EasyOCR을 사용하여 캡챠 이미지를 처리하고 숫자를 추출하는 함수
-
-    Args:
-        input_image_path (str): 캡챠 이미지 경로 (output 폴더 내)
-
-    Returns:
-        str: OCR로 추출된 숫자 텍스트
+    고속 EasyOCR - 빠른 인식 최우선
+    최소한의 전처리로 속도 극대화
     """
     import easyocr
+    import torch
+    
+    print("🔍 EasyOCR 인식 중...")
 
-    # output 폴더 경로 설정
-    output_dir = os.path.join(os.getcwd(), "output")
-    preprocessed_path = os.path.join(output_dir, "preprocessed.png")
-    print("🔍 OCR 인식 중")
-
-    # 이미지 전처리 (이진화, 노이즈 제거 등)
+    # 이미지 로드
     image = cv2.imread(input_image_path, cv2.IMREAD_GRAYSCALE)
-    _, binary_image = cv2.threshold(image, 150, 255, cv2.THRESH_BINARY)
-    cv2.imwrite(preprocessed_path, binary_image)  # output 폴더에 저장
-
-    reader = easyocr.Reader(['en'], gpu=False)
-    results = reader.readtext(preprocessed_path, detail=0)  # output 폴더에서 읽기
-    captcha_text = ''.join(filter(str.isdigit, ''.join(results)))
-    print(f"☑ EasyOCR 인식 결과: {captcha_text}")
-    return captcha_text
+    if image is None:
+        print("❌ 이미지 로드 실패")
+        return ""
+    
+    # 최소한의 전처리: 간단한 이진화만
+    _, binary = cv2.threshold(image, 150, 255, cv2.THRESH_BINARY)
+    
+    # EasyOCR 인식 - GPU 사용 가능하면 활용
+    try:
+        gpu_available = torch.cuda.is_available()
+        reader = easyocr.Reader(['en'], gpu=gpu_available, verbose=False)
+        results = reader.readtext(binary, detail=0)
+        captcha_text = ''.join(filter(str.isdigit, ''.join(results))).strip()
+        
+        print(f"☑ EasyOCR 인식 결과: {captcha_text}")
+        return captcha_text
+    except Exception as e:
+        print(f"❌ EasyOCR 오류: {e}")
+        return ""
 
 
 def remove_lines(input_image_path, output_image_path):
