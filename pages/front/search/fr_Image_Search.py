@@ -12,8 +12,9 @@ def Image_search(page: Page):
     print("🅿 카메라 버튼 클릭 완료")
 
     # 2. fr_Image_Search.py 파일이 있는 폴더 기준으로 jeans.jpg 상대 경로 설정
-    current_dir = Path(__file__).parent
-    file_path = (current_dir / "jeans.jpg").resolve()
+    current_dir = Path(__file__).resolve().parent  # .../pages/front/search
+    project_root = current_dir.parent.parent.parent  # .../fg_playwright (루트)
+    file_path = (project_root / "image" / "jeans.jpg").resolve()
 
     if not file_path.exists():
         print(f"❌ 업로드할 이미지 파일을 찾을 수 없습니다: {file_path}")
