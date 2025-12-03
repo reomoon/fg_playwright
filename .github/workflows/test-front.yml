@@ -2,8 +2,8 @@ name: Daily Playwright Front Test
 
 on:
   workflow_dispatch:
-  # schedule:
-  #   - cron: '0 0 * * *'
+  schedule:
+    - cron: '0 0 * * *' # 매일 한국시간 9시에 실행
 
 jobs:
   test:

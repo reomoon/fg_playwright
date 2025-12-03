@@ -2,3 +2,4 @@ pytest
 playwright
 pytest-playwright
 requests
+opencv-python # cv2 library for image processing
