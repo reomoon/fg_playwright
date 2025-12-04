@@ -1,82 +1,140 @@
 from playwright.sync_api import Page
 from pathlib import Path
 
+
 def capture_screenshot(page: Page, name: str):
     path = Path(f"screenshots/{name}.png")
     path.parent.mkdir(parents=True, exist_ok=True)
     page.screenshot(path=path)
-    print(f"[스크린샷 저장] {path}")
+    print(f"🗙 [스크린샷 저장] {path}")
 
-def click_button_safe(page: Page, selector: str, name: str, timeout=5000):
+
+def click_button_safe(page: Page, selector: str, step_name: str, timeout: int = 5000) -> bool:
+    """
+    버튼 클릭을 안전하게 시도하는 헬퍼 함수.
+    - 성공: True 반환
+    - 실패: 스크린샷 남기고 False 반환
+    """
+    print(f"☑ [{step_name}] 버튼 찾기 시도: {selector}")
     try:
         page.wait_for_selector(selector, timeout=timeout)
         button = page.locator(selector)
         button.click()
-        print(f"[클릭 성공] {name}")
+        print(f"🅿 [{step_name}] 버튼 클릭 성공")
         return True
     except Exception as e:
-        print(f"[클릭 실패] {name} - {e}")
-        capture_screenshot(page, f"fail_{name.replace(' ', '_')}")
+        print(f"❌ [{step_name}] 버튼 클릭 실패 - {e}")
+        capture_screenshot(page, f"fail_{step_name.replace(' ', '_')}")
         return False
+
 
 def Checkout_store_credit_flow(page: Page):
-    # 1. 쇼핑백 페이지 진입
-    page.goto("https://beta-www.fashiongo.net/cart")
+    """
+    반환값: (success: bool, message: str)
 
-    # 1-1. Checkout 버튼 클릭
-    # if not click_button_safe(page, 'button.btn-checkoutAll', "Checkout Vendor"):
-    #    return False
-    
-    # 1-1. Checkout this vendor only 버튼 클릭
-    order_id = "16502"  # 이미 있다면 이 줄은 생략
+    success == False 인 경우, message 에
+    'STEPx - 어떤 작업에서 어떤 이유로 실패했는지' 를 담아서 반환.
+    """
+
+    # ─────────────────────────────
+    # STEP 1. Cart 페이지 진입
+    # ─────────────────────────────
+    step = "STEP1 - Cart 페이지 이동"
+    print(f"☑ {step}")
+    try:
+        page.goto("https://beta-www.fashiongo.net/cart")
+        page.wait_for_load_state("load")
+        print(f"🅿 {step} 완료")
+    except Exception as e:
+        msg = f"{step} 실패: 페이지 이동 중 예외 발생 ({e})"
+        print(f"❌ {msg}")
+        capture_screenshot(page, "fail_step1_cart_goto")
+        return False, msg
+
+    # ─────────────────────────────
+    # STEP 2. Checkout this vendor only 버튼 클릭
+    # ─────────────────────────────
+    step = "STEP2 - Checkout Vendor Only 버튼 클릭"
+    order_id = "16502"  # 필요 시 파라미터로 변경 가능
     selector = f'#order{order_id} button.btn-checkoutVendor'
 
-    if not click_button_safe(page, selector, "Checkout Vendor Only"):
-        return False
+    if not click_button_safe(page, selector, step_name=step):
+        msg = f"{step} 실패: 버튼 클릭 불가"
+        return False, msg
 
-    # 1-2. 모달 확인
+    # ─────────────────────────────
+    # STEP 3. 모달(Pre-checkout) 처리
+    # ─────────────────────────────
+    step = "STEP3 - 모달 확인 및 Continue To Checkout 클릭"
+    print(f"☑ {step}")
     modal_detected = False
     try:
         for _ in range(30):
-            modal_visible = page.evaluate("""() => {
-                const modal = document.querySelector('div.modal_beforeCheckout');
-                return modal && window.getComputedStyle(modal).display === 'block';
-            }""")
+            modal_visible = page.evaluate(
+                """() => {
+                    const modal = document.querySelector('div.modal_beforeCheckout');
+                    return modal && window.getComputedStyle(modal).display === 'block';
+                }"""
+            )
             if modal_visible:
-                print("[모달 감지됨] display: block")
+                print("🅿 [모달 감지] modal_beforeCheckout display: block")
                 modal_detected = True
                 break
             page.wait_for_timeout(100)
     except Exception as e:
-        print(f"[모달 체크 중 예외 발생] {e}")
-        capture_screenshot(page, "fail_modal_check_exception")
+        error_text = str(e)
+        if "Execution context was destroyed" in error_text:
+            # 네비게이션 때문에 컨텍스트가 사라진 경우 → 모달 없이 진행
+            print(f"☑ {step}: 네비게이션 감지, 모달 없이 진행 (에러 무시) - {e}")
+            modal_detected = False
+        else:
+            msg = f"{step} 실패: 모달 표시 여부 체크 중 예외 발생 ({e})"
+            print(f"❌ {msg}")
+            capture_screenshot(page, "fail_step3_modal_check")
+            return False, msg
 
     if modal_detected:
         try:
             modal_button = page.locator('div.modal_beforeCheckout button.btn-sure')
             if modal_button.is_visible():
                 modal_button.click()
-                print("[클릭 성공] 모달 내 Continue To Checkout")
+                print("🅿 [모달] Continue To Checkout 버튼 클릭 성공")
             else:
-                print("[클릭 실패] 모달 내 버튼이 visible하지 않음")
-                capture_screenshot(page, "fail_Continue_To_Checkout_not_visible")
-                return False
+                msg = f"{step} 실패: 모달 버튼이 visible 하지 않음"
+                print(f"❌ {msg}")
+                capture_screenshot(page, "fail_step3_modal_button_not_visible")
+                return False, msg
         except Exception as e:
-            print(f"[모달 처리 중 예외 발생] {e}")
-            capture_screenshot(page, "fail_modal_exception")
-            return False
+            msg = f"{step} 실패: 모달 버튼 클릭 중 예외 발생 ({e})"
+            print(f"❌ {msg}")
+            capture_screenshot(page, "fail_step3_modal_click_exception")
+            return False, msg
     else:
-        print("[모달 없음] 모달 무시하고 진행")
+        print("☑ [모달 없음] 모달 없이 다음 단계 진행")
 
-    # 2. 체크아웃 1단계 → 2단계
+    # ─────────────────────────────
+    # STEP 4. Checkout Step1 → Step2 (Save & Continue)
+    # ─────────────────────────────
+    step = "STEP4 - Save & Continue (Step1) 버튼 클릭"
     page.wait_for_load_state("load")
-    page.wait_for_selector("button.btn-goToPayment", timeout=15000)
-    if not click_button_safe(page, 'button.btn-goToPayment', "Save & Continue - Step1"):
-        return False
-
-    # 🔹 2-1. Payment(체크아웃 2단계)에서 Store Credit 문구 노출 확인
     try:
-        print("☑ Payment 단계 Store Credit 문구 확인 시작")
+        page.wait_for_selector("button.btn-goToPayment", timeout=15000)
+    except Exception as e:
+        msg = f"{step} 실패: 버튼이 화면에 나타나지 않음 ({e})"
+        print(f"❌ {msg}")
+        capture_screenshot(page, "fail_step4_button_not_found")
+        return False, msg
+
+    if not click_button_safe(page, "button.btn-goToPayment", step_name=step):
+        msg = f"{step} 실패: 버튼 클릭 실패"
+        return False, msg
+
+    # ─────────────────────────────
+    # STEP 5. Payment 단계 Store Credit 문구 노출 확인
+    # ─────────────────────────────
+    step = "STEP5 - Payment 단계 Store Credit 문구 확인"
+    print(f"☑ {step}")
+    try:
         # Payment 요약 영역 로딩 대기
         page.wait_for_selector("div.points-price dl.jsCreditInfo dt", timeout=10000)
 
@@ -84,56 +142,85 @@ def Checkout_store_credit_flow(page: Page):
         dt_text = dt_locator.inner_text().strip()
 
         if "Store Credit" in dt_text:
-            print(f"🅿 Store Credit 문구 노출 확인 (dt 텍스트: {dt_text})")
+            print(f"🅿 {step} 완료 - dt 텍스트: {dt_text}")
         else:
-            print(f"❌ dt 텍스트에 'Store Credit' 문구가 포함되지 않음 (현재: {dt_text})")
+            msg = f"{step} 실패: dt 텍스트에 'Store Credit' 문구 미포함 (현재: {dt_text})"
+            print(f"❌ {msg}")
             capture_screenshot(page, "fail_store_credit_text")
-            return False
+            return False, msg
     except Exception as e:
-        print(f"❌ Store Credit 문구 확인 중 예외 발생: {e}")
+        msg = f"{step} 실패: Store Credit 문구 확인 중 예외 발생 ({e})"
+        print(f"❌ {msg}")
         capture_screenshot(page, "fail_store_credit_exception")
-        return False
+        return False, msg
 
-    # 3. 체크아웃 2단계 → 3단계
+    # ─────────────────────────────
+    # STEP 6. Checkout Step2 → Step3 (Save & Continue)
+    # ─────────────────────────────
+    step = "STEP6 - Save & Continue (Step2) 버튼 클릭"
     page.wait_for_load_state("load")
-    if not click_button_safe(page, 'button.btn-goToReview', "Save & Continue - Step2"):
-        return False
+    if not click_button_safe(page, "button.btn-goToReview", step_name=step):
+        msg = f"{step} 실패: 버튼 클릭 실패"
+        return False, msg
 
-    # 4. 체크아웃 3단계 → Submit Order
+    # ─────────────────────────────
+    # STEP 7. Checkout Step3 → Submit Order
+    # ─────────────────────────────
+    step = "STEP7 - Submit Order 버튼 클릭"
     page.wait_for_load_state("load")
-    if not click_button_safe(page, 'button.btn-checkout', "Submit Order"):
-        return False
+    if not click_button_safe(page, "button.btn-checkout", step_name=step):
+        msg = f"{step} 실패: 버튼 클릭 실패"
+        return False, msg
 
-    # 5. 오더 번호 추출
+    # ─────────────────────────────
+    # STEP 8. Submit 이후 Order No 추출
+    # ─────────────────────────────
+    step = "STEP8 - Order No 추출"
+    print(f"☑ {step}")
     page.wait_for_load_state("load")
     try:
         page.wait_for_selector("a.link-order", timeout=10000)
         order_no = page.locator("a.link-order").inner_text().strip()
-        print(f"[오더번호 추출 완료] {order_no}")
-    except:
-        print("[오더번호 추출 실패] - 스크린샷 캡처")
+        print(f"🅿 {step} 완료 - 추출된 오더번호: {order_no}")
+    except Exception as e:
+        msg = f"{step} 실패: Order No 추출 중 예외 발생 ({e})"
+        print(f"❌ {msg}")
         capture_screenshot(page, "fail_order_no")
-        return False
+        return False, msg
 
-    # 6. 오더 히스토리에서 오더번호 확인
+    # ─────────────────────────────
+    # STEP 9. Order History 에서 방금 주문한 Order No 확인
+    # ─────────────────────────────
+    step = "STEP9 - Order History 에서 Order No 확인"
+    print(f"☑ {step}")
     page.goto("https://beta-www.fashiongo.net/MyAccount/OrderHistory")
     try:
+        found = False
         for _ in range(50):
             order_sn_locator = page.locator("span.order-sn").filter(has_text=order_no)
             if order_sn_locator.first.is_visible():
-                print(f"[오더 확인 완료] 오더번호 {order_no} 이력에 존재함")
+                print(f"🅿 {step} 완료 - Order History 에서 {order_no} 발견")
+                found = True
                 break
             page.wait_for_timeout(200)
-        else:
-            print(f"[오더 확인 실패] 오더번호 {order_no} 이력에 없음")
-            capture_screenshot(page, "fail_order_history")
-            return False
-    except Exception as e:
-        print(f"[오더 히스토리 페이지 오류] {e}")
-        capture_screenshot(page, "fail_order_history_page")
-        return False
 
-    # 7. 오더 디테일 페이지 진입 및 오더번호 확인 + Store Credit 금액 검증
+        if not found:
+            msg = f"{step} 실패: Order History 에서 {order_no} 를 찾지 못함"
+            print(f"❌ {msg}")
+            capture_screenshot(page, "fail_order_history")
+            return False, msg
+
+    except Exception as e:
+        msg = f"{step} 실패: Order History 페이지 로딩/조회 중 예외 발생 ({e})"
+        print(f"❌ {msg}")
+        capture_screenshot(page, "fail_order_history_page")
+        return False, msg
+
+    # ─────────────────────────────
+    # STEP 10. Order Detail 페이지 + Store Credit 금액 검증
+    # ─────────────────────────────
+    step = "STEP10 - Order Detail + Store Credit 금액 검증"
+    print(f"☑ {step}")
     try:
         # 오더 이력 리스트에서 오더 넘버 클릭
         order_sn_locator.first.click()
@@ -144,44 +231,47 @@ def Checkout_store_credit_flow(page: Page):
         h1_text = page.locator("div.tit_bx h1").inner_text().strip()
 
         if order_no in h1_text:
-            print(f"[디테일 페이지 확인 완료] 오더번호 {order_no} 표시됨")
+            print(f"🅿 Order Detail 페이지에서 오더번호 {order_no} 표시 확인")
         else:
-            print(f"[디테일 페이지 확인 실패] h1 텍스트에 오더번호 {order_no} 없음")
+            msg = f"{step} 실패: h1 텍스트에 오더번호 {order_no} 없음"
+            print(f"❌ {msg}")
             capture_screenshot(page, "fail_order_detail_h1_mismatch")
-            return False
+            return False, msg
 
-        # 🔹 Store Credit 금액 -$200.00 표시 여부 확인
+        # Store Credit 금액 -$200.00 표시 여부 확인
         try:
             print("☑ 디테일 페이지 Store Credit 금액 확인 시작")
-            # price_info 블럭 로딩 대기
             page.wait_for_selector("div.price_info", timeout=10000)
 
-            # li 중에서 'Store Credit:' 이 포함된 행 찾기
             store_credit_li = page.locator("div.price_info li").filter(has_text="Store Credit:")
             if not store_credit_li.first.is_visible():
-                print("❌ Store Credit 행(li)이 보이지 않습니다.")
+                msg = f"{step} 실패: Store Credit 행(li)이 보이지 않음"
+                print(f"❌ {msg}")
                 capture_screenshot(page, "fail_detail_store_credit_li_not_visible")
-                return False
+                return False, msg
 
-            # 해당 li 안의 span.price.discount 값 읽기
             store_credit_value = store_credit_li.first.locator("span.price.discount").inner_text().strip()
             print(f"☑ 디테일 페이지 Store Credit 표시 값: {store_credit_value}")
 
             expected_value = "-$200.00"
             if store_credit_value == expected_value:
                 print(f"🅿 Store Credit 금액 {expected_value} 표시 확인 완료")
-                return True
+                print("🅿 스토어 크레딧 적용 체크아웃 플로우 전체 성공")
+                return True, "스토어 크레딧 적용 체크아웃 플로우 성공"
             else:
-                print(f"❌ Store Credit 금액 불일치 (기대값: {expected_value}, 실제값: {store_credit_value})")
+                msg = f"{step} 실패: Store Credit 금액 불일치 (기대값: {expected_value}, 실제값: {store_credit_value})"
+                print(f"❌ {msg}")
                 capture_screenshot(page, "fail_detail_store_credit_value_mismatch")
-                return False
+                return False, msg
 
         except Exception as e:
-            print(f"❌ 디테일 페이지 Store Credit 금액 확인 중 예외 발생: {e}")
+            msg = f"{step} 실패: 디테일 페이지 Store Credit 금액 확인 중 예외 발생 ({e})"
+            print(f"❌ {msg}")
             capture_screenshot(page, "fail_detail_store_credit_exception")
-            return False
+            return False, msg
 
     except Exception as e:
-        print(f"[디테일 페이지 확인 중 예외 발생] {e}")
+        msg = f"{step} 실패: 디테일 페이지 이동/검증 중 예외 발생 ({e})"
+        print(f"❌ {msg}")
         capture_screenshot(page, "fail_order_detail_page_exception")
-        return False
+        return False, msg
