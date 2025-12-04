@@ -1,7 +1,16 @@
+import requests
 from core.page_wrapper import HighlightPageWrapper
 from core.close_by_close_buttons import close_by_close_buttons
+from pages.wa.wa_login_token import wa_login_token
+from core.page_account import LOGIN_CREDENTIALS
 
-def create_vendor_account(page):
+def create_vendor_account(page, logs=None):
+    """
+    wa_login에서 받은 page로 바로 벤더 계정 생성
+    (로그인과 토큰 추출은 wa_login에서 처리)
+    """
+
+    # Vendor Admin 검색 페이지 진입
     vendor_account = "alliumtest" # 벤더 ID
 
     # 팝업이 뜨기 전에 Net Terms 온보딩 쿠키 추가
