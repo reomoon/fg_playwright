@@ -37,7 +37,7 @@ def wa_login_token(page, account="wa2"):
         print(f"  - {cookie['name']}: {cookie['value'][:30]}...")
         if cookie['name'] == 'tokenID':
             auth_token = cookie['value']
-            print(f"✅ tokenID 찾음: {auth_token[:50]}...")
+            print(f"🅿 tokenID 찾음: {auth_token[:50]}...")
             break
 
     if not auth_token:
