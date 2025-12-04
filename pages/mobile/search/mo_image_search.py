@@ -24,16 +24,40 @@ def mobile_image_search(page):
     page.wait_for_timeout(1000)  # 충분히 대기
 
     # 이미지 파일 경로
-    file_path = Path("C:\\playwright\\fg_playwright\\image\\top.jpg").resolve()
+    current_dir = Path(__file__).parent
+    file_path = (current_dir / "top.jpg").resolve()
+
+    print(f"☑ 업로드할 이미지 파일 경로: {file_path}")
+
+    if not file_path.exists():
+        print(f"❌ 업로드할 이미지 파일을 찾을 수 없습니다: {file_path}")
+        raise FileNotFoundError(f"이미지 파일을 찾을 수 없습니다: {file_path}")
+
 
     # 이미지 검색 API 응답을 기다리면서 파일 업로드
     def is_image_search_response(response):
         # API https://beta-mobile.fashiongo.net/api/mobile/image-search/partials?
         return "api/mobile/image-search/partials" in response.url
 
+    # input[type="file"]가 이미 있으면 바로 사용, 없으면 최대 30초 대기
+    try:
+        file_input = page.locator('input[type="file"]').first
+        if not file_input.count():
+            page.wait_for_selector('input[type="file"]', state="attached", timeout=30000)
+            file_input = page.locator('input[type="file"]').first
+        print("☑ 파일 input 확인")
+    except Exception as e:
+        print("❌ 파일 input을 찾을 수 없습니다:", e)
+        raise
+
+    # 파일 업로드
+    file_input.set_input_files(str(file_path))
+    print("☑ 파일 업로드 완료, 3초 대기")
+    page.wait_for_timeout(3000)
+
+    # 그 다음에 API 응답 대기
     with page.expect_response(is_image_search_response, timeout=30000) as response_info:
-        # input[type="file"] 요소에 직접 파일 지정
-        page.set_input_files('input[type="file"]', file_path)
+        pass  # 여기서는 별도 동작 없이 응답만 기다림
 
     response = response_info.value
     data = response.json()
