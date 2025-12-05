@@ -19,7 +19,13 @@ $totalSkipped = 0
 $totalTests = 0
 
 $xmlFiles = @("precondition-results.xml", "front-results.xml", "mobile-results.xml", "va-results.xml", "wa-results.xml")
-$testLabels = @("precondition" = "⚡Precondition"; "front" = "🌐 Front"; "mobile" = "📲 Mobile"; "va" = "👨‍💼 Vendor Admin"; "wa" = "⚙️ Web Admin")
+$testLabels = @{
+    "precondition" = "⚡ PRECONDITION"
+    "front"       = "🌐 Front"
+    "mobile"      = "📲 MOBILE"
+    "va"          = "👨‍💼 VENDOR ADMIN"
+    "wa"          = "⚙️ WEB ADMIN"
+}
 
 foreach ($xmlFile in $xmlFiles) {
     $path = "$OutputPath/$xmlFile"
