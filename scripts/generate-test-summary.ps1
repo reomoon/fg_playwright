@@ -6,10 +6,8 @@ param(
 $startTime = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
 
 $summary = @"
-[FG Automation] Test Results
-Started at: $startTime
-
-"@
+FG Automation Test Results ($startTime)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 $totalPassed = 0
 $totalFailed = 0
@@ -19,11 +17,11 @@ $totalTests = 0
 
 $xmlFiles = @("precondition-results.xml", "front-results.xml", "mobile-results.xml", "va-results.xml", "wa-results.xml")
 $testLabels = @{
-    "precondition" = "PRECONDITION"
-    "front"       = "Front"
-    "mobile"      = "MOBILE"
-    "va"          = "VENDOR ADMIN"
-    "wa"          = "WEB ADMIN"
+    "precondition" = "[PRECONDITION]"
+    "front"       = "[FRONT]"
+    "mobile"      = "[MOBILE]"
+    "va"          = "[VENDOR ADMIN]"
+    "wa"          = "[WEB ADMIN]"
 }
 
 foreach ($xmlFile in $xmlFiles) {
@@ -51,7 +49,11 @@ foreach ($xmlFile in $xmlFiles) {
             
             $summary += @"
 $statusIcon $label
-   ✓ Passed: $passed  |  ✗ Failed: $failed  |  ⚠ Errors: $errors  |  ⊘ Skipped: $skipped
+✓ Passed: $passed 
+✗ Failed: $failed
+⚠ Errors: $errors
+⊘ Skipped: $skipped
+
 
 "@
         }
@@ -62,16 +64,19 @@ $overallStatus = if ($totalFailed -eq 0 -and $totalErrors -eq 0) { "✅ PASSED" 
 $passRate = if ($totalTests -gt 0) { [math]::Round(($totalPassed / $totalTests) * 100, 1) } else { 0 }
 
 $summary += @"
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 TOTAL SUMMARY
 Status: $overallStatus
 Pass Rate: $passRate%
 
-✓ Passed: $totalPassed  |  ✗ Failed: $totalFailed  |  ⚠ Errors: $totalErrors  |  ⊘ Skipped: $totalSkipped
+✓ Passed: $totalPassed
+✗ Failed: $totalFailed
+⚠ Errors: $totalErrors
+⊘ Skipped: $totalSkipped
 Total Tests: $totalTests
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 "@
 
