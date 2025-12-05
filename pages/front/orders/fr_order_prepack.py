@@ -39,7 +39,7 @@ def order_prepack(page, product_prepack_id):
     page.locator('.btn.btn_black_v01.addCart.nclick').click()
 
     # 페이지 로딩 상태를 기다림
-    page.wait_for_load_state('networkidle')
+    page.wait_for_timeout(5000)
 
     # 헤더 /cart 아이콘 클릭
     # minicount = page.locator("#miniCount")

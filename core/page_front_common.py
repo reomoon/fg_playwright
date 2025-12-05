@@ -16,16 +16,19 @@ def checkout_process(page):
     page.locator('.btn-dark_grey.btn-checkoutAll.nclick').click()
 
     # You Have Promotions! 팝업 있으면 클릭 없으면 스킵
-    try:
-        popup_promotion = page.locator('button.btn-sure', has_text="Continue To Checkout", log_if_not_found=False)
-        if popup_promotion.is_visible() and popup_promotion.count() > 0 and popup_promotion.is_enabled():
-            popup_promotion.click()
-            print("☑ You Have Promotions! 팝업이 표시되었습니다.")
-        else:
-            print("☑ You Have Promotions! 팝업이 표시되지 않았습니다.")
-    except Exception as e:
-        print(f"☑ 팝업 처리 중 예외발생, 스킵하고 진행합니다:{e}")
-
+        # You Have Promotions! 팝업 있으면 클릭 없으면 스킵
+    popup_promotion = page.locator('button.btn-sure.fw', log_if_not_found=False)
+    
+    if popup_promotion.count() > 0:
+        try:
+            popup_promotion.first.wait_for(state="visible", timeout=5000)
+            popup_promotion.first.click(force=True)
+            print("☑ button.btn-sure.fw 클릭 성공")
+        except Exception as e:
+            print(f"❌ 클릭 실패: {e}")
+    else:
+        print("☑ button.btn-sure.fw가 보이지 않음")
+        
     """
     🟢 Step1 Shipping
     """
