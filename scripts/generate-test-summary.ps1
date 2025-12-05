@@ -2,9 +2,12 @@ param(
     [string]$OutputPath = "output"
 )
 
+# 현재 시간 가져오기 (예: 2025-12-05 13:00:00)
+$startTime = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+
 $summary = @"
 ╔════════════════════════════════════════════════════════════╗
-║               FG Automation Test Results                   ║
+║          FG Automation Test Results($startTime)            ║
 ╚════════════════════════════════════════════════════════════╝
 
 "@
@@ -16,7 +19,7 @@ $totalSkipped = 0
 $totalTests = 0
 
 $xmlFiles = @("precondition-results.xml", "front-results.xml", "mobile-results.xml", "va-results.xml", "wa-results.xml")
-$testLabels = @("precondition" = "Precondition"; "front" = "🌐 Front"; "mobile" = "📱 Mobile"; "va" = "🏪 Vendor Admin"; "wa" = "⚙️ Web Admin")
+$testLabels = @("precondition" = "📋 Precondition"; "front" = "🌐 Front"; "mobile" = "📱 Mobile"; "va" = "🏪 Vendor Admin"; "wa" = "⚙️ Web Admin")
 
 foreach ($xmlFile in $xmlFiles) {
     $path = "$OutputPath/$xmlFile"
@@ -39,7 +42,7 @@ foreach ($xmlFile in $xmlFiles) {
             
             $testType = $xmlFile -replace "-results.xml"
             $label = $testLabels[$testType]
-            $statusIcon = if ($failed -eq 0 -and $errors -eq 0) { "✅" } else { "❌" }
+            $statusIcon = if ($failed -eq 0 -and $errors -eq 0) { "✓" } else { "✗" }
             
             $summary += @"
 $statusIcon $label
@@ -54,7 +57,7 @@ $statusIcon $label
     }
 }
 
-$overallStatus = if ($totalFailed -eq 0 -and $totalErrors -eq 0) { "✅ PASSED" } else { "❌ FAILED" }
+$overallStatus = if ($totalFailed -eq 0 -and $totalErrors -eq 0) { "✓ PASSED" } else { "✗ FAILED" }
 $passRate = if ($totalTests -gt 0) { [math]::Round(($totalPassed / $totalTests) * 100, 1) } else { 0 }
 
 $summary += @"
@@ -96,4 +99,4 @@ Add-Content -Path $env:GITHUB_OUTPUT -Value "summary<<EOF"
 Add-Content -Path $env:GITHUB_OUTPUT -Value $summary
 Add-Content -Path $env:GITHUB_OUTPUT -Value "EOF"
 
-Write-Output "✨ Test summary generated successfully!"
+Write-Output "Test summary generated successfully!"
