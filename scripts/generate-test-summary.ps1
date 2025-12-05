@@ -3,9 +3,9 @@ param(
 )
 
 $summary = @"
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-FG Automation Test Results
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+╔════════════════════════════════════════════════════════════╗
+║               FG Automation Test Results                   ║
+╚════════════════════════════════════════════════════════════╝
 
 "@
 
@@ -16,6 +16,7 @@ $totalSkipped = 0
 $totalTests = 0
 
 $xmlFiles = @("precondition-results.xml", "front-results.xml", "mobile-results.xml", "va-results.xml", "wa-results.xml")
+$testLabels = @("precondition" = "Precondition"; "front" = "🌐 Front"; "mobile" = "📱 Mobile"; "va" = "🏪 Vendor Admin"; "wa" = "⚙️ Web Admin")
 
 foreach ($xmlFile in $xmlFiles) {
     $path = "$OutputPath/$xmlFile"
@@ -37,37 +38,53 @@ foreach ($xmlFile in $xmlFiles) {
             $totalTests += $total
             
             $testType = $xmlFile -replace "-results.xml"
-            $status = if ($failed -eq 0 -and $errors -eq 0) { "✅" } else { "❌" }
+            $label = $testLabels[$testType]
+            $statusIcon = if ($failed -eq 0 -and $errors -eq 0) { "✅" } else { "❌" }
             
             $summary += @"
-$status $($testType.ToUpper())
-   Passed:  $passed
-   Failed:  $failed
-   Errors:  $errors
-   Skipped: $skipped
-   
+$statusIcon $label
+   ✓ Passed:  $passed
+   ✗ Failed:  $failed
+   ⚠ Errors:  $errors
+   ⊘ Skipped: $skipped
+   ─────────────────────────────────────
+
 "@
         }
     }
 }
 
-$summary += @"
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Total Summary
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ Total Passed:  $totalPassed
-❌ Total Failed:  $totalFailed
-⚠️ Total Errors:  $totalErrors
-⏭ Total Skipped: $totalSkipped
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   Grand Total:  $totalTests tests
+$overallStatus = if ($totalFailed -eq 0 -and $totalErrors -eq 0) { "✅ PASSED" } else { "❌ FAILED" }
+$passRate = if ($totalTests -gt 0) { [math]::Round(($totalPassed / $totalTests) * 100, 1) } else { 0 }
 
-HTML Reports:
-- precondition-report.html
-- front-report.html
-- mobile-report.html
-- va-report.html
-- wa-report.html
+$summary += @"
+╔════════════════════════════════════════════════════════════╗
+║                      Total Summary                         ║
+╚════════════════════════════════════════════════════════════╝
+
+   Status:          $overallStatus
+   Pass Rate:       $passRate%
+   
+   ✓ Passed:        $totalPassed
+   ✗ Failed:        $totalFailed
+   ⚠ Errors:        $totalErrors
+   ⊘ Skipped:       $totalSkipped
+   ─────────────────────────────────────
+   Total Tests:     $totalTests
+
+╔════════════════════════════════════════════════════════════╗
+║                       Attachments                          ║
+╚════════════════════════════════════════════════════════════╝
+
+📸 Test Summary Screenshot
+📄 HTML Reports
+   • precondition-report.html
+   • front-report.html
+   • mobile-report.html
+   • va-report.html
+   • wa-report.html
+
+╔════════════════════════════════════════════════════════════╗
 
 "@
 
@@ -79,4 +96,4 @@ Add-Content -Path $env:GITHUB_OUTPUT -Value "summary<<EOF"
 Add-Content -Path $env:GITHUB_OUTPUT -Value $summary
 Add-Content -Path $env:GITHUB_OUTPUT -Value "EOF"
 
-Write-Output "Test summary generated successfully"
+Write-Output "✨ Test summary generated successfully!"
