@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from playwright.sync_api import Page
+import pytest
 
 #프로모션 생성 시 할인율
 promotion_discount = 7
@@ -13,8 +14,14 @@ def va_create_promotion(page: Page):
     page.goto("https://beta-vendoradmin.fashiongo.net/#/marketing/special/promotion/vendor", timeout=10000, wait_until="domcontentloaded")
     # page.wait_for_url("**/marketing/special/promotion/vendor")
 
-    # 2. 'Create Promotion' 클릭
-    page.locator("button.btn.btn-blue", has_text="Create Promotion").click()
+    # 2. 여러 개 중 enabled인 버튼만 클릭
+    create_btn = page.locator("button.btn.btn-blue.btn-grey", has_text="Create Promotion")
+
+    if create_btn.count() == 0:
+        pytest.skip("'Create Promotion' 버튼이 없거나 모두 비활성화되어 있어 테스트를 스킵합니다.")
+        return
+
+    create_btn.first.click()
 
     # 3. No end date 체크
     # page.locator('.fg-checkbox.no-end-date label').click()

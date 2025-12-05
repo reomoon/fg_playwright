@@ -8,6 +8,7 @@ $startTime = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
 $summary = @"
 FG Automation Test Results ($startTime)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"@
 
 $totalPassed = 0
 $totalFailed = 0
@@ -47,13 +48,12 @@ foreach ($xmlFile in $xmlFiles) {
             $label = $testLabels[$testType]
             $statusIcon = if ($failed -eq 0 -and $errors -eq 0) { "✅" } else { "❌" }
             
-            $summary += @"
+$summary += @"
 $statusIcon $label
 ✓ Passed: $passed 
 ✗ Failed: $failed
 ⚠ Errors: $errors
 ⊘ Skipped: $skipped
-
 
 "@
         }
