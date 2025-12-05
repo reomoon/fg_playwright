@@ -20,6 +20,8 @@ jobs:
       - name: Install dependencies
         shell: cmd
         run: |
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip install --upgrade pip
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-playwright -y
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install --user -r requirements.txt
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install --user pytest-html
           "${{ env.PYTHON_PATH }}\python.exe" -m playwright install
