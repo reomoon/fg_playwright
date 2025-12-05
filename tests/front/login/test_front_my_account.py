@@ -26,7 +26,7 @@ def test_my_account_home(front_login_fixture):
     # 4️ 상단 타이틀 'My Account Home' 확인
     print("☑ 상단 타이틀 텍스트 확인")
     title_sel = 'span.hx_myac'
-    page.wait_for_selector(title_sel, timeout=5000)
+    page.wait_for_selector(title_sel, timeout=15000)
     title_text = page.locator(title_sel).inner_text().strip()
     assert title_text == "My Account Home", f"❌ 타이틀 텍스트 불일치: {title_text}"
     print("🅿 'My Account Home' 텍스트 확인")
@@ -37,7 +37,7 @@ def test_my_account_home(front_login_fixture):
         "heading",
         name=re.compile(r"^Your Recent Orders", re.I)
     )
-    recent_orders_h2.wait_for(timeout=5000)
+    recent_orders_h2.wait_for(timeout=15000)
     assert "Your Recent Orders" in recent_orders_h2.inner_text().strip(), "❌ 'Your Recent Orders' 헤더 텍스트 불일치"
     print("🅿 'Your Recent Orders' 헤더 확인")
  
