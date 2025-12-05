@@ -2,13 +2,12 @@ param(
     [string]$OutputPath = "output"
 )
 
-# 현재 시간 가져오기 (예: 2025-12-05 13:00:00)
+# 현재 시간 가져오기
 $startTime = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
 
 $summary = @"
-╔════════════════════════════════════════════════════════════╗
-║          FG Automation Test Results($startTime)            ║
-╚════════════════════════════════════════════════════════════╝
+[FG Automation] Test Results
+Started at: $startTime
 
 "@
 
@@ -20,11 +19,11 @@ $totalTests = 0
 
 $xmlFiles = @("precondition-results.xml", "front-results.xml", "mobile-results.xml", "va-results.xml", "wa-results.xml")
 $testLabels = @{
-    "precondition" = "⚡ PRECONDITION"
-    "front"       = "🌐 Front"
-    "mobile"      = "📲 MOBILE"
-    "va"          = "👨‍💼 VENDOR ADMIN"
-    "wa"          = "⚙️ WEB ADMIN"
+    "precondition" = "PRECONDITION"
+    "front"       = "Front"
+    "mobile"      = "MOBILE"
+    "va"          = "VENDOR ADMIN"
+    "wa"          = "WEB ADMIN"
 }
 
 foreach ($xmlFile in $xmlFiles) {
@@ -48,54 +47,31 @@ foreach ($xmlFile in $xmlFiles) {
             
             $testType = $xmlFile -replace "-results.xml"
             $label = $testLabels[$testType]
-            $statusIcon = if ($failed -eq 0 -and $errors -eq 0) { "☑️" } else { "❌" }
+            $statusIcon = if ($failed -eq 0 -and $errors -eq 0) { "✅" } else { "❌" }
             
-            # 타이틀 강조: 대문자, 한 칸 띄우기
-            $title = $label.ToUpper()
             $summary += @"
-$statusIcon $title
-   ✓ Passed:  $passed
-   ✗ Failed:  $failed
-   ⚠ Errors:  $errors
-   ⊘ Skipped: $skipped
-   ─────────────────────────────────────
+$statusIcon $label
+   ✓ Passed: $passed  |  ✗ Failed: $failed  |  ⚠ Errors: $errors  |  ⊘ Skipped: $skipped
 
 "@
         }
     }
 }
 
-$overallStatus = if ($totalFailed -eq 0 -and $totalErrors -eq 0) { "☑️ PASSED" } else { "❌ FAILED" }
+$overallStatus = if ($totalFailed -eq 0 -and $totalErrors -eq 0) { "✅ PASSED" } else { "❌ FAILED" }
 $passRate = if ($totalTests -gt 0) { [math]::Round(($totalPassed / $totalTests) * 100, 1) } else { 0 }
 
 $summary += @"
-╔════════════════════════════════════════════════════════════╗
-║                      Total Summary                         ║
-╚════════════════════════════════════════════════════════════╝
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-   Status:          $overallStatus
-   Pass Rate:       $passRate%
-   
-   ✓ Passed:        $totalPassed
-   ✗ Failed:        $totalFailed
-   ⚠ Errors:        $totalErrors
-   ⊘ Skipped:       $totalSkipped
-   ─────────────────────────────────────
-   Total Tests:     $totalTests
+TOTAL SUMMARY
+Status: $overallStatus
+Pass Rate: $passRate%
 
-╔════════════════════════════════════════════════════════════╗
-║                       Attachments                          ║
-╚════════════════════════════════════════════════════════════╝
+✓ Passed: $totalPassed  |  ✗ Failed: $totalFailed  |  ⚠ Errors: $totalErrors  |  ⊘ Skipped: $totalSkipped
+Total Tests: $totalTests
 
-📸 Test Summary Screenshot
-📄 HTML Reports
-   • precondition-report.html
-   • front-report.html
-   • mobile-report.html
-   • va-report.html
-   • wa-report.html
-
-╔════════════════════════════════════════════════════════════╗
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 "@
 
