@@ -42,26 +42,10 @@ def order_prepack(page, product_prepack_id):
     page.wait_for_load_state('networkidle')
 
     # 헤더 /cart 아이콘 클릭
-    minicount = page.locator("#miniCount")
-
-    if minicount.is_visible():
-        page.screenshot(path="output/debug_minicount.png") # minicount 실제 위치 스샷
-        try:
-            minicount.scroll_into_view_if_needed() # view포트에 보이도록 스크롤
-            page.wait_for_timeout(500)
-            minicount.click(force=True)
-        except Exception as e:
-            print(f"❌ minicount 클릭 실패: {e}")
-            # JS로 클릭 시도
-            try:
-                minicount.evaluate("el => el.click()")
-                print("☑ JS로 직접 minicount 클릭")
-            except Exception as js_e:
-                print(f"❌ JS 클릭도 실패: {js_e}")
-                page.goto("https://beta-www.fashiongo.net/cart")
-                print(f"☑ {minicount} 클릭 실패하여 직접 /cart 페이지로 이동합니다.")
-    else:
-        page.goto("https://beta-www.fashiongo.net/cart")
+    # minicount = page.locator("#miniCount")
+    
+    # cart 페이지 이동
+    page.goto("https://beta-www.fashiongo.net/cart")
 
     # checkout_process 호출
     checkout_process(page)
