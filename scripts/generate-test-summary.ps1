@@ -19,7 +19,7 @@ $totalSkipped = 0
 $totalTests = 0
 
 $xmlFiles = @("precondition-results.xml", "front-results.xml", "mobile-results.xml", "va-results.xml", "wa-results.xml")
-$testLabels = @("precondition" = "📋 Precondition"; "front" = "🌐 Front"; "mobile" = "📱 Mobile"; "va" = "🏪 Vendor Admin"; "wa" = "⚙️ Web Admin")
+$testLabels = @("precondition" = "⚡Precondition"; "front" = "🌐 Front"; "mobile" = "📲 Mobile"; "va" = "👨‍💼 Vendor Admin"; "wa" = "⚙️ Web Admin")
 
 foreach ($xmlFile in $xmlFiles) {
     $path = "$OutputPath/$xmlFile"
@@ -42,10 +42,12 @@ foreach ($xmlFile in $xmlFiles) {
             
             $testType = $xmlFile -replace "-results.xml"
             $label = $testLabels[$testType]
-            $statusIcon = if ($failed -eq 0 -and $errors -eq 0) { "✓" } else { "✗" }
+            $statusIcon = if ($failed -eq 0 -and $errors -eq 0) { "☑️" } else { "❌" }
             
+            # 타이틀 강조: 대문자, 한 칸 띄우기
+            $title = $label.ToUpper()
             $summary += @"
-$statusIcon $label
+$statusIcon $title
    ✓ Passed:  $passed
    ✗ Failed:  $failed
    ⚠ Errors:  $errors
@@ -57,7 +59,7 @@ $statusIcon $label
     }
 }
 
-$overallStatus = if ($totalFailed -eq 0 -and $totalErrors -eq 0) { "✓ PASSED" } else { "✗ FAILED" }
+$overallStatus = if ($totalFailed -eq 0 -and $totalErrors -eq 0) { "☑️ PASSED" } else { "❌ FAILED" }
 $passRate = if ($totalTests -gt 0) { [math]::Round(($totalPassed / $totalTests) * 100, 1) } else { 0 }
 
 $summary += @"
