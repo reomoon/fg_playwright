@@ -1,6 +1,5 @@
 pytest
 playwright
-pytest-playwright
 requests
 python-dotenv
 easyocr
