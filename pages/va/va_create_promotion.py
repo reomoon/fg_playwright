@@ -15,13 +15,31 @@ def va_create_promotion(page: Page):
     # page.wait_for_url("**/marketing/special/promotion/vendor")
 
     # 2. 여러 개 중 enabled인 버튼만 클릭
-    create_btn = page.locator("button.btn.btn-blue.btn-grey", has_text="Create Promotion")
+    create_btns = page.locator("button.btn.btn-md.btn-blue", has_text="Create Promotion")
 
-    if create_btn.count() == 0:
-        pytest.skip("'Create Promotion' 버튼이 없거나 모두 비활성화되어 있어 테스트를 스킵합니다.")
+    btn_count = create_btns.count()
+    print(f"☑ button.btn.btn-md.btn-blue found ({btn_count}개)")
+
+    if btn_count == 0:
+        pytest.skip("'Create Promotion' 버튼이 아예 없어 테스트를 스킵합니다.")
         return
 
-    create_btn.first.click()
+    # 비활성화 버튼들을 제외한 enabled 버튼 필터링
+    enabled_btn = page.locator(
+        "button.btn.btn-md.btn-blue:not(.btn-grey):not([disabled])",
+        has_text="Create Promotion"
+    )
+
+    enabled_count = enabled_btn.count()
+    print(f"☑ enabled Create Promotion 버튼 개수: {enabled_count}개")
+
+    # 비활성화만 존재하면 스킵 처리
+    if enabled_count == 0:
+        print("🗙 Create Promotion 버튼이 disabled 상태입니다. 테스트를 스킵합니다.")
+        pytest.skip("Create Promotion 버튼이 disabled 상태라 테스트를 진행할 수 없습니다.")
+        return
+
+    create_btns.first.click()
 
     # 3. No end date 체크
     # page.locator('.fg-checkbox.no-end-date label').click()
