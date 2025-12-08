@@ -5,10 +5,8 @@ param(
 # 현재 시간 가져오기
 $startTime = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
 
-$summary = @"
-FG Automation Test Results ($startTime)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-"@
+$summary = "FG Automation Test Results ($startTime)`n" +
+           "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n`n"
 
 $totalPassed = 0
 $totalFailed = 0
