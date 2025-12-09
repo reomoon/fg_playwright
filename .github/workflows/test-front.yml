@@ -20,12 +20,18 @@ jobs:
       - name: Install dependencies
         shell: cmd
         run: |
+          REM Python 캐시 정리
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip cache purge
+          
+          REM pip 업그레이드
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install --upgrade pip
-          "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-playwright -y
+          
+          REM 문제 되는 패키지 강제 제거
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-playwright pytest-asyncio -y --no-deps
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install --user -r requirements.txt
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install --user pytest-html
           "${{ env.PYTHON_PATH }}\python.exe" -m playwright install
-      
+
       - name: Create .env file
         shell: cmd
         run: |
