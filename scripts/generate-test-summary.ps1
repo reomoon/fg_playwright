@@ -28,30 +28,30 @@ foreach ($xmlFile in $xmlFiles) {
     if (Test-Path $path) {
         [xml]$xml = Get-Content $path
         $testsuite = $xml.testsuites.testsuite
-        
-        foreach ($xmlFile in $xmlFiles) {
+        $testcases = $testsuite.testcase
 
-    $summary += "Pytest Case Summary`n"
+        $summary += "Pytest Case Summary`n"
 
-    $caseGroups = @{}
-    foreach ($case in $testcases) {
-        $file = $case.file
-        if (-not $file) { continue }
-        $filename = [System.IO.Path]::GetFileName($file)
-        if (-not $caseGroups.ContainsKey($filename)) {
-            $caseGroups[$filename] = @{fail=0}
+        $caseGroups = @{}
+        foreach ($case in $testcases) {
+            $file = $case.file
+            if (-not $file) { continue }
+            $filename = [System.IO.Path]::GetFileName($file)
+            if (-not $caseGroups.ContainsKey($filename)) {
+                $caseGroups[$filename] = @{fail=0}
+            }
+            if ($case.failure -or $case.error) {
+                $caseGroups[$filename].fail++
+            }
         }
-        if ($case.failure -or $case.error) {
-            $caseGroups[$filename].fail++
-        }
-    }
 
-    foreach ($filename in $caseGroups.Keys) {
-        $g = $caseGroups[$filename]
-        $result = if ($g.fail -eq 0) { "Pass" } else { "❌ Fail" }
-        $summary += "$filename : $result`n"
+        foreach ($filename in $caseGroups.Keys) {
+            $g = $caseGroups[$filename]
+            $result = if ($g.fail -eq 0) { "Pass" } else { "❌ Fail" }
+            $summary += "$filename : $result`n"
+        }
+        $summary += "`n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n"
     }
-    $summary += "`n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n"
 }
 
 # 전체 요약 계산
