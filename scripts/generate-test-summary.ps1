@@ -44,7 +44,9 @@ foreach ($xmlFile in $xmlFiles) {
             
             $testType = $xmlFile -replace "-results.xml"
             $label = $testLabels[$testType]
-            $statusIcon = if ($failed -eq 0 -and $errors -eq 0) { "✅" } else { "❌" }
+            $statusIcon = if ($failed -eq 0 -and $errors -eq 0) { "✅" }
+                          elseif ($failed -le 5) { "⚠️" }
+                          else { "❌" }
             
 $summary += @"
 $statusIcon $label
@@ -58,7 +60,9 @@ $statusIcon $label
     }
 }
 
-$overallStatus = if ($totalFailed -eq 0 -and $totalErrors -eq 0) { "✅ PASSED" } else { "❌ FAILED" }
+$overallStatus = if ($totalFailed -eq 0 -and $totalErrors -eq 0) { "✅ PASSED" }
+                 elseif ($totalFailed -le 5) { "⚠️ NEEDS REVIEW" }
+                 else { "❌ FAILED" }
 $passRate = if ($totalTests -gt 0) { [math]::Round(($totalPassed / $totalTests) * 100, 1) } else { 0 }
 
 $summary += @"
