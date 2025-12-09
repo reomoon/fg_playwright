@@ -29,36 +29,32 @@ foreach ($xmlFile in $xmlFiles) {
         [xml]$xml = Get-Content $path
         $testsuite = $xml.testsuites.testsuite
         
-        if ($testsuite -ne $null) {
-            $total = [int]$testsuite.tests
-            $passed = $total - [int]$testsuite.failures - [int]$testsuite.errors - [int]$testsuite.skipped
-            $failed = [int]$testsuite.failures
-            $errors = [int]$testsuite.errors
-            $skipped = [int]$testsuite.skipped
-            
-            $totalPassed += $passed
-            $totalFailed += $failed
-            $totalErrors += $errors
-            $totalSkipped += $skipped
-            $totalTests += $total
-            
-            $testType = $xmlFile -replace "-results.xml"
-            $label = $testLabels[$testType]
-            $statusIcon = if ($failed -eq 0 -and $errors -eq 0) { "✅" }
-                          elseif ($failed -le 5) { "⚠️" }
-                          else { "❌" }
-            
-$summary += @"
-$statusIcon $label
-✓ Passed: $passed 
-✗ Failed: $failed
-⚠ Errors: $errors
-⊘ Skipped: $skipped
+        foreach ($xmlFile in $xmlFiles) {
 
-"@
+    $summary += "Pytest Case Summary`n"
+
+    $caseGroups = @{}
+    foreach ($case in $testcases) {
+        $file = $case.file
+        if (-not $file) { continue }
+        $filename = [System.IO.Path]::GetFileName($file)
+        if (-not $caseGroups.ContainsKey($filename)) {
+            $caseGroups[$filename] = @{fail=0}
+        }
+        if ($case.failure -or $case.error) {
+            $caseGroups[$filename].fail++
         }
     }
+
+    foreach ($filename in $caseGroups.Keys) {
+        $g = $caseGroups[$filename]
+        $result = if ($g.fail -eq 0) { "Pass" } else { "❌ Fail" }
+        $summary += "$filename : $result`n"
+    }
+    $summary += "`n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n"
 }
+
+# 전체 요약 계산
 
 $overallStatus = if ($totalFailed -eq 0 -and $totalErrors -eq 0) { "✅ PASSED" }
                  elseif ($totalFailed -le 5) { "⚠️ NEEDS REVIEW" }
@@ -66,9 +62,7 @@ $overallStatus = if ($totalFailed -eq 0 -and $totalErrors -eq 0) { "✅ PASSED" 
 $passRate = if ($totalTests -gt 0) { [math]::Round(($totalPassed / $totalTests) * 100, 1) } else { 0 }
 
 $summary += @"
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-TOTAL SUMMARY
+Total Summary
 Status: $overallStatus
 Pass Rate: $passRate%
 
