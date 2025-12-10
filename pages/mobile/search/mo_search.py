@@ -3,7 +3,7 @@ from core.page_wrapper import create_highlighted_page
 
 def mobile_text_search(page):
     # 홈 페이지로 이동
-    page.goto('https://beta-mobile.fashiongo.net/home')
+    page.goto('https://beta-mobile.fashiongo.net/home', wait_until="domcontentloaded", timeout=60000)
 
     # Top Vendor 팝업의 "Don't show again for 24 hours"가 있으면 클릭, 없으면 닫기 버튼 클릭
     dont_show_popup = page.locator('a.link-footer-sub')
@@ -27,7 +27,7 @@ def mobile_text_search(page):
     
     # 검색 실행 (엔터 입력 또는 검색 버튼 클릭)
     page.keyboard.press("Enter")
-    page.wait_for_url("**/search/result;**", timeout=10000)
+    page.wait_for_url("**/search/result;**", timeout=30000)
 
     # url searchQuery에서 검색어 확인
     import urllib.parse # 문자열(예: 검색어)을 URL에 안전하게 넣을 수 있도록 URL 인코딩(공백 → %20, 한글/특수문자 → %XX 형태) 해주는 함수

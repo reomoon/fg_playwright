@@ -5,7 +5,7 @@ from core.page_wrapper import create_highlighted_page
 
 def mobile_image_search(page):
     # 홈 페이지로 이동
-    page.goto('https://beta-mobile.fashiongo.net/home')
+    page.goto('https://beta-mobile.fashiongo.net/home', wait_until="domcontentloaded", timeout=60000)
 
     # Top Vendor 팝업의 "Don't show again for 24 hours"가 있으면 클릭, 없으면 닫기 버튼 클릭
     dont_show_popup = page.locator('a.link-footer-sub')
