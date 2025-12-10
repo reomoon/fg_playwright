@@ -16,9 +16,10 @@ def mobile_text_search(page):
             top_vendor_close.click()
             print("☑ Top Vendor 팝업 닫기 클릭")
     
-    # 헤더의 Search 입력란을 찾아 클릭하여 포커스
+    # 헤더의 Search 입력란을 찾아 클릭하여 포커스 (wait_for + no_wait_after)
     header_search_input = page.locator('input[placeholder="Search"]')
-    header_search_input.click()
+    header_search_input.wait_for(state="visible", timeout=5000)
+    header_search_input.click(no_wait_after=True)
 
     # 검색어 후보 리스트에서 랜덤하게 하나 선택
     random_search = ['diamante jeans', 'floral crop top', 'bodycon dress']

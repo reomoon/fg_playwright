@@ -59,7 +59,7 @@ test-screenshots/
 *.txt
 
 # gitignore 제외
-!image/top.jpg
 !requirements.txt
 !README.md
-!images/jeans.jpg
+!pages/mobile/search/top.jpg
+!pages/mobile/search/jeans.jpg

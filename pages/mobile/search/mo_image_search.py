@@ -6,7 +6,7 @@ from core.page_wrapper import create_highlighted_page
 def mobile_image_search(page):
     # 홈 페이지로 이동
     page.goto('https://beta-mobile.fashiongo.net/home', wait_until="domcontentloaded", timeout=60000)
-
+              
     # Top Vendor 팝업의 "Don't show again for 24 hours"가 있으면 클릭, 없으면 닫기 버튼 클릭
     dont_show_popup = page.locator('a.link-footer-sub')
     if dont_show_popup.count() > 0 and dont_show_popup.is_visible():
@@ -33,35 +33,43 @@ def mobile_image_search(page):
         print(f"❌ 업로드할 이미지 파일을 찾을 수 없습니다: {file_path}")
         raise FileNotFoundError(f"이미지 파일을 찾을 수 없습니다: {file_path}")
 
+    # 파일 input 요소 찾기
+    file_input = page.locator('input[type="file"]')
 
-    # 이미지 검색 API 응답을 기다리면서 파일 업로드
-    def is_image_search_response(response):
-        # API https://beta-mobile.fashiongo.net/api/mobile/image-search/partials?
-        return "api/mobile/image-search/partials" in response.url
+     # 이미지 업로드 직후 모든 response를 수집
+    responses = []
 
-    # input[type="file"]가 이미 있으면 바로 사용, 없으면 최대 30초 대기
-    try:
-        file_input = page.locator('input[type="file"]').first
-        if not file_input.count():
-            page.wait_for_selector('input[type="file"]', state="attached", timeout=30000)
-            file_input = page.locator('input[type="file"]').first
-        print("☑ 파일 input 확인")
-    except Exception as e:
-        print("❌ 파일 input을 찾을 수 없습니다:", e)
-        raise
+    def collect_response(response):
+        if "api/mobile/image-search/partials" in response.url:
+            print("API 응답 URL:", response.url)
+            responses.append(response)
+
+    page.on("response", collect_response)
 
     # 파일 업로드
     file_input.set_input_files(str(file_path))
-    print("☑ 파일 업로드 완료, 3초 대기")
-    page.wait_for_timeout(3000)
+    print("☑ 파일 업로드 완료, 10초 대기")
+    page.wait_for_timeout(10000)  # 충분히 대기
 
-    # 그 다음에 API 응답 대기
-    with page.expect_response(is_image_search_response, timeout=30000) as response_info:
-        pass  # 여기서는 별도 동작 없이 응답만 기다림
+    # 수집된 응답에서 원하는 결과 찾기
+    found = False
+    for response in responses:
+        try:
+            data = response.json()
+            # print("API 응답 데이터:", data)
+            if (
+                "data" in data and
+                "searchProvider" in data["data"] and
+                data["data"]["searchProvider"] in ["AI_FASHION", "RECOMMENDATION"]
+            ):
+                print("🅿 이미지 검색 API 성공(AI_FASHION 또는 RECOMMENDATION)")
+                found = True
+                break
+        except Exception as e:
+            print("❌ 응답 파싱 실패:", e)
 
-    response = response_info.value
-    data = response.json()
-    if "data" in data and "searchProvider" in data["data"] and data["data"]["searchProvider"] == "AI_FASHION":
-        print("🅿 AI_FASHION으로 불러오기를 성공 하였습니다.(이미지 검색 API 성공)")
-    else:
-        print("❌ AI_FASHION으로 불러오기를 실패 하였습니다.(이미지 검색 API 실패)")
+    if not found:
+        print("❌ AI_FASHION 또는 RECOMMENDATION으로 불러오기를 실패 하였습니다.(이미지 검색 API 실패)")
+
+    # 이벤트 핸들러 해제 (중복 방지)
+    page.remove_listener("response", collect_response)
