@@ -17,7 +17,7 @@ def wa_login_token(page, account="wa2"):
         raise ValueError(f"LOGIN_CREDENTIALS {account}가 없습니다.")
     
     # 1. WA 로그인 페이지로 이동
-    page.goto("https://beta-webadmin.fashiongo.net/login")
+    page.goto("https://beta-webadmin.fashiongo.net/login", wait_until="domcontentloaded", timeout=60000)
     page.wait_for_timeout(2000)
     
     # 2. 로그인
