@@ -9,6 +9,9 @@ if sys.stdout.encoding != 'utf-8':
 import pytest
 import os
 
+# pytest-asyncio 비활성화 (Sync API 사용)
+pytest_plugins = ()
+
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     # pytest가 각 테스트 함수의 실행 결과를 가져옴

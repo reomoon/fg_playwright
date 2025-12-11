@@ -27,7 +27,7 @@ jobs:
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install --upgrade pip
           
           REM 문제 되는 패키지 강제 제거
-          "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-playwright pytest-asyncio -y --no-deps
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-asyncio -y || true
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install --user -r requirements.txt
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install --user pytest-html
           "${{ env.PYTHON_PATH }}\python.exe" -m playwright install
