@@ -70,7 +70,7 @@ def mobile_image_search(page):
             "searchProvider" in api_response_data["data"] and
             api_response_data["data"]["searchProvider"] in ["AI_FASHION", "RECOMMENDATION"]
         ):
-            print(f"✅ 이미지 검색 API 성공 - searchProvider: {api_response_data['data']['searchProvider']}")
+            print(f"🅿 이미지 검색 API 성공 - searchProvider: {api_response_data['data']['searchProvider']}")
         else:
             print(f"❌ 응답 형식 오류: {api_response_data}")
     else:
