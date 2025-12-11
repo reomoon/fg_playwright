@@ -11,9 +11,13 @@ def mobile_add_to_cart_openpack(page, product_id):
 
     # openpack item url 이동
     page.goto(f'https://beta-www.fashiongo.net/Item/{product_id}')
+    print(f"☑ https://beta-www.fashiongo.net/Item/{product_id} 이동 완료")
+    page.wait_for_timeout(2000)
 
-    # 수량 버튼이 나타날 때까지 대기
-    page.wait_for_selector('.btn_openPack', timeout=10000)
+    if page.locator('.btn_openPack').count() == 0:
+        print("❌ .btn_openPack 버튼이 없습니다. 상품ID/페이지 확인 필요")
+        page.screenshot(path="output/debug_openpack.png")
+        return
 
     # 옵션 선택
     page.locator('.btn_openPack').first.click()
@@ -79,6 +83,15 @@ def mobile_add_to_cart_openpack(page, product_id):
 def mobile_promotion_cart(page, promotion_discount=promotion_discount):
     # Cart 페이지 이동
     page.goto('https://beta-mobile.fashiongo.net/cart')
+    page.wait_for_timeout(1000)
+
+    # 배너 강제 제거
+    try:
+        page.evaluate("document.querySelector('.get-app-text')?.parentElement?.remove()")
+        page.evaluate("document.querySelector('.get-app-bnr')?.remove()")
+        print("☑ APP 배너 제거 완료")
+    except Exception as e:
+        print("☑ APP 배너 제거 실패 또는 배너 없음:", e)
 
     # Promotion 선택
     # Select Promotion 드롭다운 클릭
