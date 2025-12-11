@@ -48,7 +48,7 @@ def wa_login_token(page, account="wa2"):
     print(f"🅿 인증 토큰 획득 완료: {auth_token[:50]}...")
     vendor_admin_url = f"https://beta-vendoradmin.fashiongo.net/#/auth/webadmin/login/{auth_token}"
     print(f"☑ Vendor Admin 페이지로 이동")
-    page.goto(vendor_admin_url)
+    page.goto(vendor_admin_url, wait_until="domcontentloaded", timeout=60000)
     page.wait_for_timeout(3000)
     print(f"🅿 Vendor Admin 페이지 진입 완료")
     
