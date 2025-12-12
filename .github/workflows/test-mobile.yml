@@ -49,8 +49,6 @@ jobs:
           echo ===== DNS Resolution =====
           nslookup beta-mobile.fashiongo.net 2>&1 | findstr /v "^$"
           echo.
-          echo ===== Ping Test =====
-          ping -n 1 beta-mobile.fashiongo.net 2>&1 | findstr /i "reply"
       
       - name: Create .env file
         shell: cmd

@@ -67,8 +67,6 @@ jobs:
           echo ===== DNS Resolution =====
           nslookup beta-www.fashiongo.net 2>&1 | findstr /v "^$"
           echo.
-          echo ===== Ping Test =====
-          ping -n 1 beta-www.fashiongo.net 2>&1 | findstr /i "reply"
       
       - name: Run Precondition tests
         shell: cmd
