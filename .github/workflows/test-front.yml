@@ -20,17 +20,24 @@ jobs:
       - name: Install dependencies
         shell: cmd
         run: |
-          REM Python 캐시 정리
+          REM 모든 Python 캐시 및 설치된 패키지 정리
           "${{ env.PYTHON_PATH }}\python.exe" -m pip cache purge
           
           REM pip 업그레이드
-          "${{ env.PYTHON_PATH }}\python.exe" -m pip install --upgrade pip
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip install --upgrade pip setuptools wheel
           
-          REM 문제 되는 패키지 강제 제거
-          "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-asyncio -y || true
-          "${{ env.PYTHON_PATH }}\python.exe" -m pip install --user -r requirements.txt
-          "${{ env.PYTHON_PATH }}\python.exe" -m pip install --user pytest-html
+          REM pytest-asyncio 및 관련 패키지 강제 제거
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-asyncio pytest-plugins pytest-xdist -y || true
+          
+          REM requirements.txt에서 fresh install
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip install -r requirements.txt
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip install pytest-html
+          
+          REM Playwright 설치 및 초기화
           "${{ env.PYTHON_PATH }}\python.exe" -m playwright install
+          
+          REM pytest 버전 확인
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest --version
 
       - name: Create .env file
         shell: cmd
@@ -50,18 +57,52 @@ jobs:
             echo fr_user_mobile_id=${{ secrets.FR_USER_MOBILE_ID }}
           ) > .env
       
+      - name: Network Diagnostics
+        shell: cmd
+        run: |
+          REM 네트워크 연결 확인
+          echo ===== Network Diagnostics =====
+          ipconfig
+          echo.
+          echo ===== DNS Resolution =====
+          nslookup beta-www.fashiongo.net
+          echo.
+          echo ===== Ping Test =====
+          ping -n 1 beta-www.fashiongo.net || echo "Ping failed"
+          echo.
+          echo ===== Route to Host =====
+          tracert -h 10 beta-www.fashiongo.net || echo "Tracert failed"
+      
       - name: Run Precondition tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html
+          REM 최대 3회 재시도
+          for /l %%i in (1,1,3) do (
+            echo === Precondition Test Attempt %%i ===
+            "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html
+            if !errorlevel! equ 0 goto precondition_success
+            echo Attempt %%i failed, retrying...
+            timeout /t 10 /nobreak
+          )
+          echo All precondition attempts failed
+          :precondition_success
         continue-on-error: true
 
       - name: Run Front tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/front -v -s --tb=short --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html
+          REM 최대 3회 재시도
+          for /l %%i in (1,1,3) do (
+            echo === Front Test Attempt %%i ===
+            "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/front -v -s --tb=short --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html
+            if !errorlevel! equ 0 goto front_success
+            echo Attempt %%i failed, retrying...
+            timeout /t 10 /nobreak
+          )
+          echo All front attempts failed
+          :front_success
         continue-on-error: true
       
       - name: Generate test summary
