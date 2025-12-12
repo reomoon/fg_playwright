@@ -59,6 +59,7 @@ jobs:
       
       - name: Network Diagnostics
         shell: cmd
+        continue-on-error: true
         run: |
           echo ===== Network Status =====
           ipconfig | findstr IPv4
