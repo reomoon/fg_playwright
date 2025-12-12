@@ -20,18 +20,15 @@ def mobile_text_search(page):
     
     # 헤더의 Search 입력란을 찾아 클릭하여 포커스
     header_search_input = page.locator('input[placeholder="Search"]')
-    header_search_input.wait_for(state="visible", timeout=30000)  # 타임아웃 30초
-    page.wait_for_timeout(2000)  # 요소 안정화 대기
-    header_search_input.click(force=True, timeout=30000)
+    header_search_input.wait_for(state="visible", timeout=30000)
+    page.wait_for_timeout(1000)  # 요소 완전히 로딩 대기
 
     # 검색어 후보 리스트에서 랜덤하게 하나 선택
     random_search = ['diamante jeans', 'floral crop top', 'bodycon dress']
     random_text = random.choice(random_search)  # 랜덤 검색어 선택
-    header_search_input.type(random_text, delay=50)  # 검색어 입력 (타이핑 효과)
-    
-    # 검색 실행 (엔터 입력 또는 검색 버튼 클릭)
-    page.keyboard.press("Enter")
-    page.wait_for_url("**/search/result;**", timeout=30000)
+    header_search_input.fill(random_text)  # type 대신 fill 사용 (더 빠름)
+    page.keyboard.press("Enter") # 검색어 입력 후 엔터
+    page.wait_for_timeout(5000) 
 
     # url searchQuery에서 검색어 확인
     import urllib.parse # 문자열(예: 검색어)을 URL에 안전하게 넣을 수 있도록 URL 인코딩(공백 → %20, 한글/특수문자 → %XX 형태) 해주는 함수

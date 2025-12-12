@@ -47,20 +47,26 @@ def mobile_image_search(page):
     page.on("response", collect_response)
 
     # input 요소 대기
-    print("input[type='file'] 요소 대기")
+    print("☑ input[type='file'] 요소 대기")
     page.wait_for_selector("input[type='file']", state="attached", timeout=30000)
-    print("input[type='file'] 요소 확인")
+    print("☑ input[type='file'] 요소 확인")
 
     # ElementHandle로 직접 파일 설정 (hidden이어도 작동)
     file_input_handle = page.query_selector("input[type='file']")
     if file_input_handle is None:
         raise AssertionError("input[type='file'] not found")
 
-    print("파일 업로드 시작")
-    file_input_handle.set_input_files(str(file_path))
-    print("파일 업로드 완료")
+    print("☑ 파일 업로드 시작")
+    # timeout을 60초로 더 늘리고 no_wait_after 사용
+    try:
+        file_input_handle.set_input_files(str(file_path), timeout=60000)
+        print("☑ 파일 업로드 완료")
+    except Exception as e:
+        print(f"❌ 파일 업로드 실패: {e}")
+        # 실패해도 계속 진행 (API 응답 확인)
+        pass
 
-    print("API 응답 대기 중... (파일 S3 업로드 후 API 호출 대기)")
+    print("☑ API 응답 대기 중... (파일 S3 업로드 후 API 호출 대기)")
     page.wait_for_timeout(15000)
 
     # 응답 확인

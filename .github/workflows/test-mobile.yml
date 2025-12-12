@@ -3,7 +3,7 @@ name: Daily Playwright Mobile Test
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 1 * * *' # 매일 한국시간 10시에 실행
+    - cron: '0 0 * * 1-5' # 매일 한국시간 9시 월~금만 실행
 
 jobs:
   test:

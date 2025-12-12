@@ -39,7 +39,12 @@ def va_create_promotion(page: Page):
         pytest.skip("Create Promotion 버튼이 disabled 상태라 테스트를 진행할 수 없습니다.")
         return
 
-    create_btns.first.click()
+    # Spinner가 사라질 때까지 기다림 (로딩 완료)
+    page.wait_for_selector("div.spinner", state="hidden", timeout=30000)
+    print("☑ 로딩 완료 (spinner 사라짐)")
+    page.wait_for_timeout(1000)  # 추가 안정화 대기
+    
+    create_btns.first.click(force=True, timeout=30000)
 
     # 3. No end date 체크
     # page.locator('.fg-checkbox.no-end-date label').click()
@@ -63,7 +68,19 @@ def va_create_promotion(page: Page):
     }""", one_week_later)
 
     # 5. 할인율 입력
-    page.fill('input#percent-input-3', str(promotion_discount))
+    # 요소가 visible할 때까지 기다림
+    page.locator('input#percent-input-3').wait_for(state="visible", timeout=30000)
+    page.wait_for_timeout(1000)  # 안정화 대기
+
+    # fill 대신 evaluate로 직접 입력 (더 안정적)
+    page.evaluate("""(value) => {
+        const input = document.querySelector('input#percent-input-3');
+        input.value = value;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+    }""", str(promotion_discount))
+
+    print(f"☑ 할인율 {promotion_discount}% 입력 완료")
 
     # 6. Save 클릭 (POST 발생 X)
     page.locator('button.btn.btn-lg.btn-blue', has_text='Save Promotion').click()
