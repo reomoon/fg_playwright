@@ -20,9 +20,9 @@ def mobile_text_search(page):
     
     # 헤더의 Search 입력란을 찾아 클릭하여 포커스
     header_search_input = page.locator('input[placeholder="Search"]')
-    header_search_input.wait_for(state="visible", timeout=30000)  # 타임아웃 30초로 증가
-    page.wait_for_timeout(1000)  # 요소 안정화 대기
-    header_search_input.click(force=True, timeout=10000)
+    header_search_input.wait_for(state="visible", timeout=30000)  # 타임아웃 30초
+    page.wait_for_timeout(2000)  # 요소 안정화 대기
+    header_search_input.click(force=True, timeout=30000)
 
     # 검색어 후보 리스트에서 랜덤하게 하나 선택
     random_search = ['diamante jeans', 'floral crop top', 'bodycon dress']

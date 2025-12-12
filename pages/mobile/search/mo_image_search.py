@@ -15,9 +15,9 @@ def mobile_image_search(page):
 
     # 헤더 이미지 버튼 클릭
     header_image_insert = page.locator('button.btn_tool.photo.nclick')
-    header_image_insert.wait_for(state="visible", timeout=15000)  # 먼저 보일 때까지 대기
-    page.wait_for_timeout(1000)  # 요소 안정화 대기
-    header_image_insert.click(force=True, timeout=10000)
+    header_image_insert.wait_for(state="visible", timeout=30000)  # 타임아웃 30초로 증가
+    page.wait_for_timeout(2000)  # 요소 안정화 대기
+    header_image_insert.click(force=True, timeout=30000)
 
     # 이미지 파일 경로
     current_dir = Path(__file__).parent
