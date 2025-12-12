@@ -73,32 +73,14 @@ jobs:
         shell: cmd
         run: |
           chcp 65001
-          REM 최대 3회 재시도
-          for /l %%i in (1,1,3) do (
-            echo === Precondition Test Attempt %%i ===
-            "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html
-            if !errorlevel! equ 0 goto precondition_success
-            echo Attempt %%i failed, retrying...
-            timeout /t 10 /nobreak
-          )
-          echo All precondition attempts failed
-          :precondition_success
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html
         continue-on-error: true
 
       - name: Run Front tests
         shell: cmd
         run: |
           chcp 65001
-          REM 최대 3회 재시도
-          for /l %%i in (1,1,3) do (
-            echo === Front Test Attempt %%i ===
-            "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/front -v -s --tb=short --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html
-            if !errorlevel! equ 0 goto front_success
-            echo Attempt %%i failed, retrying...
-            timeout /t 10 /nobreak
-          )
-          echo All front attempts failed
-          :front_success
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/front -v -s --tb=short --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html
         continue-on-error: true
       
       - name: Generate test summary
