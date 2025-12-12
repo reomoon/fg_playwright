@@ -39,6 +39,18 @@ jobs:
           REM pytest 버전 확인
           "${{ env.PYTHON_PATH }}\python.exe" -m pytest --version
       
+      - name: Network Diagnostics
+        shell: cmd
+        run: |
+          echo ===== Network Status =====
+          ipconfig | findstr IPv4
+          echo.
+          echo ===== DNS Resolution =====
+          nslookup beta-mobile.fashiongo.net 2>&1 | findstr /v "^$"
+          echo.
+          echo ===== Ping Test =====
+          ping -n 1 beta-mobile.fashiongo.net 2>&1 | findstr /i "reply"
+      
       - name: Create .env file
         shell: cmd
         run: |

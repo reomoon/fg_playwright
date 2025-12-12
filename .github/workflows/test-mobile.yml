@@ -42,18 +42,14 @@ jobs:
       - name: Network Diagnostics
         shell: cmd
         run: |
-          REM 네트워크 연결 확인
-          echo ===== Network Diagnostics =====
-          ipconfig
+          echo ===== Network Status =====
+          ipconfig | findstr IPv4
           echo.
           echo ===== DNS Resolution =====
-          nslookup beta-mobile.fashiongo.net
+          nslookup beta-mobile.fashiongo.net 2>&1 | findstr /v "^$"
           echo.
           echo ===== Ping Test =====
-          ping -n 1 beta-mobile.fashiongo.net || echo "Ping failed"
-          echo.
-          echo ===== Route to Host =====
-          tracert -h 10 beta-mobile.fashiongo.net || echo "Tracert failed"
+          ping -n 1 beta-mobile.fashiongo.net 2>&1 | findstr /i "reply"
       
       - name: Create .env file
         shell: cmd
