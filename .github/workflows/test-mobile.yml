@@ -20,14 +20,14 @@ jobs:
       - name: Install dependencies
         shell: cmd
         run: |
-          REM 모든 Python 캐시 및 설치된 패키지 정리
+          REM 모든 Python 캐시 정리
           "${{ env.PYTHON_PATH }}\python.exe" -m pip cache purge
-          
-          REM pip 업그레이드
-          "${{ env.PYTHON_PATH }}\python.exe" -m pip install --upgrade pip setuptools wheel
           
           REM pytest-asyncio 및 관련 패키지 강제 제거
           "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-asyncio pytest-plugins pytest-xdist -y || true
+          
+          REM pip 업그레이드
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip install --upgrade pip setuptools wheel
           
           REM requirements.txt에서 fresh install
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install -r requirements.txt
@@ -36,8 +36,9 @@ jobs:
           REM Playwright 설치 및 초기화
           "${{ env.PYTHON_PATH }}\python.exe" -m playwright install
           
-          REM pytest 버전 확인
+          REM pytest 버전 및 플러그인 확인
           "${{ env.PYTHON_PATH }}\python.exe" -m pytest --version
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip list | findstr pytest
       
       - name: Network Diagnostics
         shell: cmd
