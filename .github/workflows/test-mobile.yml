@@ -23,8 +23,8 @@ jobs:
           REM 모든 Python 캐시 정리
           "${{ env.PYTHON_PATH }}\python.exe" -m pip cache purge
           
-          REM pytest-asyncio 및 관련 패키지 강제 제거
-          "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-asyncio pytest-plugins pytest-xdist -y || true
+          REM asyncio 관련 패키지 강제 제거
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-asyncio pytest-plugins pytest-xdist pytest-base-url -y || true
           
           REM pip 업그레이드
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install --upgrade pip setuptools wheel

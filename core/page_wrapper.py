@@ -63,7 +63,7 @@ class HighlightPageWrapper:
     def __getattr__(self, name):
         return getattr(self._page, name)
 
-def create_highlighted_page(browser):
+def create_highlighted_page(context):
     """브라우저에서 하이라이트 기능이 있는 새 페이지 생성"""
-    page = browser.new_page()
+    page = context.new_page()
     return HighlightPageWrapper(page)
