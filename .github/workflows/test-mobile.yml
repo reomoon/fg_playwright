@@ -97,6 +97,18 @@ jobs:
           name: test-results
           path: output/
           retention-days: 7
+      
+      # 테스트 결과 파일들을 날짜/시간이 포함된 zip 파일로 압축
+      # zip 파일명을 GitHub Actions 환경 변수(GITHUB_ENV)에 등록하여 이후 step에서 사용
+      - name: Zip test results with datetime
+        if: always()
+        id: zip
+        shell: pwsh
+        run: |
+          $now = Get-Date -Format "yyyyMMdd_HHmm"
+          $zipName = "FG_auto-test-results_$now.zip"
+          Compress-Archive -Path output\* -DestinationPath "output\$zipName"
+          echo "ZIP_NAME=$zipName" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Send email with results
         if: always()
@@ -116,3 +128,4 @@ jobs:
 
             상세 결과는 Artifacts에서 HTML 리포트를 다운로드하여 확인하세요.
             GitHub Actions: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          attachments: output/${{ env.ZIP_NAME }} # PowerShell에서 생성한 zip 파일명을 환경 변수로 등록하여, 동적으로 첨부
