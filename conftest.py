@@ -12,13 +12,10 @@ import os
 # pytest-asyncio 비활성화 (Sync API 사용)
 pytest_plugins = ()
 
-@pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
-    # pytest가 각 테스트 함수의 실행 결과를 가져옴
-    outcome = yield
-    rep = outcome.get_result()
+    """테스트 실패 시 스크린샷 캡처"""
     # 테스트 함수 실행 단계에서 실패한 경우만 처리
-    if rep.when == "call" and rep.failed:
+    if call.when == "call" and call.excinfo is not None:
         # 여러 fixture 이름 중 실제 page 객체를 가져옴 (실제 객체가 있으면 반환, 없으면 None)
         page = (
             item.funcargs.get("page")              # 일반적으로 사용하는 page fixture
