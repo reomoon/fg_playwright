@@ -23,9 +23,6 @@ jobs:
           REM 모든 Python 캐시 정리
           "${{ env.PYTHON_PATH }}\python.exe" -m pip cache purge
           
-          REM asyncio 관련 패키지 강제 제거
-          "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-asyncio pytest-plugins pytest-xdist pytest-base-url -y || true
-          
           REM pip 업그레이드
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install --upgrade pip setuptools wheel
           
@@ -33,10 +30,13 @@ jobs:
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install -r requirements.txt
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install pytest-html
           
-          REM Playwright 설치 및 초기화
+          REM asyncio 관련 패키지 강제 제거 (마지막!)
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-asyncio pytest-plugins pytest-xdist pytest-base-url -y || true
+          
+          REM Playwright 설치
           "${{ env.PYTHON_PATH }}\python.exe" -m playwright install
           
-          REM pytest 버전 및 플러그인 확인
+          REM 최종 확인
           "${{ env.PYTHON_PATH }}\python.exe" -m pytest --version
           "${{ env.PYTHON_PATH }}\python.exe" -m pip list | findstr pytest
 
