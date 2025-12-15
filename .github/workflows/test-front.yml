@@ -12,11 +12,11 @@ jobs:
       PYTHON_PATH: C:\Users\NHN\AppData\Local\Programs\Python\Python311
       PYTHONIOENCODING: utf-8
       HEADLESS: "True"   # Headless 모드 True로 설정
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
+
       - name: Install dependencies
         shell: cmd
         run: |
@@ -57,7 +57,7 @@ jobs:
             echo fr_user_id=${{ secrets.FR_USER_ID }}
             echo fr_user_mobile_id=${{ secrets.FR_USER_MOBILE_ID }}
           ) > .env
-      
+
       - name: Network Diagnostics
         shell: cmd
         continue-on-error: true
@@ -68,28 +68,28 @@ jobs:
           echo ===== DNS Resolution =====
           nslookup beta-www.fashiongo.net 2>&1 | findstr /v "^$"
           echo.
-      
+
       - name: Run Precondition tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest -p no:pytest_asyncio tests/precondition -v -s --tb=short --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html
         continue-on-error: true
 
       - name: Run Front tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/front -v -s --tb=short --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest -p no:pytest_asyncio tests/front -v -s --tb=short --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html
         continue-on-error: true
-      
+
       - name: Generate test summary
         if: always()
         id: summary  # body { steps.summary.outputs.summary }에 사용
         shell: pwsh
         run: |
           & ./scripts/generate-test-summary.ps1 -OutputPath "output"
-      
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
