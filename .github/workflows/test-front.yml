@@ -3,7 +3,7 @@ name: Daily Playwright Front Test
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * 1-5' # 매일 한국시간 9시 월~금만 실행
+    - cron: '0 0 * * 0-4' # 매일 한국시간 9시 월~금만 실행
 
 jobs:
   test:
@@ -126,6 +126,6 @@ jobs:
 
             ${{ steps.summary.outputs.summary }}
 
-            상세 결과는 Artifacts에서 HTML 리포트를 다운로드하여 확인하세요.
+            상세 결과는 첨부파일을 다운로드하여 HTML 리포트를 확인하세요.
             GitHub Actions: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           attachments: output/${{ env.ZIP_NAME }} # PowerShell에서 생성한 zip 파일명을 환경 변수로 등록하여, 동적으로 첨부
