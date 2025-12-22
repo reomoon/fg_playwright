@@ -28,15 +28,17 @@ def mobile_text_search(page):
     random_text = random.choice(random_search)  # 랜덤 검색어 선택
     header_search_input.fill(random_text)  # type 대신 fill 사용 (더 빠름)
     page.keyboard.press("Enter") # 검색어 입력 후 엔터
-    page.wait_for_timeout(5000) 
 
-    # url searchQuery에서 검색어 확인
-    import urllib.parse # 문자열(예: 검색어)을 URL에 안전하게 넣을 수 있도록 URL 인코딩(공백 → %20, 한글/특수문자 → %XX 형태) 해주는 함수
-
+    import urllib.parse
     encoded_query = urllib.parse.quote(random_text)
+
+    # URL에 검색어가 포함될 때까지 대기
+    page.wait_for_function(
+        f"() => window.location.href.includes('searchQuery={encoded_query}')",
+        timeout=10000
+    )
+
     if f"searchQuery={encoded_query}" in page.url:
         print(f"🅿 Pass: 검색어 '{random_text}'가 URL에 포함되어 있습니다.")
     else:
         print(f"❌ Fail: 검색어 '{random_text}'가 URL에 포함되어 있지 않습니다. ({page.url})")
-
-    page.wait_for_timeout(5000)
