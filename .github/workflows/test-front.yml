@@ -7,7 +7,7 @@ on:
 
 jobs:
   test:
-    runs-on: [self-hosted] # TH_Office 우선 실행, 오프라인이면 self-hosted 실행
+    runs-on: [self-hosted, AL01597683] # AL01597683 우선 실행, 오프라인이면 self-hosted 실행
     env:
       PYTHON_PATH: C:\Users\NHN\AppData\Local\Programs\Python\Python311
       PYTHONIOENCODING: utf-8
