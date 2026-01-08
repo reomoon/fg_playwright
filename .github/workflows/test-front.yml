@@ -125,6 +125,11 @@ jobs:
             FG Automation Playwright Front 테스트가 완료되었습니다.
 
             ${{ steps.summary.outputs.summary }}
+            
+            실행된 러너 정보:
+             - PC: ${{ runner.name }}
+             - OS: ${{ runner.os }}
+             - Label: ${{ runner.labels }}
 
             상세 결과는 첨부파일을 다운로드하여 HTML 리포트를 확인하세요.
             GitHub Actions: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
