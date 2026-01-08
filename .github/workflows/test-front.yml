@@ -9,6 +9,7 @@ jobs:
   test_thoffice:
     runs-on: [self-hosted, THoffice] # THoffice 우선 실행
     continue-on-error: true
+    timeout-minutes: 1 # 1분 기다렸다가 runner 없으면 fallback 실행
     env:
       PYTHON_PATH: C:\Users\NHN\AppData\Local\Programs\Python\Python311
       PYTHONIOENCODING: utf-8
