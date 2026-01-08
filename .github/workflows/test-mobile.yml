@@ -6,8 +6,9 @@ on:
     - cron: '30 0 * * 1-5' # 매일 한국시간 9시반 월~금만 실행
 
 jobs:
-  test:
-    runs-on: [self-hosted, THoffice] # AL01597683 우선 실행, 오프라인이면 self-hosted 실행
+  test_thoffice:
+    runs-on: [self-hosted, THoffice] # THoffice 우선 실행
+    continue-on-error: true
     env:
       PYTHON_PATH: C:\Users\NHN\AppData\Local\Programs\Python\Python311
       PYTHONIOENCODING: utf-8
@@ -127,6 +128,138 @@ jobs:
             ${{ steps.summary.outputs.summary }}
             
             실행된 러너 정보:
+             - PC: ${{ runner.name }}
+             - OS: ${{ runner.os }}
+             - Label: ${{ runner.labels }}
+
+            상세 결과는 첨부파일을 다운로드하여 HTML 리포트를 확인하세요.
+            GitHub Actions: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          attachments: output/${{ env.ZIP_NAME }} # PowerShell에서 생성한 zip 파일명을 환경 변수로 등록하여, 동적으로 첨부
+
+  test_fallback:
+    needs: test_thoffice # THoffice job이 먼저 실행
+    if: ${{ failure() || cancelled() }}
+    runs-on: [self-hosted] # 이전 job 실패 시 다른 self-hosted runner에서 실행
+    env:
+      PYTHON_PATH: C:\Users\NHN\AppData\Local\Programs\Python\Python311
+      PYTHONIOENCODING: utf-8
+      HEADLESS: "True"   # Headless 모드 True로 설정
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Install dependencies
+        shell: cmd
+        run: |
+          REM 모든 Python 캐시 정리
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip cache purge
+          
+          REM pip 업그레이드
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip install --upgrade pip setuptools wheel
+          
+          REM requirements.txt에서 fresh install
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip install -r requirements.txt
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip install pytest-html
+          
+          REM asyncio 관련 패키지 강제 제거 (마지막!)
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-asyncio pytest-plugins pytest-xdist pytest-base-url -y || true
+          
+          REM Playwright 설치
+          "${{ env.PYTHON_PATH }}\python.exe" -m playwright install
+          
+          REM 최종 확인
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest --version
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip list | findstr pytest
+      
+      - name: Network Diagnostics
+        shell: cmd
+        continue-on-error: true
+        run: |
+          echo ===== Network Status =====
+          ipconfig | findstr IPv4
+          echo.
+          echo ===== DNS Resolution =====
+          nslookup beta-mobile.fashiongo.net 2>&1 | findstr /v "^$"
+          echo.
+      
+      - name: Create .env file
+        shell: cmd
+        run: |
+          (
+            echo fr_username=${{ secrets.FR_USERNAME }}
+            echo fr_password=${{ secrets.FR_PASSWORD }}
+            echo va_username=${{ secrets.VA_USERNAME }}
+            echo va_password=${{ secrets.VA_PASSWORD }}
+            echo wa1_username=${{ secrets.WA1_USERNAME }}
+            echo wa1_password=${{ secrets.WA1_PASSWORD }}
+            echo wa2_username=${{ secrets.WA2_USERNAME }}
+            echo wa2_password=${{ secrets.WA2_PASSWORD }}
+            echo mo_username=${{ secrets.MO_USERNAME }}
+            echo mo_password=${{ secrets.MO_PASSWORD }}
+            echo fr_user_id=${{ secrets.FR_USER_ID }}
+            echo fr_user_mobile_id=${{ secrets.FR_USER_MOBILE_ID }}
+          ) > .env
+      
+      - name: Run Precondition tests
+        shell: cmd
+        run: |
+          chcp 65001
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html
+        continue-on-error: true
+
+      - name: Run Mobile tests
+        shell: cmd
+        run: |
+          chcp 65001
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/mobile -v -s --tb=short --junitxml=output/mobile-results.xml --html=output/mobile-report.html --self-contained-html
+        continue-on-error: true
+      
+      - name: Generate test summary
+        if: always()
+        id: summary  # body { steps.summary.outputs.summary }에 사용
+        shell: pwsh
+        run: |
+          & ./scripts/generate-test-summary.ps1 -OutputPath "output"
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: output/
+          retention-days: 7
+      
+      # 테스트 결과 파일들을 날짜/시간이 포함된 zip 파일로 압축
+      # zip 파일명을 GitHub Actions 환경 변수(GITHUB_ENV)에 등록하여 이후 step에서 사용
+      - name: Zip test results with datetime
+        if: always()
+        id: zip
+        shell: pwsh
+        run: |
+          $now = Get-Date -Format "yyyyMMdd_HHmm"
+          $zipName = "FG_auto-test-results_$now.zip"
+          Compress-Archive -Path output\* -DestinationPath "output\$zipName"
+          echo "ZIP_NAME=$zipName" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Send email with results
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.dooray.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USER }}
+          password: ${{ secrets.MAIL_PASS }}
+          subject: FG Automation Mobile Test Results
+          to: taehyung-moon@nhnservice.com, seungbin.an@nhnservice.com
+          from: ${{ secrets.MAIL_USER }}
+          body: |
+            FG Automation Playwright Mobile 테스트가 완료되었습니다.
+
+            ${{ steps.summary.outputs.summary }}
+
+            실행된 러너 정보:
+            fallback job info:
              - PC: ${{ runner.name }}
              - OS: ${{ runner.os }}
              - Label: ${{ runner.labels }}
