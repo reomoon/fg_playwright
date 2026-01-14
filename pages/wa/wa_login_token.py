@@ -49,7 +49,13 @@ def wa_login_token(page, account="wa2"):
     vendor_admin_url = f"https://beta-vendoradmin.fashiongo.net/#/auth/webadmin/login/{auth_token}"
     print(f"☑ Vendor Admin 페이지로 이동")
     page.goto(vendor_admin_url, wait_until="domcontentloaded", timeout=60000)
-    page.wait_for_timeout(3000)
+    
+    # VA 로딩 완료 추가 대기
+    try:
+        page.wait_for_load_state("load", timeout=10000)
+    except Exception as e:
+        print(f"⚠️ 페이지 로드 타임아웃: {str(e)}")
+    
     print(f"🅿 Vendor Admin 페이지 진입 완료")
     
     return page

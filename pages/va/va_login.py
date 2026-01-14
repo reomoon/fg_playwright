@@ -29,11 +29,11 @@ def va_login(page, account="va"):
     # 페이지 로딩 상태를 기다림
     try:
         # 먼저 load state로 기다림
-        page.wait_for_load_state("networkidle", timeout=50000)
+        page.wait_for_load_state("networkidle", timeout=60000)
         print("☑ 페이지 로딩 완료")
         
         # 그 다음 URL 확인
-        page.wait_for_url(re.compile(r"https://beta-vendoradmin\.fashiongo\.net/#/home(?:\?.*)?$"), timeout=30000)
+        page.wait_for_url(re.compile(r"https://beta-vendoradmin\.fashiongo\.net/#/home(?:\?.*)?$"), timeout=60000)
         print("🅿 VA URL ok:", page.url)
     except Exception as e:
         # 타임아웃되도 현재 URL이 home이면 계속 진행

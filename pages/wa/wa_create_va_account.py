@@ -42,8 +42,10 @@ def create_vendor_account(page, logs=None):
     manage_account.wait_for(state="visible", timeout=5000)
     manage_account.click()
 
-    # alliumtest 계정이 있는지 확인
+    # 테이블 로딩 대기
     page.wait_for_timeout(3000)
+    
+    # alliumtest 계정이 있는지 확인
     if page.locator("td", has_text=vendor_account).count() > 0:
         print(f"{vendor_account} 계정이 있습니다. 해당 케이스를 종료합니다.")
         logs.append(f"{vendor_account} 계정 이미 존재")
@@ -62,7 +64,11 @@ def create_vendor_account(page, logs=None):
     page.locator('input[formcontrolname="userId"]').type(vendor_account, delay=50)
     page.locator('input[formcontrolname="password"]').type("789456123qQ!", delay=50)
 
-    page.wait_for_timeout(3000)
+    # 폼 로딩 완료 대기
+    try:
+        page.wait_for_load_state("networkidle", timeout=10000)
+    except Exception as e:
+        print(f"☑ 폼 로딩 타임아웃: {str(e)}")
     
     # 권한 체크 요소 찾기
     checkboxs = page.locator('li >> div.check-square')
@@ -74,7 +80,12 @@ def create_vendor_account(page, logs=None):
 
     # Save 버튼 클릭
     page.locator('button.btn.btn-blue', has_text="Save").click()
-    page.wait_for_timeout(3000)
+    
+    # 저장 완료 대기
+    try:
+        page.wait_for_load_state("networkidle", timeout=10000)
+    except Exception as e:
+        print(f"☑ 저장 후 로딩 타임아웃: {str(e)}")
 
     # 계정 생성 확인
     if page.locator("td", has_text=vendor_account).count() > 0:
