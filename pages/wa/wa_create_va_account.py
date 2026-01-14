@@ -81,11 +81,8 @@ def create_vendor_account(page, logs=None):
     # Save 버튼 클릭
     page.locator('button.btn.btn-blue', has_text="Save").click()
     
-    # 저장 완료 대기
-    try:
-        page.wait_for_load_state("networkidle", timeout=10000)
-    except Exception as e:
-        print(f"☑ 저장 후 로딩 타임아웃: {str(e)}")
+    # 저장 완료 테이블 로딩 대기
+    page.wait_for_timeout(3000)
 
     # 계정 생성 확인
     if page.locator("td", has_text=vendor_account).count() > 0:
