@@ -1,7 +1,7 @@
 from playwright.sync_api import Page
 from tests.front.login.test_front_login_fixture import front_login_fixture
 from pages.front.orders.fr_Checkout import checkout_flow
-from pages.front.items.fr_AddtoCart_api import add_item_to_cart
+from pages.front.items.fr_AddtoCart import run_add_to_cart_flow
 
 
 def test_place_order(front_login_fixture: Page):
@@ -16,7 +16,7 @@ def test_place_order(front_login_fixture: Page):
     print("🅰 Front 계정 로그인 완료 - 장바구니 담기 시작")
 
     # 1. 장바구니에 아이템 담기 (API 기반)
-    add_item_to_cart(page)
+    run_add_to_cart_flow(page)
     print("🅿 장바구니 담기 완료 - 체크아웃 플로우 시작")
 
     # 2. 체크아웃 플로우 실행
