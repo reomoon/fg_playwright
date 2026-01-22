@@ -72,6 +72,7 @@ def create_card(page):
 
     # captcha 캡처 함수 불러오기
     captcha_capture(page)
+    page.wait_for_timeout(1000)  # 캡차 이미지 저장 대기
 
     # output 폴더 경로 설정
     output_dir = os.path.join(os.getcwd(), "output")
@@ -99,39 +100,55 @@ def create_card(page):
     for attempt in range(3):  # 최대 3번 시도
         # Save 버튼 클릭
         page.locator('.btn.btn_m_blue.add_btn.cls_save_card').click()
-        page.wait_for_timeout(3000)  # 3초 대기
+        page.wait_for_timeout(500)  # 버튼 클릭 반응 대기
+        
+        # 팝업이 나타날 때까지 대기 (최대 4초) 또는 페이지 업데이트까지 대기
+        try:
+            page.wait_for_selector('#close-showInfoError', state="attached", timeout=4000)
+            # 팝업이 나타났으면 visible 상태 확인
+            if page.locator('#close-showInfoError', log_if_not_found=False).is_visible():
+                print(f"⚠️ Invalid Verification Code 팝업 감지됨. OCR 재시도 중... (시도 {attempt + 1}/3)")
+                # 팝업 닫기
+                page.locator('#close-showInfoError').click()
+                page.wait_for_timeout(500)  # 팝업 닫힘 대기
 
-        # 팝업 확인
-        if page.locator('#close-showInfoError', log_if_not_found=False).is_visible():
-            print(f"⚠️ Invalid Verification Code 팝업 감지됨. OCR 재시도 중... (시도 {attempt + 1}/3)")
-            # 팝업 닫기
-            page.locator('#close-showInfoError').click()
+                # 새로운 캡챠 이미지 캡처
+                captcha_capture(page)
+                page.wait_for_timeout(1500)  # 이미지 저장 완전 대기
 
-            # 새로운 캡챠 이미지 캡처
-            captcha_capture(page)
+                # 기존 처리 이미지 파일이 있다면 삭제
+                if os.path.exists(output_image_path):
+                    try:
+                        os.remove(output_image_path)
+                        page.wait_for_timeout(500)  # 파일 삭제 완료 대기
+                    except Exception as e:
+                        print(f"⚠️ 파일 삭제 중 오류: {e}")
 
-            # processed_captcha.png 파일이 있다면 기존 파일 삭제
-            if os.path.exists(output_image_path):
-                os.remove(output_image_path)
+                # 새로 캡처된 이미지로 선 제거 후 처리
+                remove_lines(input_image_path, output_image_path)
+                page.wait_for_timeout(500)
+                
+                # OCR 다시 수행 (새 이미지로)
+                captcha_text = perform_easyocr(output_image_path)
 
-            # 새로 생성
-            remove_lines(input_image_path, output_image_path)
-            page.wait_for_timeout(500)
-            
-            # OCR 다시 수행
-            captcha_text = perform_easyocr(output_image_path)
+                # OCR 결과 검증
+                if not captcha_text:
+                    print("☒ OCR 결과 유효하지 않음. 재시도합니다.")
+                    continue
 
-            # OCR 결과 검증
-            if not captcha_text:
-                print("☒ OCR 결과 유효하지 않음. 재시도합니다.")
-                continue
-
-            # 캡챠 입력
-            page.locator('#card_captcha_answer').fill("")
-            page.locator('#card_captcha_answer').type(captcha_text)
-            print(f"✅ 새 CAPTCHA 입력: {captcha_text}")
-        else:
-            print("☑ 카드 저장 성공")
+                # 캡챠 입력 (완전히 초기화 후 입력)
+                page.locator('#card_captcha_answer').click(click_count=3)  # 기존 텍스트 전체 선택
+                page.locator('#card_captcha_answer').fill("")  # 완전히 초기화
+                page.wait_for_timeout(200)
+                page.locator('#card_captcha_answer').type(captcha_text)
+                print(f"✅ 새 CAPTCHA 입력: {captcha_text}")
+            else:
+                print("☑ 카드 저장 성공")
+                break
+        except Exception as e:
+            # 팝업이 4초 내에 나타나지 않으면 카드가 저장된 것으로 간주
+            print(f"☑ 팝업 없음 - 카드 저장 성공 (상세: {e})")
+            page.wait_for_timeout(2000)  # 페이지 업데이트 완료 대기
             break
     else:
         print("❌ 최대 시도 횟수 초과. 카드 추가 실패.")
