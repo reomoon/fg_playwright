@@ -8,6 +8,7 @@ on:
 jobs:
   test_self_hosted:
     runs-on: [self-hosted, office] # self-hosted office 라벨 러너에서 실행
+    timeout-minutes: 60  # 60분 초과 시 자동취소 후 fallback으로 넘어감
     env:
       PYTHON_PATH: C:\Users\NHN\AppData\Local\Programs\Python\Python311
       PYTHONIOENCODING: utf-8
@@ -139,6 +140,7 @@ jobs:
     needs: test_self_hosted # 이전 job 완료 후 실행
     if: ${{ failure() || cancelled() }}
     runs-on: [self-hosted] # 이전 job 실패 시 다른 러너 실행
+    timeout-minutes: 60  # 60분 초과 시 자동취소 후 종료
     env:
       PYTHON_PATH: C:\Users\NHN\AppData\Local\Programs\Python\Python311
       PYTHONIOENCODING: utf-8
