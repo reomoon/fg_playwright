@@ -28,19 +28,15 @@ def va_login(page, account="va"):
 
     # 페이지 로딩 상태를 기다림
     try:
-        # 먼저 load state로 기다림
-        page.wait_for_load_state("networkidle", timeout=60000)
-        print("☑ 페이지 로딩 완료")
-        
-        # 그 다음 URL 확인
-        page.wait_for_url(re.compile(r"https://beta-vendoradmin\.fashiongo\.net/#/home(?:\?.*)?$"), timeout=60000)
+        # URL이 home이 되는지 확인
+        page.wait_for_url(re.compile(r"https://beta-vendoradmin\.fashiongo\.net/#/home(?:\?.*)?$"), timeout=30000)
         print("🅿 VA URL ok:", page.url)
-    except Exception as e:
-        # 타임아웃되도 현재 URL이 home이면 계속 진행
+    except:
+        # 현재 URL이 home이면 계속 진행
         if "home" in page.url:
-            print(f"⚠️ URL 타임아웃이지만 현재 페이지가 home입니다: {page.url}")
+            print(f"🅿 beta-vendoradmin.fashiongo.net/home 확인 OK: {page.url}")
         else:
-            raise e
+            raise
 
     # 팝업이 뜨기 전에 Net Terms 온보딩 쿠키 추가
     page.context.add_cookies([{

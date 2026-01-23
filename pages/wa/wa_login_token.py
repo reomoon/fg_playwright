@@ -1,6 +1,6 @@
 from core.page_account import LOGIN_CREDENTIALS
 
-def wa_login_token(page, account="wa2"):
+def wa_login_token(page, account="wa2", max_retries=3):
     """
     WA 로그인 후 JWT 토큰으로 Vendor Admin 페이지로 이동
     """
@@ -16,10 +16,21 @@ def wa_login_token(page, account="wa2"):
     if not username or not password:
         raise ValueError(f"LOGIN_CREDENTIALS {account}가 없습니다.")
     
-    # 1. WA 로그인 페이지로 이동
-    page.goto("https://beta-webadmin.fashiongo.net/login", wait_until="domcontentloaded", timeout=60000)
-    page.wait_for_timeout(2000)
+    # 1. WA 로그인 페이지로 이동 (재시도 로직)
+    for attempt in range(max_retries):
+        try:
+            page.goto("https://beta-webadmin.fashiongo.net/login", wait_until="domcontentloaded", timeout=90000)
+            page.wait_for_selector('#username', timeout=15000)
+            break
+        except Exception as e:
+            if attempt < max_retries - 1:
+                print(f"⚠️ 페이지 로드 시도 {attempt+1} 실패, 재시도 중...")
+                page.goto("https://beta-webadmin.fashiongo.net/login", wait_until="domcontentloaded", timeout=60000)
+            else:
+                raise
     
+    page.wait_for_timeout(500)
+
     # 2. 로그인
     page.locator('#username').fill(username)
     page.locator('#password').fill(password)
