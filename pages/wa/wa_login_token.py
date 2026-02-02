@@ -39,21 +39,31 @@ def wa_login_token(page, account="wa2", max_retries=3):
     
     print(f"☑ WA_{account} 계정 로그인 완료")
 
-    # 3. 쿠키에서 tokenID 추출
-    cookies = page.context.cookies()
-    print(f"🅿 저장된 쿠키: {len(cookies)}개")
-    
+    # 3. 쿠키에서 tokenID 추출 (재시도 로직 포함)
     auth_token = None
-    for cookie in cookies:
-        print(f"  - {cookie['name']}: {cookie['value'][:30]}...")
-        if cookie['name'] == 'tokenID':
-            auth_token = cookie['value']
-            print(f"🅿 tokenID 찾음: {auth_token[:50]}...")
+    token_retries = 3
+    retry_delay = 2000  # 2초
+    
+    for retry_attempt in range(token_retries):
+        cookies = page.context.cookies()
+        print(f"🅿 저장된 쿠키: {len(cookies)}개 (시도 {retry_attempt + 1}/{token_retries})")
+        
+        for cookie in cookies:
+            print(f"  - {cookie['name']}: {cookie['value'][:30]}...")
+            if cookie['name'] == 'tokenID':
+                auth_token = cookie['value']
+                print(f"🅿 tokenID 찾음: {auth_token[:50]}...")
+                break
+        
+        if auth_token:
             break
-
-    if not auth_token:
-        print("❌ 쿠키에서 tokenID를 찾을 수 없습니다.")
-        raise ValueError("JWT 토큰 추출 실패")
+        
+        if retry_attempt < token_retries - 1:
+            print(f"⚠️ tokenID를 찾지 못했습니다. {retry_delay}ms 후 재시도...")
+            page.wait_for_timeout(retry_delay)
+        else:
+            print("❌ 쿠키에서 tokenID를 찾을 수 없습니다.")
+            raise ValueError("JWT 토큰 추출 실패")
 
     # 4. JWT 토큰으로 Vendor Admin 페이지로 이동
     print(f"🅿 인증 토큰 획득 완료: {auth_token[:50]}...")
