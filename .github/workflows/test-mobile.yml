@@ -5,6 +5,12 @@ on:
   schedule:
     - cron: '30 0 * * 1-5' # 매일 한국시간 9시반 월~금만 실행
 
+env:
+  MAIL_RECIPIENTS: >- # 메일 수신자 목록
+    taehyung-moon@nhnservice.com, seungbin.an@nhnservice.com, jaekyun.park@nhnservice.com,
+    kheejin@nhnservice.com, minju.jang@nhnservice.com, wjddidgns22@nhnservice.com, 
+    yungyeong.choi@nhnservice.com, dajeong.song@nhnservice.com
+
 jobs:
   test_self_hosted:
     runs-on: [self-hosted, office] # self-hosted office 라벨 러너에서 실행
@@ -252,7 +258,7 @@ jobs:
           username: ${{ secrets.MAIL_USER }}
           password: ${{ secrets.MAIL_PASS }}
           subject: FG Automation Mobile Test Results
-          to: taehyung-moon@nhnservice.com, seungbin.an@nhnservice.com
+          to: ${{ env.MAIL_RECIPIENTS }}
           from: ${{ secrets.MAIL_USER }}
           body: |
             FG Automation Playwright Mobile 테스트가 완료되었습니다.
