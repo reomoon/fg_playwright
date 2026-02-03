@@ -125,11 +125,11 @@ jobs:
           server_port: 465
           username: ${{ secrets.MAIL_USER }}
           password: ${{ secrets.MAIL_PASS }}
-          subject: FG Automation Front Test Results
+          subject: FG Automation Beta Front Test Results
           to: taehyung-moon@nhnservice.com, seungbin.an@nhnservice.com
           from: ${{ secrets.MAIL_USER }}
           body: |
-            FG Automation Playwright Front 테스트가 완료되었습니다.
+            FG Automation Playwright Beta Front 테스트가 완료되었습니다.
 
             ${{ steps.summary.outputs.summary }}
             
