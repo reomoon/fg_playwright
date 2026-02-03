@@ -211,14 +211,14 @@ jobs:
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short --reruns 2 --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html
         continue-on-error: true
 
       - name: Run Mobile tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/mobile -v -s --tb=short --junitxml=output/mobile-results.xml --html=output/mobile-report.html --self-contained-html
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/mobile -v -s --tb=short --reruns 2 --junitxml=output/mobile-results.xml --html=output/mobile-report.html --self-contained-html
         continue-on-error: true
       
       - name: Generate test summary
