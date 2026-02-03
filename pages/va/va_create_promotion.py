@@ -13,38 +13,29 @@ def va_create_promotion(page: Page):
     # page.locator("a.nav__sub-group2__item__title", has_text="Vendor Promotion").click()
     page.goto("https://beta-vendoradmin.fashiongo.net/#/marketing/special/promotion/vendor", timeout=10000, wait_until="domcontentloaded")
     # page.wait_for_url("**/marketing/special/promotion/vendor")
+    page.wait_for_timeout(3000)
 
     # 2. 여러 개 중 enabled인 버튼만 클릭
-    create_btns = page.locator("button.btn.btn-md.btn-blue", has_text="Create Promotion")
-
-    btn_count = create_btns.count()
-    print(f"☑ button.btn.btn-md.btn-blue found ({btn_count}개)")
-
-    if btn_count == 0:
-        pytest.skip("'Create Promotion' 버튼이 아예 없어 테스트를 스킵합니다.")
-        return
-
-    # 비활성화 버튼들을 제외한 enabled 버튼 필터링
-    enabled_btn = page.locator(
-        "button.btn.btn-md.btn-blue:not(.btn-grey):not([disabled])",
-        has_text="Create Promotion"
-    )
-
-    enabled_count = enabled_btn.count()
-    print(f"☑ enabled Create Promotion 버튼 개수: {enabled_count}개")
-
-    # 비활성화만 존재하면 스킵 처리
-    if enabled_count == 0:
-        print("🗙 Create Promotion 버튼이 disabled 상태입니다. 테스트를 스킵합니다.")
-        pytest.skip("Create Promotion 버튼이 disabled 상태라 테스트를 진행할 수 없습니다.")
-        return
-
+    # btn-blue: 활성화, btn-grey: 비활성화
+    
+    # 비활성화 버튼만 있으면 스킵
+    disabled_btn = page.locator("button.btn.btn-md.btn-blue.btn-grey", has_text="Create Promotion")
+    if disabled_btn.count() > 0:
+        print("🗙 Create Promotion 버튼이 비활성화 상태입니다.")
+        pytest.skip("Create Promotion 버튼이 비활성화 상태라 테스트를 스킵합니다.")
+    
+    # 활성화 버튼 클릭
+    enabled_btn = page.locator("button.btn.btn-md.btn-blue", has_text="Create Promotion")
+    if enabled_btn.count() == 0:
+        pytest.skip("Create Promotion 버튼을 찾을 수 없습니다.")
+    
     # Spinner가 사라질 때까지 기다림 (로딩 완료)
     page.wait_for_selector("div.spinner", state="hidden", timeout=30000)
     print("☑ 로딩 완료 (spinner 사라짐)")
     page.wait_for_timeout(1000)  # 추가 안정화 대기
     
-    create_btns.first.click(force=True, timeout=30000)
+    enabled_btn.first.click(force=True, timeout=30000)
+    print(f"☑ Create Promotion 버튼 클릭")
 
     # 3. No end date 체크
     # page.locator('.fg-checkbox.no-end-date label').click()
