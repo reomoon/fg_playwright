@@ -1,10 +1,15 @@
 import sys
 import io
+import asyncio
 
 # UTF-8 인코딩 설정
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# Windows에서 asyncio 이벤트 루프 정책 설정 (GitHub Actions 호환성)
+if sys.platform == 'win32':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 import pytest
 import os
