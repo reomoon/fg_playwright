@@ -9,7 +9,12 @@ if sys.stdout.encoding != 'utf-8':
 
 # Windows에서 asyncio 이벤트 루프 정책 설정 (GitHub Actions 호환성)
 if sys.platform == 'win32':
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    try:
+        # ProactorEventLoopPolicy 사용 (subprocess 지원)
+        asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+    except Exception as e:
+        print(f"Warning: Failed to set event loop policy: {e}")
+        pass
 
 import pytest
 import os

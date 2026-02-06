@@ -80,14 +80,14 @@ jobs:
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest -p no:pytest_asyncio tests/precondition -v -s --tb=short --reruns 2 --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short --reruns 2 --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html
         continue-on-error: true
 
       - name: Run Front tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest -p no:pytest_asyncio tests/front -v -s --tb=short --reruns 2 --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/front -v -s --tb=short --reruns 2 --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html
         continue-on-error: true
 
       - name: Generate test summary
@@ -212,14 +212,14 @@ jobs:
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest -p no:pytest_asyncio tests/precondition -v -s --tb=short --reruns 2 --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short --reruns 2 --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html
         continue-on-error: true
 
       - name: Run Front tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest -p no:pytest_asyncio tests/front -v -s --tb=short --reruns 2 --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/front -v -s --tb=short --reruns 2 --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html
         continue-on-error: true
 
       - name: Generate test summary
