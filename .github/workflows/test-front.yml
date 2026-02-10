@@ -90,6 +90,20 @@ jobs:
           "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/front -v -s --tb=short --reruns 2 --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html -o asyncio_mode=off
         continue-on-error: true
 
+      - name: Run Vendor Admin tests
+        shell: cmd
+        run: |
+          chcp 65001
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/va -v -s --tb=short --reruns 2 --junitxml=output/vendor_admin-results.xml --html=output/vendor_admin-report.html --self-contained-html -o asyncio_mode=off
+        continue-on-error: true
+
+      - name: Run Web Admin tests
+        shell: cmd
+        run: |
+          chcp 65001
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/wa -v -s --tb=short --reruns 2 --junitxml=output/web_admin-results.xml --html=output/web_admin-report.html --self-contained-html -o asyncio_mode=off
+        continue-on-error: true
+
       - name: Generate test summary
         if: always()
         id: summary  # body { steps.summary.outputs.summary }에 사용
@@ -220,6 +234,20 @@ jobs:
         run: |
           chcp 65001
           "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/front -v -s --tb=short --reruns 2 --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html -o asyncio_mode=off
+        continue-on-error: true
+
+      - name: Run Vendor Admin tests
+        shell: cmd
+        run: |
+          chcp 65001
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/va -v -s --tb=short --reruns 2 --junitxml=output/vendor_admin-results.xml --html=output/vendor_admin-report.html --self-contained-html -o asyncio_mode=off
+        continue-on-error: true
+
+      - name: Run Web Admin tests
+        shell: cmd
+        run: |
+          chcp 65001
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/wa -v -s --tb=short --reruns 2 --junitxml=output/web_admin-results.xml --html=output/web_admin-report.html --self-contained-html -o asyncio_mode=off
         continue-on-error: true
 
       - name: Generate test summary
