@@ -1,15 +1,13 @@
-name: Daily Playwright Front Test
+name: Daily Playwright Admin Test
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * 1-5' # 매일 한국시간 9시 월~금만 실행
+    - cron: '30 0 * * 1-5' # 매일 한국시간 9시 월~금만 실행
 
 env:
   MAIL_RECIPIENTS: >- # 메일 수신자 목록
-    taehyung-moon@nhnservice.com, seungbin.an@nhnservice.com, jaekyun.park@nhnservice.com,
-    kheejin@nhnservice.com, minju.jang@nhnservice.com, wjddidgns22@nhnservice.com, 
-    yungyeong.choi@nhnservice.com, dajeong.song@nhnservice.com
+    taehyung-moon@nhnservice.com, seungbin.an@nhnservice.com
 
 jobs:
   test_self_hosted:
@@ -33,11 +31,15 @@ jobs:
           REM pip 업그레이드
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install --upgrade pip setuptools wheel
           
+          REM asyncio 관련 패키지 먼저 제거 (설치 전)
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-asyncio pytest-plugins pytest-xdist pytest-base-url -y || true
+          
           REM requirements.txt에서 fresh install
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip install -r requirements.txt --no-deps
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install -r requirements.txt
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install pytest-html
           
-          REM asyncio 관련 패키지 강제 제거 (마지막!)
+          REM asyncio 관련 패키지 다시 제거 (의존성으로 설치될 수 있음)
           "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-asyncio pytest-plugins pytest-xdist pytest-base-url -y || true
           
           REM Playwright 설치
@@ -45,7 +47,15 @@ jobs:
           
           REM 최종 확인
           "${{ env.PYTHON_PATH }}\python.exe" -m pytest --version
+          echo.
+          echo ===== Installed pytest packages =====
           "${{ env.PYTHON_PATH }}\python.exe" -m pip list | findstr pytest
+
+      - name: Verify no asyncio in pytest
+        shell: cmd
+        run: |
+          echo ===== Checking for pytest-asyncio =====
+          "${{ env.PYTHON_PATH }}\python.exe" -c "import sys; sys.exit(0 if 'pytest_asyncio' not in sys.modules and __import__('importlib.util').util.find_spec('pytest_asyncio') is None else 1)" && echo pytest-asyncio NOT found (OK) || (echo ERROR: pytest-asyncio is still installed! && "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-asyncio -y && echo Uninstalled pytest-asyncio)
 
       - name: Create .env file
         shell: cmd
@@ -76,18 +86,18 @@ jobs:
           nslookup beta-www.fashiongo.net 2>&1 | findstr /v "^$"
           echo.
 
-      - name: Run Precondition tests
+      - name: Run Vendor Admin tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short --reruns 2 --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html -o asyncio_mode=off
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/va -v -s --tb=short --reruns 2 --junitxml=output/vendor_admin-results.xml --html=output/vendor_admin-report.html --self-contained-html -o asyncio_mode=off -p no:asyncio
         continue-on-error: true
 
-      - name: Run Front tests
+      - name: Run Web Admin tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/front -v -s --tb=short --reruns 2 --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html -o asyncio_mode=off
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/wa -v -s --tb=short --reruns 2 --junitxml=output/web_admin-results.xml --html=output/web_admin-report.html --self-contained-html -o asyncio_mode=off -p no:asyncio
         continue-on-error: true
 
       - name: Generate test summary
@@ -125,11 +135,11 @@ jobs:
           server_port: 465
           username: ${{ secrets.MAIL_USER }}
           password: ${{ secrets.MAIL_PASS }}
-          subject: FG Automation Beta Front Test Results
+          subject: FG Automation Beta Admin Test Results
           to: ${{ env.MAIL_RECIPIENTS }}
           from: ${{ secrets.MAIL_USER }}
           body: |
-            FG Automation Playwright Beta Front 테스트가 완료되었습니다.
+            FG Automation Playwright Beta Admin 테스트가 완료되었습니다.
 
             ${{ steps.summary.outputs.summary }}
             
@@ -165,11 +175,15 @@ jobs:
           REM pip 업그레이드
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install --upgrade pip setuptools wheel
           
+          REM asyncio 관련 패키지 먼저 제거 (설치 전)
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-asyncio pytest-plugins pytest-xdist pytest-base-url -y || true
+          
           REM requirements.txt에서 fresh install
+          "${{ env.PYTHON_PATH }}\python.exe" -m pip install -r requirements.txt --no-deps
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install -r requirements.txt
           "${{ env.PYTHON_PATH }}\python.exe" -m pip install pytest-html
           
-          REM asyncio 관련 패키지 강제 제거 (마지막!)
+          REM asyncio 관련 패키지 다시 제거 (의존성으로 설치될 수 있음)
           "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-asyncio pytest-plugins pytest-xdist pytest-base-url -y || true
           
           REM Playwright 설치
@@ -177,7 +191,15 @@ jobs:
           
           REM 최종 확인
           "${{ env.PYTHON_PATH }}\python.exe" -m pytest --version
+          echo.
+          echo ===== Installed pytest packages =====
           "${{ env.PYTHON_PATH }}\python.exe" -m pip list | findstr pytest
+
+      - name: Verify no asyncio in pytest
+        shell: cmd
+        run: |
+          echo ===== Checking for pytest-asyncio =====
+          "${{ env.PYTHON_PATH }}\python.exe" -c "import sys; sys.exit(0 if 'pytest_asyncio' not in sys.modules and __import__('importlib.util').util.find_spec('pytest_asyncio') is None else 1)" && echo pytest-asyncio NOT found (OK) || (echo ERROR: pytest-asyncio is still installed! && "${{ env.PYTHON_PATH }}\python.exe" -m pip uninstall pytest-asyncio -y && echo Uninstalled pytest-asyncio)
 
       - name: Create .env file
         shell: cmd
@@ -208,18 +230,18 @@ jobs:
           nslookup beta-www.fashiongo.net 2>&1 | findstr /v "^$"
           echo.
 
-      - name: Run Precondition tests
+      - name: Run Vendor Admin tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/precondition -v -s --tb=short --reruns 2 --junitxml=output/precondition-results.xml --html=output/precondition-report.html --self-contained-html -o asyncio_mode=off
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/va -v -s --tb=short --reruns 2 --junitxml=output/vendor_admin-results.xml --html=output/vendor_admin-report.html --self-contained-html -o asyncio_mode=off -p no:asyncio
         continue-on-error: true
 
-      - name: Run Front tests
+      - name: Run Web Admin tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/front -v -s --tb=short --reruns 2 --junitxml=output/front-results.xml --html=output/front-report.html --self-contained-html -o asyncio_mode=off
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/wa -v -s --tb=short --reruns 2 --junitxml=output/web_admin-results.xml --html=output/web_admin-report.html --self-contained-html -o asyncio_mode=off -p no:asyncio
         continue-on-error: true
 
       - name: Generate test summary
@@ -233,7 +255,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: test-results-fallback
           path: output/
           retention-days: 7
 
@@ -257,16 +279,15 @@ jobs:
           server_port: 465
           username: ${{ secrets.MAIL_USER }}
           password: ${{ secrets.MAIL_PASS }}
-          subject: FG Automation Beta Front Test Results
+          subject: FG Automation Beta Admin Test Results (Fallback)
           to: ${{ env.MAIL_RECIPIENTS }}
           from: ${{ secrets.MAIL_USER }}
           body: |
-            FG Automation Playwright Beta Front 테스트가 완료되었습니다.
+            FG Automation Playwright Beta Admin 테스트가 완료되었습니다.
 
             ${{ steps.summary.outputs.summary }}
             
-            실행된 러너 정보
-            fallback job info:
+            실행된 러너 정보 (Fallback):
              - PC: ${{ runner.name }}
              - OS: ${{ runner.os }}
              - Label: ${{ join(runner.labels, ', ') }}
