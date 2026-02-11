@@ -12,7 +12,7 @@ env:
 jobs:
   test_self_hosted:
     runs-on: [self-hosted, office] # self-hosted office runner에서 실행
-    timeout-minutes: 90  # 설정된 값 초과 시 자동취소 후 fallback으로 넘어감
+    timeout-minutes: 60  # 설정된 값 초과 시 자동취소 후 fallback으로 넘어감
     env:
       PYTHON_PATH: C:\Users\NHN\AppData\Local\Programs\Python\Python311
       PYTHONIOENCODING: utf-8
