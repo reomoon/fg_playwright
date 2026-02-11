@@ -90,14 +90,14 @@ jobs:
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/va -v -s --tb=short --reruns 2 --junitxml=output/vendor_admin-results.xml --html=output/vendor_admin-report.html --self-contained-html -o asyncio_mode=off -p no:asyncio
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/va -v -s --tb=short --reruns 2 --junitxml=output/va-results.xml --html=output/va-report.html --self-contained-html -o asyncio_mode=off -p no:asyncio
         continue-on-error: true
 
       - name: Run Web Admin tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/wa -v -s --tb=short --reruns 2 --junitxml=output/web_admin-results.xml --html=output/web_admin-report.html --self-contained-html -o asyncio_mode=off -p no:asyncio
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/wa -v -s --tb=short --reruns 2 --junitxml=output/wa-results.xml --html=output/wa-report.html --self-contained-html -o asyncio_mode=off -p no:asyncio
         continue-on-error: true
 
       - name: Generate test summary
@@ -234,14 +234,14 @@ jobs:
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/va -v -s --tb=short --reruns 2 --junitxml=output/vendor_admin-results.xml --html=output/vendor_admin-report.html --self-contained-html -o asyncio_mode=off -p no:asyncio
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/va -v -s --tb=short --reruns 2 --junitxml=output/va-results.xml --html=output/va-report.html --self-contained-html -o asyncio_mode=off -p no:asyncio
         continue-on-error: true
 
       - name: Run Web Admin tests
         shell: cmd
         run: |
           chcp 65001
-          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/wa -v -s --tb=short --reruns 2 --junitxml=output/web_admin-results.xml --html=output/web_admin-report.html --self-contained-html -o asyncio_mode=off -p no:asyncio
+          "${{ env.PYTHON_PATH }}\python.exe" -m pytest tests/wa -v -s --tb=short --reruns 2 --junitxml=output/wa-results.xml --html=output/wa-report.html --self-contained-html -o asyncio_mode=off -p no:asyncio
         continue-on-error: true
 
       - name: Generate test summary
